@@ -1,9 +1,9 @@
 import React from 'react'
 
-function teamDashboard() {
+function TeamDashboard() {
   return (
     <div>teamDashboard</div>
   )
 }
 
-export default teamDashboard
+export default TeamDashboard

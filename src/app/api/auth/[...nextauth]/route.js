@@ -5,6 +5,8 @@ import {PrismaAdapter} from '@next-auth/prisma-adapter'
 import bcrypt from 'bcrypt'
 
 export const authOptions = {
+    adapter: PrismaAdapter(prisma),
+
     providers: [
         CredentialsProviders({
             name: "Credentials",
@@ -38,10 +40,15 @@ export const authOptions = {
             },
         }),
     ],
-    adapter: PrismaAdapter(prisma),
     pages:{
         signIn:"/auth/login",
         error: "/auth/error"
+    },
+    callbacks: {
+        async session({session, user}){
+            session.user.role = user.role
+            return session
+        },
     },
    
 };
