@@ -1,0 +1,74 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo User
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  username   String
+  password   String
+  name       String
+  lastname   String
+  phone      String
+  role       Role     // DEFINE ROL DE USUARIO
+  services   Service[] @relation("UserServices")
+  resources  Resource[] @relation("UserResources")
+  company    String?
+  companyEmail String?
+  companyPhone String?
+  companyAdress String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+enum Role{
+  ADMIN 
+  USER 
+  CLIENT // acceso a recursos
+}
+
+// Modelo Service
+model Service {
+  id         Int      @id @default(autoincrement())
+  name       String
+  description String
+  active     Boolean  @default(true)
+  clientId   Int?     // Campo opcional para relacionar con un cliente
+  client     User?    @relation(fields: [clientId], references: [id], name: "UserServices")
+  resources  Resource[] // Relación con recursos
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Modelo Resource
+model Resource {
+  id        Int      @id @default(autoincrement())
+  name      String
+  description String 
+  serviceId Int      // Relacionado con el servicio
+  service   Service  @relation(fields: [serviceId], references: [id])
+  clientId  Int?     // Relacionado con el cliente
+  client    User?    @relation(fields: [clientId], references: [id], name: "UserResources")
+  files     File[]   // Relación con archivos
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Modelo File
+model File {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  url       String
+  resourceId Int     // Relacionado con el recurso
+  resource  Resource @relation(fields: [resourceId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

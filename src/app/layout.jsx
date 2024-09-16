@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -11,6 +12,12 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+const OverusedGrotesk = localFont({
+  src: "./fonts/OverusedGrotesk-VF.woff",
+  variable: "--font-overused-grotesk",
+  weight: "100 900",
+});
+
 
 export const metadata = {
   title: "Create Next App",
@@ -21,8 +28,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${OverusedGrotesk.variable}  antialiased`}
       >
+        <Navbar/>
         {children}
       </body>
     </html>
