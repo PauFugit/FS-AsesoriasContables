@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProviders from 'next-auth/providers/credentials'
 import db from '@/lib/prisma'
+import {PrismaAdapter} from '@next-auth/prisma-adapter'
 import bcrypt from 'bcrypt'
 
 export const authOptions = {
@@ -10,7 +11,7 @@ export const authOptions = {
             credentials: {
                 email: {label: "Email", type: "text", placeholder:"correo@ejemplo.cl"},
                 password:{label:"Password", type:"password", placeholder:"**********"},
-                //role:{},
+                role:{},
             },
             async authorize(credentials, req){
                 console.log(credentials)
@@ -32,29 +33,17 @@ export const authOptions = {
                     id: userFound.id,
                     name: userFound.username,
                     email: userFound.email,
-                    //role: userFound.role
+                    role: userFound.role
                 }
             },
         }),
     ],
+    adapter: PrismaAdapter(prisma),
     pages:{
         signIn:"/auth/login",
         error: "/auth/error"
     },
-   // callbacks: {
-        // Callback para agregar el rol al objeto de sesión
-    //    async session({ session, user }) {
-          // Buscar el rol del usuario en la base de datos o pasarlo directamente desde user.role
-    //      const userInDB = await db.user.findUnique({
-    //        where: { email: session.user.email },
-      //    });
-    
-          // Agregar rol al objeto session
-     //     session.user.role = userInDB?.role || "CLIENT"; // Rol predeterminado si no existe
-    
-       //   return session;
-      //  },
-   // },
+   
 };
 
 const handler = NextAuth(authOptions);
