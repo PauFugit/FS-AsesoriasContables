@@ -5,7 +5,9 @@ import prisma from '@/lib/prisma'
 
 export async function POST(request) {
     try {
+        console.log("Received registration request");
         const data = await request.json()
+        console.log("Parsed request data:", data);
 
         // input validacion
         if (!data.email || !data.username || !data.password || !data.name || !data.lastname || !data.phone) {
@@ -39,8 +41,9 @@ export async function POST(request) {
         }
 
 
-        const hashedPassword = await bcrypt.hash(data.password, 10)
-
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        
+        console.log("Creating new user");
         const newUser = await prisma.users.create({
             data: {
                 username: data.username,
@@ -52,6 +55,7 @@ export async function POST(request) {
                 role: data.role,
             }
         })
+        console.log("User created successfully");
 
         const { password: _, ...user } = newUser
 
@@ -59,7 +63,7 @@ export async function POST(request) {
 
     } catch (error) {
         return NextResponse.json({
-            message: error.message,
+            message: error.message || "An unexpected error occurred",
         }, {
             status: 500,
         });

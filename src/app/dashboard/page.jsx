@@ -1,18 +1,29 @@
-"use client"
-import {signOut} from 'next-auth/react'
+'use client'
 
-function DashboardPage() {
+import { useSession } from 'next-auth/react'
+import RoleBasedAccess from '@/components/RoleBasedAccess'
+import AdminDashboard from '@/components/AdminDashboard'
+import TeamDashboard from '@/components/TeamDashboard'
+import ClientDashboard from '@/components/ClientDashboard'
+
+export default function DashboardPage() {
+  const { data: session } = useSession()
+
+  if (!session) {
+    return <div>Loading...</div>
+  }
+
   return (
-    <section className="h-[calc(100vh-7rem)] flex justify-center items-center">
-      <div>
-        <h1 className="text-white text-5xl">Dashboard</h1>
-        <button className="bg-white text-black px-4 py-2 rounded-md mt-4"
-          onClick={() => signOut()}
-        >
-          Logout
-        </button>
-      </div>
-    </section>
+    <div>
+      <RoleBasedAccess allowedRoles={['ADMIN']}>
+        <AdminDashboard />
+      </RoleBasedAccess>
+      <RoleBasedAccess allowedRoles={['TEAM']}>
+        <TeamDashboard />
+      </RoleBasedAccess>
+      <RoleBasedAccess allowedRoles={['CLIENT']}>
+        <ClientDashboard />
+      </RoleBasedAccess>
+    </div>
   )
 }
-export default DashboardPage;

@@ -16,6 +16,7 @@ CREATE TABLE `Users` (
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Users_email_key`(`email`),
+    UNIQUE INDEX `Users_username_key`(`username`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import localFont from "next/font/local";
+import { Providers } from './providers'
 import "./globals.css";
 
 
@@ -19,11 +20,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${OverusedGrotesk.variable}  antialiased`}
-      >
+        className={`${OverusedGrotesk.variable}  antialiased`}>
         <Navbar/>
       
-        {children}
+        <Providers>{children}</Providers>
         
       </body>
     </html>

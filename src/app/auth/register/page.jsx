@@ -27,13 +27,17 @@ function RegisterPage() {
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
+        });
+
         //mandar al login
-        if (response.ok) {
+    if (response.ok) {
             router.push("/auth/login");
+        }else{
+            const errorData = await response.json();
+            console.log("Registration failed:", errorData);
+            alert(errorData.message || "Registration failed. Please try again.");
         }
     });
-
     console.log(errors);
     return (
         <div className="h-[calc(100vh-7rem)] flex justify-center items-center">

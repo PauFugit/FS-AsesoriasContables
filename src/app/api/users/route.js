@@ -13,9 +13,11 @@ export async function GET() {
 export async function POST(request) {
     try {
         const data = await request.json()
+
         const user = await prisma.users.create({
             data: data
         })
+        console.log("User created successfully.")
         return new NextResponse(JSON.stringify(user), {
             headers: { "Content-Type": "application/json" },
             status: 201
