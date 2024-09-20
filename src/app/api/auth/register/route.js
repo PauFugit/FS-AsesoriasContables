@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
-import db from '@/lib/prisma'
+import prisma from '@/lib/prisma'
 
 
 export async function POST(request) {
     try {
         const data = await request.json()
 
-        const userFound = await db.user.findUnique({
+        // input validacion
+        if (!data.email || !data.username || !data.password || !data.name || !data.lastname || !data.phone) {
+            return NextResponse.json({ message: "Todos los campos son requeridos" }, { status: 400 })
+        }
+    // verificar si existe el correo
+        const userFound = await prisma.users.findUnique({
             where: {
                 email: data.email
             }
@@ -19,7 +24,8 @@ export async function POST(request) {
                 status: 400
             })
         }
-        const usernameFound = await db.user.findUnique({
+        // verificar si usuario existe
+        const usernameFound = await prisma.users.findUnique({
             where: {
                 username: data.username
             }
@@ -34,13 +40,16 @@ export async function POST(request) {
 
 
         const hashedPassword = await bcrypt.hash(data.password, 10)
-        const newUser = await db.user.create({
+
+        const newUser = await prisma.users.create({
             data: {
                 username: data.username,
                 email: data.email,
                 name: data.name,
                 lastname: data.lastname,
-                password: hashedPassword
+                password: hashedPassword,
+                phone: data.phone,
+                role: data.role,
             }
         })
 

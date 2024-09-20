@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma'
 export async function GET(request, { params }) {
     const id = parseInt(params.id)
     try {
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
             where: { id: id },
             include: { services: true },
         });
@@ -21,7 +21,7 @@ export async function GET(request, { params }) {
 export async function DELETE(request, { params }) {
     const id = parseInt(params.id)
     try {
-        const result = await prisma.user.delete({
+        const result = await prisma.users.delete({
             where: { id: id },
         })
         return NextResponse.json({ message: 'Usuario eliminado con éxito', result }, { status: 200 });
@@ -34,7 +34,7 @@ export async function PUT(request, { params }) {
     const id = parseInt(params.id)
     const data = await request.json()
     try {
-        const result = await prisma.user.update({
+        const result = await prisma.users.update({
             where: { id: id },
             data: data
         });

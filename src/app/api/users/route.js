@@ -3,8 +3,8 @@ import prisma from '@/lib/prisma'
 
 export async function GET() {
     try {
-        const users = await prisma.user.findMany();
-        return NextResponse.json({ data: users }, { status: 200 });
+        const user = await prisma.users.findMany();
+        return NextResponse.json({ data: user }, { status: 200 });
     } catch (error) {
         return new NextResponse(error.message, { status: 500 })
     }
@@ -13,7 +13,7 @@ export async function GET() {
 export async function POST(request) {
     try {
         const data = await request.json()
-        const user = await prisma.user.create({
+        const user = await prisma.users.create({
             data: data
         })
         return new NextResponse(JSON.stringify(user), {

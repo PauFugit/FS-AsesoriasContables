@@ -1,11 +1,9 @@
 import NextAuth from 'next-auth'
 import CredentialsProviders from 'next-auth/providers/credentials'
-import db from '@/lib/prisma'
-import {PrismaAdapter} from '@next-auth/prisma-adapter'
+import prisma from '@/lib/prisma'
 import bcrypt from 'bcrypt'
 
 export const authOptions = {
-    adapter: PrismaAdapter(prisma),
 
     providers: [
         CredentialsProviders({
@@ -13,12 +11,12 @@ export const authOptions = {
             credentials: {
                 email: {label: "Email", type: "text", placeholder:"correo@ejemplo.cl"},
                 password:{label:"Password", type:"password", placeholder:"**********"},
-                role:{},
+                
             },
             async authorize(credentials, req){
                 console.log(credentials)
                 
-                const userFound = await db.user.findUnique({
+                const userFound = await prisma.users.findUnique({
                     where:{
                         email: credentials.email
                     }
@@ -35,7 +33,7 @@ export const authOptions = {
                     id: userFound.id,
                     name: userFound.username,
                     email: userFound.email,
-                    role: userFound.role
+                    role: userFound.role,
                 }
             },
         }),
@@ -44,12 +42,12 @@ export const authOptions = {
         signIn:"/auth/login",
         error: "/auth/error"
     },
-    callbacks: {
-        async session({session, user}){
-            session.user.role = user.role
-            return session
-        },
-    },
+   // callbacks: {
+     //   async session({session, user}){
+       //     session.user.role = user.role
+         //   return session
+        //},
+    //},
    
 };
 

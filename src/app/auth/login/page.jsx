@@ -18,7 +18,6 @@ function LoginPage() {
     const response = await signIn('credentials', {
       email: data.email,
       password: data.password,
-      role: data.role,
       redirect:false,
     });
     console.log(response)

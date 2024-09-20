@@ -1,18 +1,8 @@
 import Navbar from "@/components/Navbar";
 import localFont from "next/font/local";
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+
 const OverusedGrotesk = localFont({
   src: "./fonts/OverusedGrotesk-VF.woff",
   variable: "--font-overused-grotesk",
@@ -32,9 +22,9 @@ export default function RootLayout({ children }) {
         className={`${OverusedGrotesk.variable}  antialiased`}
       >
         <Navbar/>
-        <SessionProvider>
+      
         {children}
-        </SessionProvider>
+        
       </body>
     </html>
   );

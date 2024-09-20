@@ -21,6 +21,8 @@ function RegisterPage() {
                 name: data.name,
                 lastname: data.lastname,
                 password: data.password,
+                phone: data.phone,
+                role: data.role,
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -149,6 +151,43 @@ function RegisterPage() {
                             className="text-red-500 text-sm">{errors.confirmPassword.message}</span>
                     )
                 }
+                 <label htmlFor="phone" className="text-slate-500 mb-2 block  text-sm" >Teléfono:</label>
+                <input type="text"
+                    {...(register("phone", {
+                        required: {
+                            value: true,
+                            message: "Teléfono requerido."
+                        }
+                    }))}
+                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    placeholder="123456789"
+
+                />
+                {
+                    errors.phone && (
+                        <span
+                            className="text-red-500 text-sm">{errors.phone.message}</span>
+                    )
+                }
+
+                <label htmlFor="role" className="text-slate-500 mb-2 block  text-sm" >Ingresa el rol del usuario</label>
+                <input type="text"
+                    {...(register("role", {
+                        required: {
+                            value: true,
+                            message: "Rol de usuario requerido."
+                        }
+                    }))}
+                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    placeholder="Define al usuario como TEAM O CLIENT"
+                />
+                {
+                    errors.role && (
+                        <span
+                            className="text-red-500 text-sm">{errors.role.message}</span>
+                    )
+                }
+
 
 
                 <button className="w-full bg-blue-500 text-white p-3 rounded-lg mt-2"

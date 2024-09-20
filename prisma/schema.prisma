@@ -9,17 +9,17 @@ datasource db {
 }
 
 // Modelo User
-model User {
+model Users {
   id         Int      @id @default(autoincrement())
   email      String   @unique
   username   String
-  password   String
   name       String
   lastname   String
-  phone      String
+  password   String
+  phone      String?
   role       Role     // DEFINE ROL DE USUARIO
-  services   Service[] @relation("UserServices")
-  resources  Resource[] @relation("UserResources")
+  //services   Service[] @relation("UserServices")
+  resources  Resource[] @relation("UsersResources")
   company    String?
   companyEmail String?
   companyPhone String?
@@ -30,22 +30,22 @@ model User {
 
 enum Role{
   ADMIN 
-  USER 
+  TEAM 
   CLIENT // acceso a recursos
 }
 
 // Modelo Service
-model Service {
-  id         Int      @id @default(autoincrement())
-  name       String
-  description String
-  active     Boolean  @default(true)
-  clientId   Int?     // Campo opcional para relacionar con un cliente
-  client     User?    @relation(fields: [clientId], references: [id], name: "UserServices")
-  resources  Resource[] // Relación con recursos
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
+//model Service {
+  //id         Int      @id @default(autoincrement())
+  //name       String
+  //description String
+  //active     Boolean  @default(true)
+  //clientId   Int?     // Campo opcional para relacionar con un cliente
+  //client     User?    @relation(fields: [clientId], references: [id], name: "UserServices")
+  //resources  Resource[] // Relación con recursos
+  //createdAt  DateTime @default(now())
+  //updatedAt  DateTime @updatedAt
+//}
 
 // Modelo Resource
 model Resource {
@@ -53,9 +53,9 @@ model Resource {
   name      String
   description String 
   serviceId Int      // Relacionado con el servicio
-  service   Service  @relation(fields: [serviceId], references: [id])
+  //service   Service  @relation(fields: [serviceId], references: [id])
   clientId  Int?     // Relacionado con el cliente
-  client    User?    @relation(fields: [clientId], references: [id], name: "UserResources")
+  client    Users?    @relation(fields: [clientId], references: [id], name: "UsersResources")
   files     File[]   // Relación con archivos
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
