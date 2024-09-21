@@ -18,6 +18,7 @@ model Users {
   password   String
   phone      String?
   role       Role     // DEFINE ROL DE USUARIO
+  active Boolean @default(true)
   //services   Service[] @relation("UserServices")
   resources  Resource[] @relation("UsersResources")
   company    String?

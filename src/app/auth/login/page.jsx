@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react'
 import {useState} from 'react'
+import Image from 'next/image';
 
 
 function LoginPage() {
@@ -33,15 +34,18 @@ function LoginPage() {
   return (
     <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
 
-      <form onSubmit={onSubmit} className="w-1/4">
+      <form onSubmit={onSubmit} className="w-1/2">
 
       {error && (
         <p className="bg-red-500 text-lg p-3 rounded">{error}</p>
       )}
-
-        <h1 className="text-slate-200 font-bold text-4xl mb-4">
-          Login
-        </h1>
+        <div className="flex justify-center items-center">
+        <Image
+        src="/isotipodos.png"
+        width={150}
+        height={150}
+        />
+        </div>
         <label htmlFor="email" className="text-slate-500 mb-2 block  text-sm" >Correo electrónico:</label>
         <input type="email"
           {...(register("email", {
@@ -50,7 +54,7 @@ function LoginPage() {
               message: 'Correo electrónico requerido'
             }
           }))}
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+          className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
           placeholder="correo@ejemplo.cl"
         />
         {
@@ -67,7 +71,7 @@ function LoginPage() {
               message: "Contraseña requerida."
             }
           }))}
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+          className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
           placeholder="**********"
 
         />
@@ -77,9 +81,9 @@ function LoginPage() {
               className="text-red-500 text-sm">{errors.password.message}</span>
           )
         }
-        <button className="w-full bg-blue-500 text-white p-3 rounded-lg mt-2"
+        <button className="w-full  bg-custom-blue text-white hover:bg-custom-green hover:text-custom-blue p-3 rounded-lg mt-2"
         >
-          Ingresar
+          INICIAR SESIÓN
         </button>
       </form>
 

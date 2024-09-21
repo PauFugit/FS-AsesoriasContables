@@ -41,8 +41,8 @@ function RegisterPage() {
     console.log(errors);
     return (
         <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-            <form onSubmit={onSubmit} className="w-1/4">
-                <h1 className="text-slate-200 font-bold text-4xl mb-4">
+            <form onSubmit={onSubmit} className="w-1/2">
+                <h1 className="text-custom-blue font-bold text-4xl mb-4">
                     Registro de Usuario
                 </h1>
                 <label htmlFor="username" className="text-slate-500 mb-2 block  text-sm" >Usuario</label>
@@ -53,15 +53,11 @@ function RegisterPage() {
                             message: 'Usuario requerido'
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-                    placeholder="Tu usuario"
+                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    placeholder="Nombre de usuario"
                 />
-                {
-                    errors.username && (
-                        <span
-                            className="text-red-500 text-sm">{errors.username.message}</span>
-                    )
-                }
+                {errors.username && 
+                (<span className="text-red-500 text-sm">{errors.username.message}</span>)}
 
                 <label htmlFor="email" className="text-slate-500 mb-2 block  text-sm" >Correo Electrónico:</label>
                 <input type="email"
@@ -71,7 +67,7 @@ function RegisterPage() {
                             message: "Correo electrónico requerido.",
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
                     placeholder="correo@ejemplo.cl"
 
                 />
@@ -90,8 +86,8 @@ function RegisterPage() {
                             message: 'Nombre requerido'
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-                    placeholder="Tu nombre"
+                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    placeholder="Nombre del Usuario"
                 />
                 {
                     errors.username && (
@@ -108,8 +104,8 @@ function RegisterPage() {
                             message: 'Apellido requerido'
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
-                    placeholder="Tu apellido"
+                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    placeholder="Apellido del Usuario"
                 />
                 {
                     errors.username && (
@@ -126,7 +122,7 @@ function RegisterPage() {
                             message: "Contraseña requerida."
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
                     placeholder="**********"
 
                 />
@@ -145,7 +141,7 @@ function RegisterPage() {
                             message: "Confirmación de contraseña requerida."
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
                     placeholder="**********"
 
                 />
@@ -163,7 +159,7 @@ function RegisterPage() {
                             message: "Teléfono requerido."
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
                     placeholder="123456789"
 
                 />
@@ -182,7 +178,7 @@ function RegisterPage() {
                             message: "Rol de usuario requerido."
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
                     placeholder="Define al usuario como TEAM O CLIENT"
                 />
                 {
@@ -194,9 +190,9 @@ function RegisterPage() {
 
 
 
-                <button className="w-full bg-blue-500 text-white p-3 rounded-lg mt-2"
+                <button className="w-full bg-custom-blue text-white p-3 rounded-lg mt-2 hover:bg-custom-green hover:text-custom-blue"
                 >
-                    Register
+                    REGISTRAR
                 </button>
             </form>
         </div>

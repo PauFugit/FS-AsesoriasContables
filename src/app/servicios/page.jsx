@@ -1,8 +1,15 @@
+import BannerEstatico from '@/components/BannerEstatico';
+import BannerServicios from '@/components/BannerServicios';
+import ServicesSection from '@/components/ServicesSection';
 import React from 'react'
 
 function Services() {
   return (
-    <div>Services</div>
+    <div>
+      <BannerServicios/>
+      <ServicesSection/>
+      <BannerEstatico/>
+    </div>
   )
 }
 

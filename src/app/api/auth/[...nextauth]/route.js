@@ -1,34 +1,32 @@
 import NextAuth from 'next-auth'
-import CredentialsProviders from 'next-auth/providers/credentials'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import prisma from '@/lib/prisma'
 import bcrypt from 'bcrypt'
 
 export const authOptions = {
-
     providers: [
-        CredentialsProviders({
+        CredentialsProvider({
             name: "Credentials",
             credentials: {
-                email: {label: "Email", type: "text", placeholder:"correo@ejemplo.cl"},
-                password:{label:"Password", type:"password", placeholder:"**********"},
-                
+                email: { label: "Email", type: "text", placeholder: "correo@ejemplo.cl" },
+                password: { label: "Password", type: "password", placeholder: "**********" },
             },
-            async authorize(credentials, req){
-                console.log("Authorize function - Credentials:", credentials);
-                console.log(credentials)
-                
+            async authorize(credentials, req) {
+                if (!credentials?.email || !credentials?.password) {
+                    throw new Error('Email and password are required')
+                }
+
                 const userFound = await prisma.users.findUnique({
-                    where:{
+                    where: {
                         email: credentials.email
                     }
                 })
 
-                if(!userFound) throw new Error('No se ha encontrado al usuario.')
-                console.log(userFound)
+                if (!userFound) throw new Error('No se ha encontrado al usuario.')
 
                 const matchPassword = await bcrypt.compare(credentials.password, userFound.password)
 
-                if(!matchPassword) throw new Error('Contraseña incorrecta.')
+                if (!matchPassword) throw new Error('Contraseña incorrecta.')
 
                 return {
                     id: userFound.id,
@@ -39,33 +37,32 @@ export const authOptions = {
             },
         }),
     ],
-    pages:{
-        signIn:"/auth/login",
+    pages: {
+        signIn: "/auth/login",
         error: "/auth/error"
-    },
-    session:{
-        strategy: "jwt",
     },
     callbacks: {
         async jwt({ token, user }) {
-            console.log("JWT Callback - TOKEN:", token);
-            console.log("JWT Callback - USER:", user);
           if (user) {
+            token.id = user.id
             token.role = user.role
           }
           return token
         },
         async session({ session, token }) {
-            console.log("Session Callback - Session:", session);
-            console.log("Session Callback - Token:", token);
+          if (token) {
+            session.user.id = token.id
             session.user.role = token.role
-            return session
+          }
+          return session
         },
-      },
-   
-   
+    },
+    session: {
+        strategy: "jwt",
+    },
+    secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
 
-export {handler as GET, handler as POST};
+export { handler as GET, handler as POST };

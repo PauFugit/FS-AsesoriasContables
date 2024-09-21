@@ -6,7 +6,6 @@ export async function GET(request, { params }) {
     try {
         const user = await prisma.users.findUnique({
             where: { id: id },
-            include: { services: true },
         });
         if (!user) {
             return new NextResponse(`Usuario con la ID ${id} no ha sido encontrado`, { status: 404 })

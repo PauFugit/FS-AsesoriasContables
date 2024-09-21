@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import localFont from "next/font/local";
 import { Providers } from './providers'
 import "./globals.css";
+import './styles/navbar.css';
 
 
 const OverusedGrotesk = localFont({

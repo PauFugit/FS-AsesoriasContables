@@ -2,21 +2,28 @@
 
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const RoleBasedAccess = ({ children, allowedRoles }) => {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [isAuthorized, setIsAuthorized] = useState(false)
 
   useEffect(() => {
     if (status === 'authenticated') {
-      console.log("Authenticated session:", session);
-      if (!session.user.role || !allowedRoles.includes(session.user.role)) {
-        console.log("Unauthorized access, redirecting");
+      console.log("Authenticated session:", session)
+      console.log("User role:", session?.user?.role)
+      console.log("Allowed roles:", allowedRoles)
+      
+      if (session?.user?.role && allowedRoles.includes(session.user.role)) {
+        console.log("Access granted")
+        setIsAuthorized(true)
+      } else {
+        console.log("Unauthorized access, redirecting")
         router.push('/unauthorized')
       }
     } else if (status === 'unauthenticated') {
-      console.log("Unauthenticated, redirecting to login");
+      console.log("Unauthenticated, redirecting to login")
       router.push('/auth/login')
     }
   }, [status, session, router, allowedRoles])
@@ -25,15 +32,7 @@ const RoleBasedAccess = ({ children, allowedRoles }) => {
     return <div>Loading...</div>
   }
 
-  if (!session || !session.user || !session.user.role) {
-    return null
-  }
-
-  if (!allowedRoles.includes(session.user.role)) {
-    return null
-  }
-
-  return <>{children}</>
+  return isAuthorized ? <>{children}</> : null
 }
 
 export default RoleBasedAccess
