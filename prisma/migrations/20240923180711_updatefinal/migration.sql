@@ -8,6 +8,7 @@ CREATE TABLE `Users` (
     `password` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NULL,
     `role` ENUM('ADMIN', 'TEAM', 'CLIENT') NOT NULL,
+    `active` BOOLEAN NOT NULL DEFAULT true,
     `company` VARCHAR(191) NULL,
     `companyEmail` VARCHAR(191) NULL,
     `companyPhone` VARCHAR(191) NULL,
@@ -42,6 +43,33 @@ CREATE TABLE `File` (
     `resourceId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ContactForm` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `nombre` VARCHAR(191) NOT NULL,
+    `apellido` VARCHAR(191) NOT NULL,
+    `correo` VARCHAR(191) NOT NULL,
+    `telefono` VARCHAR(191) NULL,
+    `mensaje` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CotizationForm` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `nombre` VARCHAR(191) NOT NULL,
+    `apellido` VARCHAR(191) NOT NULL,
+    `correo` VARCHAR(191) NOT NULL,
+    `telefono` VARCHAR(191) NULL,
+    `servicio` VARCHAR(191) NOT NULL,
+    `mensaje` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
