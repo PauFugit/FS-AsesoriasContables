@@ -13,7 +13,7 @@ function RegisterPage() {
             return alert("Las contraseñas no coinciden")
         }
 
-        const response = await fetch('/api/auth/register', {
+        const response = await fetch('https://newasesoriasvaldivia.vercel.app/api/auth/register', {
             method: 'POST',
             body: JSON.stringify({
                 username: data.username,
