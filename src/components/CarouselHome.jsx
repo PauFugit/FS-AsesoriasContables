@@ -85,8 +85,16 @@ export default function Carousel() {
                                 width={100}
                                 height={100}
                                 alt="Arrow"
-                                className="mr-2"
+                                className="mr-2 hidden md:block"
                             />
+                            <Image
+                                src="/flechaverdederecha.png"
+                                width={50}
+                                height={50}
+                                alt="Arrow"
+                                className="mr-2 block md:hidden"
+                            />
+
                             <Link href={slide.href}>
                                 <button className="bg-custom-green text-white px-4 py-2 rounded-full text-lg sm:text-2xl font-semibold inline-flex items-center transition-all duration-300 ease-in-out hover:bg-white hover:text-custom-green">
                                     {slide.buttonText}
@@ -116,10 +124,19 @@ export default function Carousel() {
             >
                 <Image
                     src="/flechaverdederecha.png"
+                    width={80}
+                    height={80}
+                    alt="Arrow"
+                    className="mr-2 block md:hidden "
+                />
+                <Image
+                    src="/flechaverdederecha.png"
                     width={200}
                     height={200}
                     alt="Next slide"
+                    className="hidden md:block"
                 />
+                
             </button>
         </div>
     )

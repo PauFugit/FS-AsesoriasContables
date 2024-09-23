@@ -12,8 +12,8 @@ const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReve
           className="w-full h-auto object-cover"
         />
       </div>
-      <h2 className="text-7xl font-semibold text-custom-blue mb-8">{title}</h2>
-      <p className="text-custom-blue my-6 text-2xl">{description}</p>
+      <h2 className="text-5xl md:text-7xl font-semibold text-custom-blue mb-8">{title}</h2>
+      <p className="text-custom-blue my-6 text-md md:text-2xl">{description}</p>
       <div className="flex items-center space-x-4 mt-8">
         <button className="flex items-center space-x-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full hover:bg-custom-green hover:text-custom-blue">
           <span className="text-2xl">{buttonText}</span>
