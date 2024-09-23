@@ -19,9 +19,8 @@ const values = [
 
 const Valores = () => {
   return (
-    <div className="py-10 px-20 font-grotesk" style={{ backgroundImage: "url('/fondovalores.png')", backgroundSize: "cover" }}>
-
-      <h2 className="text-5xl xs:text-5xl sm:text-6xl text-custom-blue font-bold sm:font-normal text-right mini:text-center md:text-left mb-12" style={{letterSpacing:"0.1rem"}}>NUESTROS VALORES</h2>
+    <div>
+      <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-custom-blue py-4 md:py-8 mb-4 md:mb-8 text-left">NUESTROS VALORES</h2>
       <div className="flex flex-col md:flex-row justify-around items-center">
         {values.map((value, index) => (
           <div key={index} className="relative flex flex-col items-center mb-8 md:mb-0 md:px-4">

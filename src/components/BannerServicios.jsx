@@ -11,7 +11,7 @@ const BannerServicios = () => {
         className="object-cover"
       ></Image>
       <div className="relative z-10 p-6 md:p-16 font-grotesk  bg-opacity-50">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-custom-green py-10 md:py-20" style={{ letterSpacing: "0.5rem" }}>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-semisbold text-custom-green py-10 md:py-20" style={{ letterSpacing: "0.5rem" }}>
           NUESTROS SERVICIOS
         </h1>
         <p className="text-3xl md:text-4xl lg:text-5xl mt-1 py-1">

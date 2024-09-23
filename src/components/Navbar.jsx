@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import Image from 'next/image';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { LogIn, LogOut } from 'lucide-react';
+import { CircleUserRound, LogOut } from 'lucide-react';
 
 async function Navbar() {
   const session = await getServerSession(authOptions);
@@ -23,7 +23,7 @@ async function Navbar() {
   );
 
   return (
-    <nav className="bg-custom-blue text-white px-4 sm:px-6 lg:px-8 py-3">
+    <nav className="bg-custom-blue text-white px-4 sm:px-6 lg:px-8 py-3 fixed top-0 left-0 right-0 z-50">
       <div className=" mx-auto flex flex-wrap justify-between items-center">
         <Link href="/" className="flex-shrink-0">
           <Image
@@ -52,8 +52,7 @@ async function Navbar() {
               <NavLink href="/contacto">Contacto</NavLink>
               <li className="w-full lg:w-auto">
                 <Link href="/auth/login" className="flex items-center hover:bg-custom-green lg:hover:bg-transparent lg:hover:text-custom-green px-3 py-2 rounded transition-colors duration-200">
-                  <LogIn className="w-5 h-5 mr-2 text-custom-green" />
-                  <span>Iniciar Sesión</span>
+                <CircleUserRound className="w-5 h-5 mr-2 text-custom-green" />
                 </Link>
               </li>
             </>

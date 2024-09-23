@@ -40,7 +40,7 @@ function RegisterPage() {
     });
     console.log(errors);
     return (
-        <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
+        <div className="h-[calc(100vh-7rem)] flex justify-center items-center" style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
             <form onSubmit={onSubmit} className="w-1/2">
                 <h1 className="text-custom-blue font-bold text-4xl mb-4">
                     Registro de Usuario

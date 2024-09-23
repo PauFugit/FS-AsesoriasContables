@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Providers } from './providers'
 import "./globals.css";
 import './styles/navbar.css';
+import Footer from "@/components/Footer";
 
 
 const OverusedGrotesk = localFont({
@@ -25,7 +26,7 @@ export default function RootLayout({ children }) {
         <Navbar/>
       
         <Providers>{children}</Providers>
-        
+        <Footer/>
       </body>
     </html>
   );

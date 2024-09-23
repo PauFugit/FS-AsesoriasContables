@@ -9,7 +9,7 @@ import ClientCarousel from "@/components/ClientCarousel";
 function HomePage() {
   return (
     
-    <div>
+    <div style={{ paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
       
     <CarouselHome/>
     <CardsServices/>

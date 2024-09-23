@@ -3,7 +3,7 @@
 
 export default function TerminosdeUso() {
   return (
-      <div className='font-grotesk' style={{ backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+      <div className='font-grotesk' style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
         <header className="bg-custom-blue text-white text-center py-8">
           <h1 className="text-4xl font-bold">AVISO LEGAL Y TÉRMINOS DE USO</h1>
         </header>

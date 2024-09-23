@@ -66,16 +66,16 @@ export default function Carousel() {
                         className=""
                     />
                     <div className="absolute inset-0 flex flex-col justify-center px-4 sm:px-8 md:px-16 lg:px-24">
-                        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-2">
+                        <h2 className="text-5xl sm:text-5xl md:text-7xl font-bold text-white mb-2">
                             {slide.title}
                         </h2>
-                        <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold text-custom-green mb-2">
+                        <h3 className="text-5xl sm:text-5xl md:text-7xl font-bold text-custom-green mb-2">
                             {slide.subtitle}
                         </h3>
-                        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4">
+                        <h2 className="text-5xl sm:text-5xl md:text-7xl font-bold text-white mb-4">
                             {slide.action}
                         </h2>
-                        <p className="text-white text-lg sm:text-xl mb-6 max-w-2xl">
+                        <p className="text-white text-md sm:text-lg md:text-2xl mb-6 max-w-2xl">
                             {slide.description}
                         </p>
 
@@ -88,7 +88,7 @@ export default function Carousel() {
                                 className="mr-2"
                             />
                             <Link href={slide.href}>
-                                <button className="bg-custom-green text-white px-4 py-2 rounded-full text-lg font-semibold inline-flex items-center transition-all duration-300 ease-in-out hover:bg-white hover:text-custom-green">
+                                <button className="bg-custom-green text-white px-4 py-2 rounded-full text-lg sm:text-2xl font-semibold inline-flex items-center transition-all duration-300 ease-in-out hover:bg-white hover:text-custom-green">
                                     {slide.buttonText}
                                 </button>
                             </Link>

@@ -7,7 +7,7 @@ export default function BlogSection() {
   <div className="flex flex-col md:flex-row items-center justify-between font-grotesk text-custom-blue">
     <div className="flex flex-col md:space-y-12">
       <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-12">
-        <Link href="/" className="hover:bg-custom-green hover:text-custom-blue rounded-full">
+        <Link href="/noticias" className="hover:bg-custom-green hover:text-custom-blue rounded-full">
           <span className="flex items-center px-8 py-2 bg-transparent rounded-full shadow-lg hover:shadow-xl">
             <Image src="/iconoblog.png" width={150} height={150} alt="Blog" ></Image>
             <div className="ml-4 mini:hidden xs:block">
@@ -26,7 +26,7 @@ export default function BlogSection() {
           </span>
         </Link>
       </div>
-      <Link href="/contactanos" className="hover:bg-custom-green hover:text-custom-blue rounded-full">
+      <Link href="/cotiza" className="hover:bg-custom-green hover:text-custom-blue rounded-full">
         <span className="flex items-center px-8 py-4 bg-transparent rounded-full shadow-lg hover:shadow-xl">
           <Image src="/iconoescribenos.png" width={150} height={150} alt="Servicios" ></Image>
           <div className="ml-4 mini:hidden xs:block">
@@ -36,7 +36,7 @@ export default function BlogSection() {
         </span>
       </Link>
       <div className="block xl:hidden mt-4">
-        <Image src="/flechagranderesponsiva.png" width={400} height={400} alt="Imagen" ></Image>
+        <Image src="/flechagranderesponsiva.png" width={300} height={300} alt="Imagen" ></Image>
       </div>
     </div>
     <div className="hidden xl:block flex-shrink-0">

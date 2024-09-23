@@ -1,13 +1,13 @@
 import BannerEstatico from '@/components/BannerEstatico';
 import BannerServicios from '@/components/BannerServicios';
-import ServicesSection from '@/components/ServicesSection';
+import ServicesCards from '@/components/ServicesCards';
 import React from 'react'
 
 function Services() {
   return (
-    <div>
+    <div style={{ paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
       <BannerServicios/>
-      <ServicesSection/>
+      <ServicesCards/>
       <BannerEstatico/>
     </div>
   )
