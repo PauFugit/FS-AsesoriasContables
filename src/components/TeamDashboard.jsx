@@ -128,23 +128,30 @@ const ProfileTab = () => {
         <div className="mb-6">
           <h2 className="text-lg md:text-xl font-semibold mb-4">INFORMACIÓN GENERAL</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label htmlFor="username" className="text-slate-500 mb-2 block  text-sm">Nombre de usuario: </label>
             <input className="w-full p-2 border rounded" placeholder="Nombre de usuario" name="username" value={userData.username} onChange={handleInputChange} />
+            <label htmlFor="name" className="text-slate-500 mb-2 block  text-sm">Nombre: </label>
             <input className="w-full p-2 border rounded" placeholder="Nombre" name="name" value={userData.name} onChange={handleInputChange} />
+            <label htmlFor="lastname" className="text-slate-500 mb-2 block  text-sm">Apellido: </label>
             <input className="w-full p-2 border rounded" placeholder="Apellido" name="lastname" value={userData.lastname} onChange={handleInputChange} />
+            <label htmlFor="Teléfono" className="text-slate-500 mb-2 block  text-sm">Teléfono: </label>
             <input className="w-full p-2 border rounded" placeholder="Teléfono" name="phone" value={userData.phone} onChange={handleInputChange} />
+            <label htmlFor="password" className="text-slate-500 mb-2 block  text-sm">Contraseña </label>
             <input className="w-full p-2 border rounded" placeholder="Contraseña" name="password" value={userData.password} onChange={handleInputChange} />
+            <label htmlFor="email" className="text-slate-500 mb-2 block  text-sm">Correo electrónico: </label>
             <input className="w-full p-2 border rounded" placeholder="Correo electrónico" name="email" value={userData.email} onChange={handleInputChange} />
           </div>
         </div>
-        <div className="mb-6">
+        {/*<div className="mb-6">
           <h2 className="text-lg md:text-xl font-semibold mb-4">INFORMACIÓN COMERCIAL</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label htmlFor="company" className="text-slate-500 mb-2 block  text-sm">Nombre de usuario: </label>
             <input className="w-full p-2 border rounded" placeholder="Nombre empresa" name="company" value={userData.company} onChange={handleInputChange} />
             <input className="w-full p-2 border rounded" placeholder="Correo electrónico" name="companyEmail" value={userData.companyEmail} onChange={handleInputChange} />
             <input className="w-full p-2 border rounded" placeholder="Teléfono empresa" name="companyPhone" value={userData.companyPhone} onChange={handleInputChange} />
             <input className="w-full p-2 border rounded md:col-span-2" placeholder="Dirección empresa" name="companyAddress" value={userData.companyAddress} onChange={handleInputChange} />
           </div>
-        </div>
+        </div>*/}
         <div className="flex flex-col md:flex-row justify-end space-y-2 md:space-y-0 md:space-x-4">
           <button type="submit" className="px-4 py-2 bg-custom-blue text-white rounded hover:bg-custom-green w-full md:w-auto">Actualizar Datos</button>
           <button type="button" className="px-4 py-2 border rounded text-blue-600 hover:bg-blue-50 w-full md:w-auto" onClick={() => setUserData(prevData => ({ ...prevData }))}>Cancelar</button>
@@ -182,9 +189,9 @@ const ResourcesTab = () => {
       title: 'RECURSOS WEB',
       description: 'Enlaces útiles y herramientas en línea.',
       content: [
-        { type: 'link', name: 'Calculadora de IVA', url: 'https://www.example.com/iva-calculator' },
-        { type: 'link', name: 'Conversor de divisas', url: 'https://www.example.com/currency-converter' },
-        { type: 'link', name: 'Blog de noticias financieras', url: 'https://www.example.com/finance-news' },
+        { type: 'link', name: 'Calculadora de IVA', url: 'https://www.ivachile.cl/' },
+        { type: 'link', name: 'Calculador Boleta Honorarios', url: 'https://www.boleteo.cl' },
+        { type: 'link', name: 'Colegio Contadores de Chile', url: 'https://www.contach.cl/' },
       ]
     },
   ];

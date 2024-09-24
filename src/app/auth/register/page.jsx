@@ -53,7 +53,7 @@ function RegisterPage() {
                             message: 'Usuario requerido'
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
                     placeholder="Nombre de usuario"
                 />
                 {errors.username && 
@@ -67,7 +67,7 @@ function RegisterPage() {
                             message: "Correo electrónico requerido.",
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
                     placeholder="correo@ejemplo.cl"
 
                 />
@@ -86,7 +86,7 @@ function RegisterPage() {
                             message: 'Nombre requerido'
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
                     placeholder="Nombre del Usuario"
                 />
                 {
@@ -104,7 +104,7 @@ function RegisterPage() {
                             message: 'Apellido requerido'
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
                     placeholder="Apellido del Usuario"
                 />
                 {
@@ -122,7 +122,7 @@ function RegisterPage() {
                             message: "Contraseña requerida."
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
                     placeholder="**********"
 
                 />
@@ -141,7 +141,7 @@ function RegisterPage() {
                             message: "Confirmación de contraseña requerida."
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
                     placeholder="**********"
 
                 />
@@ -159,7 +159,7 @@ function RegisterPage() {
                             message: "Teléfono requerido."
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
                     placeholder="123456789"
 
                 />
@@ -178,7 +178,7 @@ function RegisterPage() {
                             message: "Rol de usuario requerido."
                         }
                     }))}
-                    className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+                    className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
                     placeholder="Define al usuario como TEAM O CLIENT"
                 />
                 {

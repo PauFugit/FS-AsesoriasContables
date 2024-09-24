@@ -17,7 +17,7 @@ export default function BannerClientes() {
             ¿YA ERES CLIENTE?
           </h2>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-            <Link href="/contacto">
+            <Link href="/solicitude">
               <button className="px-4 py-2 bg-custom-green text-custom-blue rounded-full text-sm sm:text-base hover:bg-custom-blue hover:text-custom-white transition-colors">
                 Solicita tu usuario
               </button>
