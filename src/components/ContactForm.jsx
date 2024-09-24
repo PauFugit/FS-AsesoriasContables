@@ -20,12 +20,12 @@ export default function ContactForm() {
     setSubmitSuccess(false)
 
     try {
-      const response = await fetch("https://newasesoriasvaldivia.vercel.app/api/contact", {
-        method: "POST",
+      const response = await fetch('https://newasesoriasvaldivia.vercel.app/api/contact', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(formData),
       })
 
       if (!response.ok) {
