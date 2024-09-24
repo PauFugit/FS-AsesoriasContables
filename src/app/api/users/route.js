@@ -16,18 +16,41 @@ export async function POST(request) {
     try {
         const data = await request.json()
 
+        // Check if username already exists
+        const existingUser = await prisma.users.findUnique({
+            where: { username: data.username }
+        })
+
+        if (existingUser) {
+            return NextResponse.json(
+                { error: "Username already exists" },
+                { status: 400 }
+            )
+        }
+
+        // Hash the password
         const hashedPassword = await bcrypt.hash(data.password, 10)
 
         const user = await prisma.users.create({
-            data: data
+            data: {
+                ...data,
+                password: hashedPassword
+            }
         })
+
         console.log("User created successfully.")
-        return new NextResponse(JSON.stringify(user), {
-            headers: { "Content-Type": "application/json" },
+        
+        // Remove password from the response
+        const { password, ...userWithoutPassword } = user
+
+        return NextResponse.json(userWithoutPassword, {
             status: 201
         })
     } catch (error) {
-        console.log('Error creating user:', error);
-        return new NextResponse(error.message, { status: 500 })
+        console.error('Error creating user:', error);
+        return NextResponse.json(
+            { error: error.message || "An error occurred while creating the user" },
+            { status: 500 }
+        )
     }
 }
