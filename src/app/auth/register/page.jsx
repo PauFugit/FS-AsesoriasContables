@@ -13,7 +13,7 @@ function RegisterPage() {
             return alert("Las contraseñas no coinciden")
         }
 
-        const response = await fetch('https://newasesoriasvaldivia.vercel.app/api/auth/register', {
+        const response = await fetch('/api/auth/register', {
             method: 'POST',
             body: JSON.stringify({
                 username: data.username,
@@ -40,10 +40,10 @@ function RegisterPage() {
     });
     console.log(errors);
     return (
-        <div className="h-[calc(100vh-7rem)] flex justify-center items-center" style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+        <div className="flex justify-center items-center p-8 " style={{paddingTop:"10rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
             <form onSubmit={onSubmit} className="w-1/2">
                 <h1 className="text-custom-blue font-bold text-4xl mb-4">
-                    Registro de Usuario
+                    Registro de Usuarios
                 </h1>
                 <label htmlFor="username" className="text-slate-500 mb-2 block  text-sm" >Usuario</label>
                 <input type="text"

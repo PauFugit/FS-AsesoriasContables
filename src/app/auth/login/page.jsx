@@ -54,7 +54,7 @@ function LoginPage() {
               message: 'Correo electrónico requerido'
             }
           }))}
-          className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+          className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
           placeholder="correo@ejemplo.cl"
         />
         {
@@ -71,7 +71,7 @@ function LoginPage() {
               message: "Contraseña requerida."
             }
           }))}
-          className="p-3 rounded block mb-2 bg-custom-white text-slate-300 w-full"
+          className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
           placeholder="**********"
 
         />

@@ -21,7 +21,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6" style={{ paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
       {/*<h1 className="text-2xl font-bold mb-4">Dashboard</h1>
       <p className="mb-6">Welcome, {session?.user?.name} (Role: {session?.user?.role})</p>*/}
       <RoleBasedAccess allowedRoles={['ADMIN', 'TEAM', 'CLIENT']}>

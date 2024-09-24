@@ -16,8 +16,8 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         height={100}
         className="rounded-full mb-2"
       />
-      <h2 className="text-lg font-bold text-custom-blue">USUARIO FICTICIO</h2>
-      <p className="text-sm text-gray-800">usuario@correo.cl</p>
+      <h2 className="text-lg font-bold text-custom-blue">ROLE ADMIN</h2>
+      <p className="text-sm text-gray-800">contacto@asesoriasvaldivia.cl</p>
     </div>
     <nav className="flex-1 space-y-2">
       {[
@@ -362,7 +362,7 @@ const ServicesTab = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h1 className="text-xl md:text-2xl font-bold mb-6 text-custom-blue">Servicios Publicados</h1>
+      <h1 className="text-xl md:text-2xl font-bold mb-6 text-custom-blue">SERVICIOS PUBLICADOS</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((service) => (
           <div key={service.id} className="bg-blue-50 p-4 rounded-lg">
