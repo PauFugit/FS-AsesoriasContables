@@ -56,3 +56,20 @@ export async function POST(request) {
         })
     }
 }
+
+export async function GET() {
+    return new NextResponse(JSON.stringify({ message: "This endpoint only accepts POST requests" }), {
+        status: 405,
+        headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders
+        }
+    })
+}
+
+export async function OPTIONS() {
+    return new NextResponse(null, {
+        status: 200,
+        headers: corsHeaders
+    })
+}

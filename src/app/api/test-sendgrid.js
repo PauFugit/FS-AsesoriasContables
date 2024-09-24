@@ -9,7 +9,7 @@ export default async function handler(req, res) {
       sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
       const msg = {
-        to: 'your-email@example.com', // Replace with your email
+        to: 'contacto@asesoriasvaldivia.cl', // Replace with your email
         from: 'contacto@asesoriasvaldivia.cl', // Replace with your verified sender
         subject: 'SendGrid Test from Vercel',
         text: 'If you receive this, SendGrid is working correctly!',
