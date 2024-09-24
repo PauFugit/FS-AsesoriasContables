@@ -171,7 +171,7 @@ const UsersTab = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('https://newasesoriasvaldivia.vercel.app/api/users');
+        const response = await fetch('/api/users');
         if (!response.ok) {
           throw new Error('Error al cargar usuarios');
         }
@@ -189,7 +189,7 @@ const UsersTab = () => {
 
   const toggleUsersStatus = async (id, currentStatus) => {
     try {
-      const response = await fetch('https://newasesoriasvaldivia.vercel.app/api/users', {
+      const response = await fetch('/api/users', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -266,7 +266,7 @@ const ClientsTab = () => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const response = await fetch('https://newasesoriasvaldivia.vercel.app/api/clients');
+        const response = await fetch('/api/clients');
         if (!response.ok) {
           throw new Error('Failed to fetch clients');
         }
@@ -284,7 +284,7 @@ const ClientsTab = () => {
 
   const toggleClientStatus = async (id, currentStatus) => {
     try {
-      const response = await fetch('https://newasesoriasvaldivia.vercel.app/api/clients', {
+      const response = await fetch('/api/clients', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

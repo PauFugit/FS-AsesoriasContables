@@ -63,7 +63,7 @@ const ProfileTab = () => {
     const fetchUserData = async () => {
       if (session?.user?.id) {
         try {
-          const response = await fetch(`https://newasesoriasvaldivia.vercel.app/api/users/${session.user.id}`);
+          const response = await fetch(`/api/users/${session.user.id}`);
           if (!response.ok) {
             throw new Error('Failed to fetch user data');
           }
@@ -99,7 +99,7 @@ const ProfileTab = () => {
     e.preventDefault();
     if (session?.user?.id) {
       try {
-        const response = await fetch(`https://newasesoriasvaldivia.vercel.app/api/users/${session.user.id}`, {
+        const response = await fetch(`/api/users/${session.user.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
