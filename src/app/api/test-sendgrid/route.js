@@ -1,12 +1,12 @@
 import sgMail from '@sendgrid/mail';
 
 export default async function handler(req, res) {
+  console.log('Test SendGrid API Route started');
   if (req.method === 'GET') {
     try {
-      // Log the API key (first few characters) for debugging
-      console.log('API Key starts with:', process.env.SENDGRID_API_KEY.substring(0, 5));
-      
+      console.log('Setting up SendGrid...');
       sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+      console.log('API Key set. Key starts with:', process.env.SENDGRID_API_KEY.substring(0, 5));
 
       const msg = {
         to: 'contacto@asesoriasvaldivia.cl', // Replace with your email
@@ -15,7 +15,9 @@ export default async function handler(req, res) {
         text: 'If you receive this, SendGrid is working correctly!',
       };
 
-      await sgMail.send(msg);
+      console.log('Attempting to send test email...');
+      const result = await sgMail.send(msg);
+      console.log('SendGrid test email sent successfully:', result);
       res.status(200).json({ success: true, message: 'Test email sent successfully' });
     } catch (error) {
       console.error('SendGrid Error:', error);

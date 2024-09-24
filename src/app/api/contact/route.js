@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import sgMail from '@sendgrid/mail'
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -11,12 +9,20 @@ const corsHeaders = {
 }
 
 export async function POST(request) {
+    console.log('API Route: POST /api/contact started');
     try {
         const data = await request.json()
+        console.log('Received data:', data);
 
+        console.log('Creating contact form entry in database...');
         const contactForm = await prisma.contactForm.create({
             data: data
         })
+        console.log('Contact form entry created:', contactForm);
+
+        console.log('Setting up SendGrid...');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+        console.log('SendGrid API Key set');
 
         const msg = {
             to: 'contacto@asesoriasvaldivia.cl',
@@ -45,7 +51,7 @@ export async function POST(request) {
     } catch (error) {
         console.error("Error en la API de contacto:", error)
         if (error.response) {
-            console.error(error.response.body)
+            console.error('SendGrid Error Response:', error.response.body)
         }
         return new NextResponse(JSON.stringify({ error: error.message }), {
             status: 500,

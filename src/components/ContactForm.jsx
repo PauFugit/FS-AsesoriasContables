@@ -19,8 +19,9 @@ export default function ContactForm() {
     setIsSubmitting(true)
     setSubmitError("")
     setSubmitSuccess(false)
-
+  
     try {
+      console.log('Submitting form data:', data);
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
@@ -28,13 +29,14 @@ export default function ContactForm() {
         },
         body: JSON.stringify(data),
       })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Error al enviar el formulario")
-      }
-
+  
       const result = await response.json()
+  
+      if (!response.ok) {
+        console.error('Form submission failed:', result);
+        throw new Error(result.error || "Error al enviar el formulario")
+      }
+  
       console.log("Form submission result:", result)
       setSubmitSuccess(true)
       reset() // Reset form fields after successful submission
