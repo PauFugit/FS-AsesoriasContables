@@ -20,7 +20,7 @@ export default function CotizaForm() {
     setSubmitSuccess(false)
 
     try {
-      const response = await fetch("https://newasesoriasvaldivia.vercel.app/api/contact", {
+      const response = await fetch("/api/cotization", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
