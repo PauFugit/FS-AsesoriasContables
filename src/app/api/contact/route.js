@@ -21,8 +21,9 @@ export async function POST(request) {
         console.log('Contact form entry created:', contactForm);
 
         console.log('Setting up SendGrid...');
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-        console.log('SendGrid API Key set');
+        const apiKey = process.env.SENDGRID_API_KEY;
+        console.log('API Key length:', apiKey ? apiKey.length : 'undefined');
+        sgMail.setApiKey(apiKey);
 
         const msg = {
             to: 'contacto@asesoriasvaldivia.cl',
