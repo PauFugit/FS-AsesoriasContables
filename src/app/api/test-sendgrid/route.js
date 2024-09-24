@@ -5,8 +5,10 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       console.log('Setting up SendGrid...');
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-      console.log('API Key set. Key starts with:', process.env.SENDGRID_API_KEY.substring(0, 5));
+      const apiKey = process.env.SENDGRID_API_KEY;
+      console.log('API Key length:', apiKey ? apiKey.length : 'undefined');
+      console.log('API Key starts with:', apiKey ? apiKey.substring(0, 5) : 'undefined');
+      sgMail.setApiKey(apiKey);
 
       const msg = {
         to: 'contacto@asesoriasvaldivia.cl', // Replace with your email
