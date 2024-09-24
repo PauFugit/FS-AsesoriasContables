@@ -8,13 +8,14 @@ export default function ContactForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState("")
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     setIsSubmitting(true)
     setSubmitError("")
     setSubmitSuccess(false)
@@ -25,15 +26,20 @@ export default function ContactForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       })
 
       if (!response.ok) {
-        throw new Error("Error al enviar el formulario")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Error al enviar el formulario")
       }
 
+      const result = await response.json()
+      console.log("Form submission result:", result)
       setSubmitSuccess(true)
+      reset() // Reset form fields after successful submission
     } catch (error) {
+      console.error("Form submission error:", error)
       setSubmitError(
         "Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo."
       )
@@ -44,7 +50,6 @@ export default function ContactForm() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-transparent rounded-xl">
-      
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label
@@ -153,24 +158,21 @@ export default function ContactForm() {
           )}
         </div>
 
-
-
         <div className="flex items-center">
-        <Image
-          src="/flechaazulderecha.png"
-          alt="Button image"
-          width={70}
-          height={70}
-          className="rounded-full"
-        />
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="flex items-center px-3 py-1 border border-transparent text-2xl font-medium rounded-full shadow-sm text-custom-white bg-custom-blue hover:bg-custom-green hover:text-custom-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        >
+          <Image
+            src="/flechaazulderecha.png"
+            alt="Button image"
+            width={70}
+            height={70}
+            className="rounded-full"
+          />
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex items-center px-3 py-1 border border-transparent text-2xl font-medium rounded-full shadow-sm text-custom-white bg-custom-blue hover:bg-custom-green hover:text-custom-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
             {isSubmitting ? "Enviando..." : "Enviar"}
-            
-        </button>
+          </button>
         </div>
       </form>
 
@@ -185,4 +187,4 @@ export default function ContactForm() {
       )}
     </div>
   )
-}
+};
