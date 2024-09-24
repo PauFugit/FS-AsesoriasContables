@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import sgMail from '@sendgrid/mail'
+import { sendEmail } from '@/utils/sendEmail'
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -14,36 +14,34 @@ export async function POST(request) {
         const data = await request.json()
         console.log('Received data:', data);
 
-        console.log('Creating contact form entry in database...');
-        const contactForm = await prisma.contactForm.create({
+        console.log('Creating cotization form entry in database...');
+        const cotizationForm = await prisma.cotizationForm.create({
             data: data
         })
-        console.log('Contact form entry created:', contactForm);
+        console.log('Cotization form entry created:', cotizationForm);
 
-        console.log('Setting up SendGrid...');
-        const apiKey = process.env.SENDGRID_API_KEY;
-        console.log('API Key length:', apiKey ? apiKey.length : 'undefined');
-        sgMail.setApiKey(apiKey);
-
-        const msg = {
-            to: 'contacto@asesoriasvaldivia.cl',
-            from: 'contacto@asesoriasvaldivia.cl', // Make sure this is verified in SendGrid
-            subject: "Nuevo mensaje de contacto",
-            text: `
+        const emailText = `
         Nombre: ${data.nombre} ${data.apellido}
         Correo: ${data.correo}
         Teléfono: ${data.telefono}
         Servicio a cotizar: ${data.servicio}
         Mensaje: ${data.mensaje}
-      `,
-        }
-        
-        console.log('Attempting to send email...');
-        const result = await sgMail.send(msg);
-        console.log('SendGrid response:', result);
+        `;
 
-        console.log("Formulario de contacto enviado y correo enviado exitosamente.")
-        return new NextResponse(JSON.stringify(contactForm), {
+        console.log('Attempting to send email...');
+        const emailSent = await sendEmail(
+            'contacto@asesoriasvaldivia.cl',
+            'contacto@asesoriasvaldivia.cl',
+            "Nueva solicitud de cotización",
+            emailText
+        );
+
+        if (!emailSent) {
+            throw new Error('Failed to send email');
+        }
+
+        console.log("Formulario de cotización enviado y correo enviado exitosamente.")
+        return new NextResponse(JSON.stringify(cotizationForm), {
             status: 201,
             headers: {
                 "Content-Type": "application/json",
@@ -51,10 +49,7 @@ export async function POST(request) {
             }
         })
     } catch (error) {
-        console.error("Error en la API de contacto:", error)
-        if (error.response) {
-            console.error('SendGrid Error Response:', error.response.body)
-        }
+        console.error("Error en la API de cotización:", error)
         return new NextResponse(JSON.stringify({ error: error.message }), {
             status: 500,
             headers: {

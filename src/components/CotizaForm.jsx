@@ -2,38 +2,43 @@
 
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import Image from "next/image"
 
 export default function CotizaForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState("")
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     setIsSubmitting(true)
     setSubmitError("")
     setSubmitSuccess(false)
 
     try {
-      const response = await fetch("/api/cotization", {
-        method: "POST",
+      const response = await fetch('/api/cotization', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       })
 
       if (!response.ok) {
-        throw new Error("Error al enviar el formulario")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Error al enviar el formulario")
       }
 
+      const result = await response.json()
+      console.log("Form submission result:", result)
       setSubmitSuccess(true)
+      reset()
     } catch (error) {
+      console.error("Form submission error:", error)
       setSubmitError(
         "Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo."
       )
@@ -41,6 +46,8 @@ export default function CotizaForm() {
       setIsSubmitting(false)
     }
   }
+
+  // Rest of your form JSX...
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-transparent rounded-xl">
