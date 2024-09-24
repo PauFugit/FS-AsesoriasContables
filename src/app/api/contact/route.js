@@ -2,48 +2,61 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import sgMail from '@sendgrid/mail'
 
-// Set SendGrid API Key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+}
+
 export async function POST(request) {
-    try {
-        const data = await request.json()
+  // Handle preflight request
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, { status: 200, headers: corsHeaders })
+  }
 
-        // Guardar en la base de datos
-        const contactForm = await prisma.contactForm.create({
-            data: data
-        })
+  try {
+    const data = await request.json()
 
-        // Preparar el mensaje de correo
-        const msg = {
-            to: process.env.EMAIL_USER,
-            from: 'contacto@asesoriasvaldivia.cl', // remitente verificado en SendGrid
-            subject: 'Nuevo mensaje de contacto',
-            text: `
-                Nombre: ${data.nombre} ${data.apellido}
-                Correo: ${data.correo}
-                Teléfono: ${data.telefono}
-                Mensaje: ${data.mensaje}
-            `,
-            html: `
-                <strong>Nombre:</strong> ${data.nombre} ${data.apellido}<br>
-                <strong>Correo:</strong> ${data.correo}<br>
-                <strong>Teléfono:</strong> ${data.telefono}<br>
-                <strong>Mensaje:</strong> ${data.mensaje}
-            `,
-        }
+    const contactForm = await prisma.contactForm.create({
+      data: data
+    })
 
-        // Enviar correo usando SendGrid
-        await sgMail.send(msg)
-
-        console.log("Formulario de contacto enviado y correo enviado exitosamente.")
-        return NextResponse.json(contactForm, { status: 201 })
-    } catch (error) {
-        console.error("Error en la API de contacto:", error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+    const msg = {
+      to: process.env.EMAIL_USER,
+      from: 'contacto@asesoriasvaldivia.cl',
+      subject: "Nuevo mensaje de contacto",
+      text: `
+        Nombre: ${data.nombre} ${data.apellido}
+        Correo: ${data.correo}
+        Teléfono: ${data.telefono}
+        Mensaje: ${data.mensaje}
+      `,
     }
+
+    await sgMail.send(msg)
+
+    console.log("Formulario de contacto enviado y correo enviado exitosamente.")
+    return new NextResponse(JSON.stringify(contactForm), { 
+      status: 201, 
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders
+      }
+    })
+  } catch (error) {
+    console.error("Error en la API de contacto:", error)
+    return new NextResponse(JSON.stringify({ error: error.message }), { 
+      status: 500, 
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders
+      }
+    })
+  }
 }
 
 export async function OPTIONS(request) {
-    return NextResponse.json({}, { status: 200 })
+  return new NextResponse(null, { status: 200, headers: corsHeaders })
 }
