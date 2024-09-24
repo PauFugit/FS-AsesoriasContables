@@ -3,14 +3,15 @@ const nextConfig = {
     async headers() {
       return [
         {
-          source: '/:path*',
+          // matching all API routes
+          source: "/api/:path*",
           headers: [
-            {
-              key: 'Content-Security-Policy',
-              value: "default-src 'self'; script-src 'self' https://maps.googleapis.com; frame-src https://www.google.com; style-src 'self' 'unsafe-inline';"
-            },
-          ],
-        },
+            { key: "Access-Control-Allow-Credentials", value: "true" },
+            { key: "Access-Control-Allow-Origin", value: "*" },
+            { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
+            { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" },
+          ]
+        }
       ]
     },
   }
