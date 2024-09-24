@@ -18,7 +18,6 @@ export const metadata = {
   },
   description:
     "Servicios de Asesoría Contable, Laboral, Tributaria y Auditorías.",
-  viewport: "width=device-width, initial-scale=1",
   charset: "utf-8",
   icons: {
     //icon: "/favicon.ico"
