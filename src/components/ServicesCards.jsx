@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReversed }) => (
   <div className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} overflow-hidden  mx-6 my-8 bg-transparent`}>
@@ -15,12 +16,13 @@ const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReve
       <h2 className="text-4xl md:text-7xl font-semibold text-custom-blue mb-8">{title}</h2>
       <p className="text-custom-blue my-6 text-md md:text-2xl">{description}</p>
       <div className="flex items-center space-x-4 mt-8">
-        <button className="flex items-center space-x-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full hover:bg-custom-green hover:text-custom-blue">
-          <span className="text-2xl">{buttonText}</span>
-        </button>
+        <Link href="/cotiza"> 
+        <button className="text-lg sm:text-2xl flex items-center space-x-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full hover:bg-custom-green hover:text-custom-blue">
+          {buttonText}</button>
+        </Link>
         <Image
           src={buttonImageSrc}
-          alt="Button image"
+          alt="Flecha Azul"
           width={80}
           height={80}
           className="rounded-full"
