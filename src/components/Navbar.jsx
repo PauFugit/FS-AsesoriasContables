@@ -9,9 +9,9 @@ async function Navbar() {
 
   const NavLink = ({ href, children, className = "" }) => (
     <li className="w-full lg:w-auto">
-      <Link href={href} className={`flex items-center lg:hover:bg-custom-white lg:hover:text-custom-blue py-1 px-4 rounded transition-colors duration-200 ${className}`}>
+      <Link href={href} className={`flex items-center lg:hover:bg-custom-white lg:hover:text-custom-green py-1 px-4 rounded transition-colors duration-200 ${className}`}>
         <Image
-          src="/flechaazulderecha.png"
+          src="/flechaverdederecha.png"
           alt="Flecha verde hacia la derecha"
           width={25}
           height={25}
