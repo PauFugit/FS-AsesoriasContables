@@ -19,6 +19,8 @@ model Users {
   phone      String?
   role       Role     // DEFINE ROL DE USUARIO
   active Boolean @default(true)
+  resetToken       String?
+  resetTokenExpires DateTime?
   //services   Service[] @relation("UserServices")
   resources  Resource[] @relation("UsersResources")
   company    String?

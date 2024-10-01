@@ -9,6 +9,8 @@ CREATE TABLE `Users` (
     `phone` VARCHAR(191) NULL,
     `role` ENUM('ADMIN', 'TEAM', 'CLIENT') NOT NULL,
     `active` BOOLEAN NOT NULL DEFAULT true,
+    `resetToken` VARCHAR(191) NULL,
+    `resetTokenExpires` DATETIME(3) NULL,
     `company` VARCHAR(191) NULL,
     `companyEmail` VARCHAR(191) NULL,
     `companyPhone` VARCHAR(191) NULL,
