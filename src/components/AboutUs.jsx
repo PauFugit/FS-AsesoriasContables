@@ -5,8 +5,10 @@ import Image from 'next/image'
 
 const AboutUs = () => {
   return (
-    <div className="font-grotesk">
-    <header className="bg-custom-green text-white text-center py-8">
+    <div>
+      <div className="bg-custom-blue text-white text-center py-14">
+      </div>
+    <header className="bg-custom-blue text-white text-center py-8">
         <h1 className="text-6xl " style={{letterSpacing:"0.5rem"}}>ASESORÍAS VALDIVIA</h1>
       </header>
     <div className=" py-12 w-full" style={{ backgroundImage: "url('/fondoaboutus.png')", backgroundSize: "cover" }}>

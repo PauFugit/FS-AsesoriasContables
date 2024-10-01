@@ -6,7 +6,7 @@ import React from 'react'
 
 function Nosotros() {
   return (
-    <div style={{ backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+    <div style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
       <AboutUs/>
       <Valores/>
       <ClientCarousel/>
