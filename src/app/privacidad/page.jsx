@@ -4,7 +4,9 @@
 export default function Privacidad() {
     return (
     
-      <div style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover"}}>
+      <div style={{ backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover"}}>
+      <div className="bg-custom-blue text-white text-center py-14">
+      </div>
       <header className="bg-custom-blue text-white text-center py-10">
         <h1 className="text-4xl font-bold">PRIVACIDAD</h1>
       </header>

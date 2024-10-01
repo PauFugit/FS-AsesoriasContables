@@ -5,7 +5,7 @@ import React from 'react'
 
 function Services() {
   return (
-    <div style={{ paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+    <div style={{ backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
       <BannerServicios/>
       <ServicesCards/>
       <BannerEstatico/>

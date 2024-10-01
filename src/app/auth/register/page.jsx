@@ -40,7 +40,11 @@ function RegisterPage() {
     });
     console.log(errors);
     return (
-        <div className="flex justify-center items-center p-8 " style={{paddingTop:"10rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+        <div>
+        <div className="bg-custom-blue text-white text-center py-16">
+            </div>
+        <div className="flex justify-center items-center py-10" style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+            
             <form onSubmit={onSubmit} className="w-1/2">
                 <h1 className="text-custom-blue font-bold text-4xl mb-4">
                     Registro de Usuarios
@@ -195,6 +199,7 @@ function RegisterPage() {
                     REGISTRAR
                 </button>
             </form>
+        </div>
         </div>
     )
 

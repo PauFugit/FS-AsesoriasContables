@@ -8,7 +8,7 @@ import BannerEstatico from '@/components/BannerEstatico';
 
 function Contacto() {
   return (
-    <div style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+    <div style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
     <section>
 
       <div className="relative text-white">

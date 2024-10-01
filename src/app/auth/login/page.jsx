@@ -32,6 +32,9 @@ function LoginPage() {
   });
 
   return (
+    <div>
+        <div className="bg-custom-blue text-white text-center py-16">
+            </div>
     <div className="h-[calc(100vh-7rem)] flex justify-center items-center" style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
 
       <form onSubmit={onSubmit} className="w-1/2">
@@ -87,6 +90,7 @@ function LoginPage() {
         </button>
       </form>
 
+    </div>
     </div>
   )
 }

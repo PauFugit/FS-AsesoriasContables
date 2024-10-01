@@ -5,7 +5,9 @@ import Image from 'next/image';
 export default function MisionVision() {
     return (
         
-            <div style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+            <div style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+                <div className="bg-custom-blue text-white text-center py-14">
+                </div>
                 <header className="bg-custom-blue text-white text-center py-8">
                     <h1 className="text-4xl font-bold">MISIÓN Y VISIÓN</h1>
                 </header>

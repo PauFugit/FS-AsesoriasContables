@@ -5,7 +5,7 @@ import BannerCierre from '@/components/BannerCierre'
 
 function Cotiza() {
   return (
-    <div style={{paddingTop:"7rem",backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+    <div style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
     <section>
 
       <div className="relative text-white">

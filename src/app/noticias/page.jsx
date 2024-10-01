@@ -4,7 +4,7 @@ import BannerNoticias from '@/components/BannerNoticias'
 
 function Noticias() {
   return (
-    <div style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+    <div style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
       <BannerNoticias/>
       <NoticesSection/>
     </div>

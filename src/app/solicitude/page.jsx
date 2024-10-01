@@ -6,9 +6,10 @@ import BannerClientes from '@/components/BannerClientes';
 
 function Contacto() {
   return (
-    <div style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+    <div style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
     <section>
-
+    <div className="bg-custom-blue text-white text-center py-14">
+    </div>
       <div className="relative text-white">
         <Image
           src="/bannerescribennos.png"
