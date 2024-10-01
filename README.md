@@ -15,5 +15,3 @@ pnpm dev
 bun dev
 ```
 
-## Puedes acceder al proyecto en (https://www.asesoriasvaldivia.cl) 
-
