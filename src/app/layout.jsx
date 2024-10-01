@@ -20,7 +20,7 @@ export const metadata = {
     "Servicios de Asesoría Contable, Laboral, Tributaria y Auditorías.",
   charset: "utf-8",
   icons: {
-    //icon: "/favicon.ico"
+    icon: "/favicon.ico"
   }
 }
 
