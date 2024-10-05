@@ -1,54 +1,65 @@
+
 'use client'
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-
+import { useState } from 'react';
 
 function RegisterPage() {
     const { register, handleSubmit, formState: { errors } } = useForm()
-    // redirigir login
     const router = useRouter();
-    //guardar datos
+    const [imagePreview, setImagePreview] = useState(null);
+
     const onSubmit = handleSubmit(async (data) => {
         if (data.password !== data.confirmPassword) {
             return alert("Las contraseñas no coinciden")
         }
 
+        const formData = new FormData();
+        formData.append('username', data.username);
+        formData.append('email', data.email);
+        formData.append('name', data.name);
+        formData.append('lastname', data.lastname);
+        formData.append('password', data.password);
+        formData.append('phone', data.phone);
+        formData.append('role', data.role);
+        if (data.image[0]) {
+            formData.append('image', data.image[0]);
+        }
+
         const response = await fetch('/api/auth/register', {
             method: 'POST',
-            body: JSON.stringify({
-                username: data.username,
-                email: data.email,
-                name: data.name,
-                lastname: data.lastname,
-                password: data.password,
-                phone: data.phone,
-                role: data.role,
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            body: formData,
         });
 
-        //mandar al login
-    if (response.ok) {
+        if (response.ok) {
             router.push("/auth/login");
-        }else{
+        } else {
             const errorData = await response.json();
             console.log("Registration failed:", errorData);
             alert(errorData.message || "Registration failed. Please try again.");
         }
     });
-    console.log(errors);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
         <div>
-        <div className="bg-custom-blue text-white text-center py-16">
+            <div className="bg-custom-blue text-white text-center py-16">
             </div>
-        <div className="flex justify-center items-center py-10" style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
-            
-            <form onSubmit={onSubmit} className="w-1/2">
-                <h1 className="text-custom-blue font-bold text-4xl mb-4">
-                    Registro de Usuarios
-                </h1>
+            <div className="flex justify-center items-center py-10" style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+                <form onSubmit={onSubmit} className="w-1/2">
+                    <h1 className="text-custom-blue font-bold text-4xl mb-4">
+                        Registro de Usuarios
+                    </h1>
                 <label htmlFor="username" className="text-slate-500 mb-2 block  text-sm" >Usuario</label>
                 <input type="text"
                     {...(register("username", {
@@ -191,18 +202,25 @@ function RegisterPage() {
                             className="text-red-500 text-sm">{errors.role.message}</span>
                     )
                 }
+                <label htmlFor="image" className="text-slate-500 mb-2 block text-sm">Imagen de perfil:</label>
+                    <input 
+                        type="file" 
+                        accept="image/*"
+                        {...register("image")}
+                        onChange={handleImageChange}
+                        className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full"
+                    />
+                    {imagePreview && (
+                        <img src={imagePreview} alt="Preview" className="mt-2 rounded-full w-24 h-24 object-cover" />
+                    )}
 
-
-
-                <button className="w-full bg-custom-blue text-white p-3 rounded-lg mt-2 hover:bg-custom-green hover:text-custom-blue"
-                >
-                    REGISTRAR
-                </button>
-            </form>
-        </div>
+                    <button className="w-full bg-custom-blue text-white p-3 rounded-lg mt-2 hover:bg-custom-green hover:text-custom-blue">
+                        REGISTRAR
+                    </button>
+                </form>
+            </div>
         </div>
     )
-
 }
 
 export default RegisterPage;

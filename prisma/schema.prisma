@@ -17,6 +17,7 @@ model Users {
   lastname   String
   password   String
   phone      String?
+  image    String?
   role       Role     // DEFINE ROL DE USUARIO
   active Boolean @default(true)
   resetToken       String?
@@ -26,7 +27,7 @@ model Users {
   company    String?
   companyEmail String?
   companyPhone String?
-  companyAdress String?
+  companyRUT String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -55,7 +56,9 @@ model Resource {
   id        Int      @id @default(autoincrement())
   name      String
   description String 
+  urldrive String?
   serviceId Int      // Relacionado con el servicio
+
   //service   Service  @relation(fields: [serviceId], references: [id])
   clientId  Int?     // Relacionado con el cliente
   client    Users?    @relation(fields: [clientId], references: [id], name: "UsersResources")
