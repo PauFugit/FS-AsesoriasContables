@@ -5,44 +5,76 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 
-const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => (
-  <div className={`w-64 bg-custom-green p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
-    <div className="flex flex-col items-center mb-6">
-      <Image
-        src="/client1.png"
-        alt="User"
-        width={100}
-        height={100}
-        className="rounded-full mb-2"
-      />
-      <h2 className="text-lg font-bold text-custom-blue">USUARIO FICTICIO</h2>
-      <p className="text-sm text-gray-800">usuario@correo.cl</p>
+const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
+  const { data: session } = useSession();
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    image: '/isotipouno.png', // Default image
+  });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (session?.user?.id) {
+        try {
+          const response = await fetch(`/api/users/${session.user.id}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+          }
+          const data = await response.json();
+          setUserData({
+            name: data.name || '',
+            email: data.email || '',
+            image: data.image || '/isotipouno.png',
+          });
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [session]);
+
+  return (
+    <div className={`w-64 bg-custom-green p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
+      <div className="flex flex-col items-center mb-6">
+        <Image
+          src={userData.image}
+          alt="User"
+          width={100}
+          height={100}
+          className="rounded-full mb-2"
+        />
+        <h2 className="text-lg font-bold text-custom-blue">{userData.name.toUpperCase()}</h2>
+        <p className="text-sm text-gray-800">{userData.email}</p>
+      </div>
+      <nav className="flex-1 space-y-2">
+        {[
+          { icon: UserCircle, label: 'Perfil', value: 'profile' },
+          { icon: FileText, label: 'Recursos', value: 'resources' },
+        ].map((item) => (
+          <button
+            key={item.value}
+            className={`w-full text-left py-2 px-4 rounded flex items-center ${activeTab === item.value ? 'bg-custom-green' : ''
+              }`}
+            onClick={() => {
+              setActiveTab(item.value);
+              setIsSidebarOpen(false);
+            }}
+          >
+            <item.icon className="w-5 h-5 mr-2 text-custom-blue" />
+            {item.label}
+          </button>
+        ))}
+      </nav>
+      <Link href="/api/auth/signout" className="flex items-center mt-6">
+        <LogOut className="w-4 h-4 mr-2 text-red-600" />
+        Cerrar sesión
+      </Link>
     </div>
-    <nav className="flex-1 space-y-2">
-      {[
-        { icon: UserCircle, label: 'Perfil', value: 'profile' },
-        { icon: FileText, label: 'Recursos', value: 'resources' },
-      ].map((item) => (
-        <button
-          key={item.value}
-          className={`w-full text-left py-2 px-4 rounded flex items-center ${activeTab === item.value ? 'bg-custom-green' : ''
-            }`}
-          onClick={() => {
-            setActiveTab(item.value);
-            setIsSidebarOpen(false);
-          }}
-        >
-          <item.icon className="w-5 h-5 mr-2 text-custom-blue" />
-          {item.label}
-        </button>
-      ))}
-    </nav>
-    <Link href="/api/auth/signout" className="flex items-center  mt-6">
-      <LogOut className="w-4 h-4 mr-2 text-red-600" />
-      Cerrar sesión
-    </Link>
-  </div>
-);
+  );
+};
 const ProfileTab = () => {
   const { data: session } = useSession();
   const [userData, setUserData] = useState({

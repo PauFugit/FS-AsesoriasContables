@@ -10,7 +10,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
   const [userData, setUserData] = useState({
     name: '',
     email: '',
-    image: '/client1.png', // Default image
+    image: '/isotipouno.png', // Default image
   });
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
           setUserData({
             name: data.name || '',
             email: data.email || '',
-            image: data.image || '/client1.png',
+            image: data.image || '/isotipouno.png',
           });
         } catch (error) {
           console.error('Error fetching user data:', error);
