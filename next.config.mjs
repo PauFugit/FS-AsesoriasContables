@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images:{
-    domains: ['https://gk5flxbicoiece78.public.blob.vercel-storage.com']
+    domains: ['gk5flxbicoiece78.public.blob.vercel-storage.com']
   },
   async headers() {
     return [
