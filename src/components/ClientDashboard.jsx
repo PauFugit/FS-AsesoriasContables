@@ -5,44 +5,76 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 
-const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => (
-  <div className={`w-64 bg-custom-green p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
-    <div className="flex flex-col items-center mb-6">
-      <Image
-        src="/client1.png"
-        alt="User"
-        width={100}
-        height={100}
-        className="rounded-full mb-2"
-      />
-      <h2 className="text-lg font-bold text-custom-blue">USUARIO FICTICIO</h2>
-      <p className="text-sm text-gray-800">usuario@correo.cl</p>
+const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
+  const { data: session } = useSession();
+  const [userData, setUserData] = useState({
+    name: '',
+    email: '',
+    image: '/client1.png', // Default image
+  });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (session?.user?.id) {
+        try {
+          const response = await fetch(`/api/users/${session.user.id}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+          }
+          const data = await response.json();
+          setUserData({
+            name: data.name || '',
+            email: data.email || '',
+            image: data.image || '/client1.png',
+          });
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [session]);
+
+  return (
+    <div className={`w-64 bg-custom-green p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
+      <div className="flex flex-col items-center mb-6">
+        <Image
+          src={userData.image}
+          alt="User"
+          width={100}
+          height={100}
+          className="rounded-full mb-2"
+        />
+        <h2 className="text-lg font-bold text-custom-blue">{userData.name.toUpperCase()}</h2>
+        <p className="text-sm text-gray-800">{userData.email}</p>
+      </div>
+      <nav className="flex-1 space-y-2">
+        {[
+          { icon: UserCircle, label: 'Perfil', value: 'profile' },
+          { icon: FileText, label: 'Recursos', value: 'resources' },
+        ].map((item) => (
+          <button
+            key={item.value}
+            className={`w-full text-left py-2 px-4 rounded flex items-center ${activeTab === item.value ? 'bg-custom-green' : ''
+              }`}
+            onClick={() => {
+              setActiveTab(item.value);
+              setIsSidebarOpen(false);
+            }}
+          >
+            <item.icon className="w-5 h-5 mr-2 text-custom-blue" />
+            {item.label}
+          </button>
+        ))}
+      </nav>
+      <Link href="/api/auth/signout" className="flex items-center mt-6">
+        <LogOut className="w-4 h-4 mr-2 text-red-600" />
+        Cerrar sesión
+      </Link>
     </div>
-    <nav className="flex-1 space-y-2">
-      {[
-        { icon: UserCircle, label: 'Perfil', value: 'profile' },
-        { icon: FileText, label: 'Recursos', value: 'resources' },
-      ].map((item) => (
-        <button
-          key={item.value}
-          className={`w-full text-left py-2 px-4 rounded flex items-center ${activeTab === item.value ? 'bg-custom-green' : ''
-            }`}
-          onClick={() => {
-            setActiveTab(item.value);
-            setIsSidebarOpen(false);
-          }}
-        >
-          <item.icon className="w-5 h-5 mr-2 text-custom-blue" />
-          {item.label}
-        </button>
-      ))}
-    </nav>
-    <Link href="/api/auth/signout" className="flex items-center  mt-6">
-      <LogOut className="w-4 h-4 mr-2 text-red-600" />
-      Cerrar sesión
-    </Link>
-  </div>
-);
+  );
+};
 const ProfileTab = () => {
   const { data: session } = useSession();
   const [userData, setUserData] = useState({
@@ -54,7 +86,7 @@ const ProfileTab = () => {
     company: '',
     companyEmail: '',
     companyPhone: '',
-    companyAddress: ''
+    companyRUT: ''
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,7 +106,11 @@ const ProfileTab = () => {
             lastname: data.lastname || '',
             phone: data.phone || '',
             password: data.password || '',
-            email: data.email || ''
+            email: data.email || '',
+            company: data.company || '',
+            companyEmail: data.companyEmail || '',
+            companyPhone: data.companyPhone || '',
+            companyRUT: data.companyRUT || ''
           });
           setIsLoading(false);
         } catch (error) {
@@ -151,8 +187,8 @@ const ProfileTab = () => {
             <input className="w-full p-2 border rounded" placeholder="Correo electrónico" name="companyEmail" value={userData.companyEmail} onChange={handleInputChange} />
             <label htmlFor="companyPhone" className="text-slate-500 mb-2 block  text-sm">Teléfono de contacto comercial: </label>
             <input className="w-full p-2 border rounded" placeholder="Teléfono empresa" name="companyPhone" value={userData.companyPhone} onChange={handleInputChange} />
-            <label htmlFor="companyAdress" className="text-slate-500 mb-2 block  text-sm">Dirección comercial: </label>
-            <input className="w-full p-2 border rounded md:col-span-2" placeholder="Dirección empresa" name="companyAddress" value={userData.companyAddress} onChange={handleInputChange} />
+            <label htmlFor="companyRUT" className="text-slate-500 mb-2 block  text-sm">RUT DE LA EMPRESA: </label>
+            <input className="w-full p-2 border rounded" placeholder="RUT empresa" name="companyRUT" value={userData.companyRUT} onChange={handleInputChange} />
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-end space-y-2 md:space-y-0 md:space-x-4">
@@ -172,17 +208,7 @@ const ResourcesTab = () => {
       title: 'BIBLIOTECA DIGITAL',
       description: 'Acceso a carpetas con documentos contables en formato digital.',
       content: [
-        { type: 'WEB', name: 'Acceso a google drive', url: 'https://drive.google.com/drive/folders/1-iQ8N6s8ggfMiPI7frGkRu56VePCEfXd' },
-      ]
-    },
-    {
-      icon: GraduationCap,
-      title: 'RECURSOS ACADÉMICOS',
-      description: 'Material educativo y recursos de aprendizaje.',
-      content: [
-        { type: 'pdf', name: 'Introducción a la contabilidad.pdf', url: '/path/to/introduccion-contabilidad.pdf' },
-        { type: 'link', name: 'Curso online de Excel', url: 'https://www.example.com/excel-course' },
-        { type: 'pdf', name: 'Glosario de términos financieros.pdf', url: '/path/to/glosario-financiero.pdf' },
+        { type: 'WEB', name: 'Acceso a google drive', urldrive: 'https://drive.google.com/drive/folders/1-iQ8N6s8ggfMiPI7frGkRu56VePCEfXd' },
       ]
     },
     {
@@ -198,11 +224,12 @@ const ResourcesTab = () => {
       ]
     },
   ];
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h1 className="text-xl md:text-2xl font-bold mb-6">RECURSOS COMPLEMENTARIOS</h1>
       <p className="mb-6">Haz click en cada recurso para acceder a él.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {resources.map((resource, index) => (
           <div
             key={index}
@@ -216,16 +243,15 @@ const ResourcesTab = () => {
         ))}
       </div>
       <ResourceModal
-      isOpen={!!activeResource}
-      onClose={() => setActiveResource(null)}
-      resource={activeResource}
+        isOpen={!!activeResource}
+        onClose={() => setActiveResource(null)}
+        resource={activeResource}
       />
     </div>
   );
 };
-const ResourceModal = ({ isOpen, onClose, resource }) => {
-  const [activeResource, setActiveResource] = useState(null);
 
+const ResourceModal = ({ isOpen, onClose, resource }) => {
   if (!isOpen) return null;
 
   return (
@@ -240,10 +266,10 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
         <div className="space-y-4">
           {resource.content.map((item, index) => (
             <div key={index} className="flex items-center space-x-2">
-              {item.type === 'pdf' && <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />}
+              {item.type === 'WEB' && <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />}
               {item.type === 'link' && <Globe className="w-5 h-5 text-blue-500 flex-shrink-0" />}
               <a
-                href={item.url}
+                href={item.urldrive || item.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline break-all"
@@ -254,13 +280,9 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
           ))}
         </div>
       </div>
-      
-      
-  
     </div>
   );
 };
-
 export default function ClientDashboard() {
   const [activeTab, setActiveTab] = useState('profile');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
