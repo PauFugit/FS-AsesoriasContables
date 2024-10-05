@@ -40,7 +40,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
     <div className={`w-64 bg-custom-green p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
       <div className="flex flex-col items-center mb-6">
         <Image
-          src={userData.image}
+          src={userData.image || '/isotipouno.png'}
           alt="User"
           width={100}
           height={100}
