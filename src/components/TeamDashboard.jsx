@@ -49,31 +49,31 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         <h2 className="text-lg font-bold text-custom-blue">{userData.name.toUpperCase()}</h2>
         <p className="text-sm text-gray-800">{userData.email}</p>
       </div>
-      <nav className="flex-1 space-y-2">
-        {[
-          { icon: UserCircle, label: 'Perfil', value: 'profile' },
-          { icon: FileText, label: 'Recursos', value: 'resources' },
-        ].map((item) => (
-          <button
-            key={item.value}
-            className={`w-full text-left py-2 px-4 rounded flex items-center ${activeTab === item.value ? 'bg-custom-green' : ''
-              }`}
-            onClick={() => {
-              setActiveTab(item.value);
-              setIsSidebarOpen(false);
-            }}
-          >
-            <item.icon className="w-5 h-5 mr-2 text-custom-blue" />
-            {item.label}
-          </button>
-        ))}
-      </nav>
-      <Link href="/api/auth/signout" className="flex items-center mt-6">
-        <LogOut className="w-4 h-4 mr-2 text-red-600" />
-        Cerrar sesión
-      </Link>
-    </div>
-  );
+    <nav className="flex-1 space-y-2">
+      {[
+        { icon: UserCircle, label: 'Perfil', value: 'profile' },
+        { icon: FileText, label: 'Recursos', value: 'resources' },
+      ].map((item) => (
+        <button
+          key={item.value}
+          className={`w-full text-left py-2 px-4 rounded flex items-center ${activeTab === item.value ? 'bg-custom-green' : ''
+            }`}
+          onClick={() => {
+            setActiveTab(item.value);
+            setIsSidebarOpen(false);
+          }}
+        >
+          <item.icon className="w-5 h-5 mr-2 text-custom-blue" />
+          {item.label}
+        </button>
+      ))}
+    </nav>
+    <Link href="/api/auth/signout" className="flex items-center  mt-6">
+      <LogOut className="w-4 h-4 mr-2 text-red-600" />
+      Cerrar sesión
+    </Link>
+  </div>
+);
 };
 const ProfileTab = () => {
   const { data: session } = useSession();
