@@ -175,7 +175,7 @@ const ResourcesTab = () => {
         { type: 'WEB', name: 'Acceso a google drive', url: 'https://drive.google.com/drive/folders/1-iQ8N6s8ggfMiPI7frGkRu56VePCEfXd' },
       ]
     },
-    {/*{
+    {
       icon: GraduationCap,
       title: 'RECURSOS ACADÉMICOS',
       description: 'Material educativo y recursos de aprendizaje.',
@@ -184,7 +184,7 @@ const ResourcesTab = () => {
         { type: 'link', name: 'Curso online de Excel', url: 'https://www.example.com/excel-course' },
         { type: 'pdf', name: 'Glosario de términos financieros.pdf', url: '/path/to/glosario-financiero.pdf' },
       ]
-    },*/},
+    },
     {
       icon: Globe,
       title: 'RECURSOS WEB',
