@@ -169,15 +169,13 @@ const ResourcesTab = () => {
   const resources = [
     {
       icon: FileText,
-      title: 'RECURSOS CONTABLES',
-      description: 'Documentos y enlaces relacionados con contabilidad y finanzas.',
+      title: 'BIBLIOTECA DIGITAL',
+      description: 'Acceso a carpetas con documentos contables en formato digital.',
       content: [
-        { type: 'pdf', name: 'Plan de cuentas 2023.pdf', url: '/path/to/plan-de-cuentas-2023.pdf' },
-        { type: 'pdf', name: 'Guía de impuestos.pdf', url: '/path/to/guia-de-impuestos.pdf' },
-        { type: 'link', name: 'Portal SII', url: 'https://www.sii.cl/' },
+        { type: 'WEB', name: 'Acceso a google drive', url: 'https://drive.google.com/drive/folders/1-iQ8N6s8ggfMiPI7frGkRu56VePCEfXd' },
       ]
     },
-    {
+    {/*{
       icon: GraduationCap,
       title: 'RECURSOS ACADÉMICOS',
       description: 'Material educativo y recursos de aprendizaje.',
@@ -186,15 +184,17 @@ const ResourcesTab = () => {
         { type: 'link', name: 'Curso online de Excel', url: 'https://www.example.com/excel-course' },
         { type: 'pdf', name: 'Glosario de términos financieros.pdf', url: '/path/to/glosario-financiero.pdf' },
       ]
-    },
+    },*/},
     {
       icon: Globe,
       title: 'RECURSOS WEB',
       description: 'Enlaces útiles y herramientas en línea.',
       content: [
-        { type: 'link', name: 'Calculadora de IVA', url: 'https://www.ivachile.cl/' },
+        { type: 'link', name: 'Calcular', url: 'https://www.calcular.cl/' },
         { type: 'link', name: 'Calculador Boleta Honorarios', url: 'https://www.boleteo.cl' },
-        { type: 'link', name: 'Colegio Contadores de Chile', url: 'https://www.contach.cl/' },
+        { type: 'link', name: 'Dirección del Trabajo', url:'https://www.dt.gob.cl'},
+        { type: 'link', name: 'Previred', url: 'https://www.previred.com/' },
+        { type: 'link', name: 'Portal SII', url: 'https://www.sii.cl/' },
       ]
     },
   ];
