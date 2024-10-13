@@ -23,7 +23,7 @@ export async function POST(request) {
 
         if (existingUser) {
             return NextResponse.json(
-                { error: "Username already exists" },
+                { error: "El usuario ya existe" },
                 { status: 400 }
             )
         }
@@ -38,7 +38,7 @@ export async function POST(request) {
             }
         })
 
-        console.log("User created successfully.")
+        console.log("Usuario creado correctamente.")
         
         // Remove password from the response
         const { password, ...userWithoutPassword } = user
@@ -47,9 +47,42 @@ export async function POST(request) {
             status: 201
         })
     } catch (error) {
-        console.error('Error creating user:', error);
+        console.error('Error al crear al usuario:', error);
         return NextResponse.json(
-            { error: error.message || "An error occurred while creating the user" },
+            { error: error.message || "Un error ocurrió al crear el usuario. Por favor, inténtalo nuevamente." },
+            { status: 500 }
+        )
+    }
+}
+
+export async function PUT(request){
+    try{
+        const data = await request.json()
+        const {id, ...updateData} = data
+
+        if (updateData.password) {
+            updateData.password = await bcrypt.hash(updateData.password, 10)
+        } else {
+            // If no new password is provided, remove the password field
+            delete updateData.password
+        }
+
+        const updatedUser = await prisma.users.update({
+            where: { id: parseInt(id) },
+            data: updateData
+        })
+
+        // Remove password from the response
+        const { password, ...userWithoutPassword } = updatedUser
+
+        return NextResponse.json({
+            message: "Usuario actualizado correctamente.",
+            data: userWithoutPassword
+        }, { status: 200 })
+    } catch (error) {
+        console.error('Error actualizando usuario:', error);
+        return NextResponse.json(
+            { error: error.message || "Ha ocurrido un error al actualizar al usuario." },
             { status: 500 }
         )
     }

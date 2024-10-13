@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import bcrypt from 'bcrypt'
 
 export async function GET(request, { params }) {
     const id = parseInt(params.id)
@@ -33,15 +34,28 @@ export async function PUT(request, { params }) {
     const id = parseInt(params.id)
     const data = await request.json()
     try {
+        let updateData = {...data };
+        // hashed new password
+        if(data.password){
+            const hashedPassword = await bcrypt.hash(data.password, 10);
+            updateData.password = hashedPassword;
+        } else {
+            // remove password if no new is provided
+            delete updateData.password;
+        }
         const result = await prisma.users.update({
             where: { id: id },
-            data: data
+            data: updateData
         });
         if (!result) {
             return new NextResponse(`Usuario con la ID ${id} no ha sido encontrado`, { status: 404 });
         }
-        return NextResponse.json(result);
-    } catch (error) {
-        return new NextResponse(error.message, { status: 500 })
+
+        // remove password from response
+        const {password, ...userWithoutPassword} = result;
+        return NextResponse.json(userWithoutPassword);
+    }catch(error){
+        console.log('Error actualizando usuario:', error);
+        return new NextResponse(error.message, {status:500})
     }
 }
