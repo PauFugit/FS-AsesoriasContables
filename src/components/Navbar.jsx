@@ -52,7 +52,7 @@ async function Navbar() {
               <NavLink href="/contacto">Contacto</NavLink>
               <li className="w-full lg:w-auto">
                 <Link href="/auth/login" className="flex items-center hover:bg-custom-green lg:hover:text-custom-white px-3 py-2 rounded transition-colors duration-200">
-                <CircleUserRound className="w-5 h-5 mr-2 text-custom-green" />
+                <CircleUserRound className="w-5 h-5 mr-2 text-custom-green hover:text-custom-white" />
                 </Link>
               </li>
             </>

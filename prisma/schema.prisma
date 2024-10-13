@@ -15,7 +15,7 @@ model Users {
   username   String   @unique
   name       String
   lastname   String
-  password   String
+  password   String @db.VarChar(255)
   phone      String?
   image    String?
   role       Role     // DEFINE ROL DE USUARIO
@@ -28,6 +28,7 @@ model Users {
   companyEmail String?
   companyPhone String?
   companyRUT String?
+  driveURL String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -56,7 +57,6 @@ model Resource {
   id        Int      @id @default(autoincrement())
   name      String
   description String 
-  urldrive String?
   serviceId Int      // Relacionado con el servicio
 
   //service   Service  @relation(fields: [serviceId], references: [id])

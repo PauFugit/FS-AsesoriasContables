@@ -24,6 +24,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
           const data = await response.json();
           setUserData({
             name: data.name || '',
+            lastname: data.lastname || '',
             email: data.email || '',
             image: data.image || '/isotipouno.png',
           });
@@ -110,7 +111,7 @@ const ProfileTab = () => {
             company: data.company || '',
             companyEmail: data.companyEmail || '',
             companyPhone: data.companyPhone || '',
-            companyRUT: data.companyRUT || ''
+            companyRUT: data.companyRUT || '',
           });
           setIsLoading(false);
         } catch (error) {
@@ -187,7 +188,7 @@ const ProfileTab = () => {
             <input className="w-full p-2 border rounded" placeholder="Correo electrónico" name="companyEmail" value={userData.companyEmail} onChange={handleInputChange} />
             <label htmlFor="companyPhone" className="text-slate-500 mb-2 block  text-sm">Teléfono de contacto comercial: </label>
             <input className="w-full p-2 border rounded" placeholder="Teléfono empresa" name="companyPhone" value={userData.companyPhone} onChange={handleInputChange} />
-            <label htmlFor="companyRUT" className="text-slate-500 mb-2 block  text-sm">RUT DE LA EMPRESA: </label>
+            <label htmlFor="companyRUT" className="text-slate-500 mb-2 block  text-sm">RUT Empresa: </label>
             <input className="w-full p-2 border rounded" placeholder="RUT empresa" name="companyRUT" value={userData.companyRUT} onChange={handleInputChange} />
           </div>
         </div>
@@ -199,8 +200,32 @@ const ProfileTab = () => {
     </div>
   );
 };
+
+
 const ResourcesTab = () => {
   const [activeResource, setActiveResource] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (session && session.user.id) {
+        try {
+          const response = await fetch(`/api/users/${session.user.id}`);
+          if (response.ok) {
+            const data = await response.json();
+            setUserData(data);
+          } else {
+            console.error('Failed to fetch user data');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [session]);
 
   const resources = [
     {
@@ -208,7 +233,7 @@ const ResourcesTab = () => {
       title: 'BIBLIOTECA DIGITAL',
       description: 'Acceso a carpetas con documentos contables en formato digital.',
       content: [
-        { type: 'WEB', name: 'Acceso a google drive', urldrive: 'https://drive.google.com/drive/folders/1-iQ8N6s8ggfMiPI7frGkRu56VePCEfXd' },
+        { type: 'WEB', name: 'Acceso a google drive', urldrive: userData?.driveURL || '#' },
       ]
     },
     {
@@ -283,6 +308,7 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
     </div>
   );
 };
+
 export default function ClientDashboard() {
   const [activeTab, setActiveTab] = useState('profile');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

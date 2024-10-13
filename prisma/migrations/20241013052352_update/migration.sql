@@ -7,6 +7,7 @@ CREATE TABLE `Users` (
     `lastname` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `phone` VARCHAR(191) NULL,
+    `image` VARCHAR(191) NULL,
     `role` ENUM('ADMIN', 'TEAM', 'CLIENT') NOT NULL,
     `active` BOOLEAN NOT NULL DEFAULT true,
     `resetToken` VARCHAR(191) NULL,
@@ -14,7 +15,8 @@ CREATE TABLE `Users` (
     `company` VARCHAR(191) NULL,
     `companyEmail` VARCHAR(191) NULL,
     `companyPhone` VARCHAR(191) NULL,
-    `companyAdress` VARCHAR(191) NULL,
+    `companyRUT` VARCHAR(191) NULL,
+    `driveURL` VARCHAR(191) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 

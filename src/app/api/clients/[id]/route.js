@@ -12,7 +12,8 @@ export async function GET(request, { params }) {
         name: true,
         lastname: true,
         email: true,
-        company: true
+        company: true,
+        driveURL: true
       }
     });
 

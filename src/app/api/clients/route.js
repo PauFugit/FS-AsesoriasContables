@@ -13,6 +13,7 @@ export async function GET() {
                 lastname: true,
                 email: true,
                 company: true,
+                driveURL: true,
                 active: true
             }
         });
@@ -34,6 +35,7 @@ export async function PUT(request) {
                 lastname: true,
                 email: true,
                 company: true,
+                driveURL: true,
                 active: true
             }
         })
