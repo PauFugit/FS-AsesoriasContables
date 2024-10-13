@@ -78,16 +78,13 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
 const ProfileTab = () => {
   const { data: session } = useSession();
   const [userData, setUserData] = useState({
+    username: '',
     name: '',
     lastname: '',
-    username: '',
-    email: '',
     phone: '',
-    company: '',
-    companyEmail: '',
-    companyPhone: '',
-    companyAddress: ''
+    email: '',
   });
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -105,7 +102,6 @@ const ProfileTab = () => {
             name: data.name || '',
             lastname: data.lastname || '',
             phone: data.phone || '',
-            password: data.password || '',
             email: data.email || ''
           });
           setIsLoading(false);
@@ -127,29 +123,40 @@ const ProfileTab = () => {
     }));
   };
 
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (session?.user?.id) {
       try {
-        const response = await fetch(`/api/users/${session.user.id}`, {
+        const dataToUpdate = { ...userData, id: session.user.id };
+        if (password) {
+          dataToUpdate.password = password;
+        }
+  
+        const response = await fetch(`/api/users`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(userData),
+          body: JSON.stringify(dataToUpdate),
         });
-
+  
         if (!response.ok) {
           throw new Error('Failed to update user data');
         }
-
-        alert('User data updated successfully!');
+  
+        const result = await response.json();
+        alert(result.message);
+        setPassword(''); // Clear the password field after successful update
       } catch (error) {
         setError(error.message);
+        alert(error.message);
       }
     }
   };
-
   if (isLoading) return <div>Loading user data...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -168,25 +175,19 @@ const ProfileTab = () => {
             <input className="w-full p-2 border rounded" placeholder="Apellido" name="lastname" value={userData.lastname} onChange={handleInputChange} />
             <label htmlFor="Teléfono" className="text-slate-500 mb-2 block  text-sm">Teléfono: </label>
             <input className="w-full p-2 border rounded" placeholder="Teléfono" name="phone" value={userData.phone} onChange={handleInputChange} />
-            <label htmlFor="password" className="text-slate-500 mb-2 block  text-sm">Contraseña </label>
-            <input className="w-full p-2 border rounded" placeholder="Contraseña" name="password" value={userData.password} onChange={handleInputChange} />
             <label htmlFor="email" className="text-slate-500 mb-2 block  text-sm">Correo electrónico: </label>
             <input className="w-full p-2 border rounded" placeholder="Correo electrónico" name="email" value={userData.email} onChange={handleInputChange} />
+            <label htmlFor="password" className="text-slate-500 mb-2 block text-sm">Nueva Contraseña: </label>
+            <input className="w-full p-2 border rounded" type="password" placeholder="Dejar en blanco para no cambiar" name="password" value={password} onChange={handlePasswordChange} />
           </div>
         </div>
-        {/*<div className="mb-6">
-          <h2 className="text-lg md:text-xl font-semibold mb-4">INFORMACIÓN COMERCIAL</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label htmlFor="company" className="text-slate-500 mb-2 block  text-sm">Nombre de usuario: </label>
-            <input className="w-full p-2 border rounded" placeholder="Nombre empresa" name="company" value={userData.company} onChange={handleInputChange} />
-            <input className="w-full p-2 border rounded" placeholder="Correo electrónico" name="companyEmail" value={userData.companyEmail} onChange={handleInputChange} />
-            <input className="w-full p-2 border rounded" placeholder="Teléfono empresa" name="companyPhone" value={userData.companyPhone} onChange={handleInputChange} />
-            <input className="w-full p-2 border rounded md:col-span-2" placeholder="Dirección empresa" name="companyAddress" value={userData.companyAddress} onChange={handleInputChange} />
-          </div>
-        </div>*/}
+     
         <div className="flex flex-col md:flex-row justify-end space-y-2 md:space-y-0 md:space-x-4">
           <button type="submit" className="px-4 py-2 bg-custom-blue text-white rounded hover:bg-custom-green w-full md:w-auto">Actualizar Datos</button>
-          <button type="button" className="px-4 py-2 border rounded text-blue-600 hover:bg-blue-50 w-full md:w-auto" onClick={() => setUserData(prevData => ({ ...prevData }))}>Cancelar</button>
+          <button type="button" className="px-4 py-2 border rounded text-blue-600 hover:bg-blue-50 w-full md:w-auto" onClick={() => {
+            setUserData(prevData => ({ ...prevData }));
+            setPassword('');
+          }}>Cancelar</button>
         </div>
       </form>
     </div>
