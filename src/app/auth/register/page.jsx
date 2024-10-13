@@ -36,7 +36,7 @@ try{
     })
 
     if (response.ok) {
-      router.push("/auth/login")
+      router.push("/dashboard")
     } else {
       const errorData = await response.json()
       console.log("Registration failed:", errorData)
