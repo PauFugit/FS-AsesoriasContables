@@ -502,7 +502,6 @@ const ResourcesTab = () => {
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 text-left">Nombre</th>
-            <th className="px-4 py-2 text-left">Usuario</th>
             <th className="px-4 py-2 text-left">Email</th>
             <th className="px-4 py-2 text-left">Empresa</th>
             <th className="px-4 py-2 text-left">RUT Empresa</th>
@@ -514,7 +513,6 @@ const ResourcesTab = () => {
           {clients.map((client) => (
             <tr key={client.id} className="border-b">
               <td className="px-4 py-2">{`${client.name} ${client.lastname}`}</td>
-              <td className="px-4 py-2">{client.username || 'N/A'}</td>
               <td className="px-4 py-2">{client.email}</td>
               <td className="px-4 py-2">{client.company || 'N/A'}</td>
               <td className="px-4 py-2">{client.companyRUT || 'N/A'}</td>
