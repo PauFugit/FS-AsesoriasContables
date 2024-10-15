@@ -12,7 +12,15 @@ export default withAuth(
       return NextResponse.redirect(new URL('/auth/login', req.url))
     }
 
-    // Add role-based redirects here if needed
+    // Check for /auth/register route
+    if (path === '/auth/register') {
+      // If user is not logged in or doesn't have an admin role, redirect to home page
+      if (!token || token.role !== 'ADMIN') {
+        return NextResponse.redirect(new URL('/', req.url))
+      }
+    }
+
+    // Add other role-based redirects here if needed
   },
   {
     callbacks: {
@@ -21,4 +29,4 @@ export default withAuth(
   }
 )
 
-export const config = { matcher: ['/dashboard/:path*'] }
+export const config = { matcher: ['/dashboard/:path*', '/auth/register'] }
