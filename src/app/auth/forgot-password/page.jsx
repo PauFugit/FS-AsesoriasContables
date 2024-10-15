@@ -7,13 +7,30 @@ import Image from 'next/image'
 export default function ForgotPasswordPage() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   const onSubmit = async (data) => {
-    // Here you would typically send a request to your API to initiate the password reset process
-    console.log('Password reset requested for:', data.email)
-    setMessage('Si la cuenta existe para este correo, recibirás las instrucciones para reestablecer tu contraseña.')
-  }
+    try {
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage(result.message);
+        setError('');
+      } else {
+        setError(result.error || 'Ha ocurrido un error. Por favor, inténtalo de nuevo.');
+        setMessage('');
+      }
+    } catch (error) {
+      setError('Ha ocurrido un error. Por favor, inténtalo de nuevo.');
+      setMessage('');
+    }
+  }
   return (
     <div className="min-h-screen flex justify-center items-center" style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover"}}>
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
@@ -49,6 +66,7 @@ export default function ForgotPasswordPage() {
           </button>
         </form>
         {message && <p className="mt-4 text-center text-green-600">{message}</p>}
+        {error && <p className="mt-4 text-center text-red-600">{error}</p>}
       </div>
     </div>
   )
