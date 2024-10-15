@@ -4,6 +4,7 @@ import { UserCircle, Users, Briefcase, FileText, LogOut, Menu } from 'lucide-rea
 import { Switch } from '@/components/ui/switch';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { PencilIcon, CheckIcon, XIcon, TrashIcon, PlusIcon } from '@heroicons/react/solid';
 
 
 const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
@@ -416,32 +417,151 @@ const ServicesTab = () => {
 };
 
 const ResourcesTab = () => {
-  const resources = [
-    { id: 1, name: 'Guía Fiscal 2023', type: 'PDF', size: '2.5 MB', uploadDate: '2023-05-15' },
-    { id: 2, name: 'Plantilla de Balance', type: 'Excel', size: '1.8 MB', uploadDate: '2023-06-01' },
-    { id: 3, name: 'Normativa Contable', type: 'PDF', size: '3.2 MB', uploadDate: '2023-06-10' },
-    { id: 4, name: 'Calculadora de Impuestos', type: 'Web App', size: 'N/A', uploadDate: '2023-07-01' },
-  ];
+  const [clients, setClients] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editValue, setEditValue] = useState('');
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
+  const fetchClients = async () => {
+    try {
+      const response = await fetch('/api/clients');
+      if (!response.ok) {
+        throw new Error('Error al cargar recursos');
+      }
+      const { data } = await response.json();
+      setClients(data);
+      setIsLoading(false);
+    } catch (error) {
+      setError(error.message);
+      setIsLoading(false);
+    }
+  };
+
+  const handleEdit = (id, currentValue) => {
+    setEditingId(id);
+    setEditValue(currentValue || '');
+  };
+
+  const handleSave = async (id) => {
+    try {
+      const response = await fetch(`/api/clients/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driveURL: editValue }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el recurso');
+      }
+
+      setClients(clients.map(client => 
+        client.id === id ? { ...client, driveURL: editValue } : client
+      ));
+      setEditingId(null);
+    } catch (error) {
+      console.error('Error saving driveURL:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar este recurso?')) return;
+
+    try {
+      const response = await fetch(`/api/clients/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driveURL: null }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar el recurso');
+      }
+
+      setClients(clients.map(client => 
+        client.id === id ? { ...client, driveURL: null } : client
+      ));
+    } catch (error) {
+      console.error('Error deleting driveURL:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
+  if (isLoading) return <div>Cargando recursos...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
-      <h1 className="text-xl md:text-2xl font-bold mb-6 text-custom-blue">RECURSOS</h1>
+      <h1 className="text-xl md:text-2xl font-bold mb-6 text-custom-blue">ADMINISTRADOR DE RECURSOS</h1>
       <table className="min-w-full">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 text-left">Nombre</th>
-            <th className="px-4 py-2 text-left">Tipo</th>
-            <th className="px-4 py-2 text-left">Tamaño</th>
-            <th className="px-4 py-2 text-left">Fecha de Subida</th>
+            <th className="px-4 py-2 text-left">Usuario</th>
+            <th className="px-4 py-2 text-left">Email</th>
+            <th className="px-4 py-2 text-left">Empresa</th>
+            <th className="px-4 py-2 text-left">RUT Empresa</th>
+            <th className="px-4 py-2 text-left">Link Drive</th>
+            <th className="px-4 py-2 text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {resources.map((resource) => (
-            <tr key={resource.id} className="border-b">
-              <td className="px-4 py-2">{resource.name}</td>
-              <td className="px-4 py-2">{resource.type}</td>
-              <td className="px-4 py-2">{resource.size}</td>
-              <td className="px-4 py-2">{resource.uploadDate}</td>
+          {clients.map((client) => (
+            <tr key={client.id} className="border-b">
+              <td className="px-4 py-2">{`${client.name} ${client.lastname}`}</td>
+              <td className="px-4 py-2">{client.username || 'N/A'}</td>
+              <td className="px-4 py-2">{client.email}</td>
+              <td className="px-4 py-2">{client.company || 'N/A'}</td>
+              <td className="px-4 py-2">{client.companyRUT || 'N/A'}</td>
+              <td className="px-4 py-2">
+                {editingId === client.id ? (
+                  <input
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    className="border rounded px-2 py-1 w-full"
+                  />
+                ) : (
+                  client.driveURL ? (
+                    <a href={client.driveURL} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                      {client.driveURL}
+                    </a>
+                  ) : 'N/A'
+                )}
+              </td>
+              <td className="px-4 py-2">
+                {editingId === client.id ? (
+                  <>
+                    <button onClick={() => handleSave(client.id)} className="text-green-600 hover:text-green-800 mr-2">
+                      <CheckIcon className="h-5 w-5" />
+                    </button>
+                    <button onClick={() => setEditingId(null)} className="text-red-600 hover:text-red-800">
+                      <XIcon className="h-5 w-5" />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => handleEdit(client.id, client.driveURL)} className="text-blue-600 hover:text-blue-800 mr-2">
+                      <PencilIcon className="h-5 w-5" />
+                    </button>
+                    {client.driveURL && (
+                      <button onClick={() => handleDelete(client.id)} className="text-red-600 hover:text-red-800">
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
+                    )}
+                    {!client.driveURL && (
+                      <button onClick={() => handleEdit(client.id, '')} className="text-green-600 hover:text-green-800">
+                        <PlusIcon className="h-5 w-5" />
+                      </button>
+                    )}
+                  </>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
