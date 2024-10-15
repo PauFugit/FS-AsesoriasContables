@@ -29,7 +29,7 @@ export async function sendEmail(to, from, subject, text, html) {
         headers: error.response.headers,
       });
     }
-    throw error; // Re-throw the error so it can be handled by the caller
+    throw error; // Re-throw the error 
   }
 }
 
@@ -53,6 +53,6 @@ export async function sendPasswordResetEmail(to, resetUrl) {
     return result;
   } catch (error) {
     console.error('Failed to send password reset email', { to: to, error: error.message });
-    throw error; // Re-throw the error so it can be handled by the caller
+    throw error; // Re-throw the error 
   }
 }

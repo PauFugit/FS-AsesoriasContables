@@ -465,7 +465,6 @@ const ResourcesTab = () => {
       setEditingId(null);
     } catch (error) {
       console.error('Error saving driveURL:', error);
-      // You might want to show an error message to the user here
     }
   };
 
