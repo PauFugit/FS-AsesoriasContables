@@ -5,7 +5,7 @@ CREATE TABLE `Users` (
     `username` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `lastname` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
     `phone` VARCHAR(191) NULL,
     `image` VARCHAR(191) NULL,
     `role` ENUM('ADMIN', 'TEAM', 'CLIENT') NOT NULL,
@@ -22,32 +22,6 @@ CREATE TABLE `Users` (
 
     UNIQUE INDEX `Users_email_key`(`email`),
     UNIQUE INDEX `Users_username_key`(`username`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Resource` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NOT NULL,
-    `serviceId` INTEGER NOT NULL,
-    `clientId` INTEGER NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `File` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(191) NOT NULL,
-    `type` VARCHAR(191) NOT NULL,
-    `url` VARCHAR(191) NOT NULL,
-    `resourceId` INTEGER NOT NULL,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -77,9 +51,3 @@ CREATE TABLE `CotizationForm` (
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- AddForeignKey
-ALTER TABLE `Resource` ADD CONSTRAINT `Resource_clientId_fkey` FOREIGN KEY (`clientId`) REFERENCES `Users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `File` ADD CONSTRAINT `File_resourceId_fkey` FOREIGN KEY (`resourceId`) REFERENCES `Resource`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
