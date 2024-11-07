@@ -264,7 +264,7 @@ const ResourcesTab = () => {
         { type: 'link', name: 'Dirección del Trabajo', url:'https://www.dt.gob.cl'},
         { type: 'link', name: 'Previred', url: 'https://www.previred.com/' },
         { type: 'link', name: 'Portal SII', url: 'https://www.sii.cl/' },
-        { type: 'pdf', name: 'Documento PDF', url: '/pdfs/pdfrecursoweb.pdf' },
+        { type: 'pdf', name: 'Documento PDF', url: '/public/pdfs/pdfrecursoweb.pdf' },
       ]
     },
   ];
