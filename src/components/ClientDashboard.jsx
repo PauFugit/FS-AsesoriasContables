@@ -217,6 +217,8 @@ const ProfileTab = () => {
 };
 
 
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
 const ResourcesTab = () => {
   const [activeResource, setActiveResource] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -261,6 +263,7 @@ const ResourcesTab = () => {
         { type: 'link', name: 'Dirección del Trabajo', url:'https://www.dt.gob.cl'},
         { type: 'link', name: 'Previred', url: 'https://www.previred.com/' },
         { type: 'link', name: 'Portal SII', url: 'https://www.sii.cl/' },
+        { type: 'pdf', name: 'Documento PDF', url: '/pdfs/pdfrecursoweb.pdf' },
       ]
     },
   ];
@@ -291,38 +294,6 @@ const ResourcesTab = () => {
   );
 };
 
-const ResourceModal = ({ isOpen, onClose, resource }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl md:text-2xl font-bold">{resource.title}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="space-y-4">
-          {resource.content.map((item, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              {item.type === 'WEB' && <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />}
-              {item.type === 'link' && <Globe className="w-5 h-5 text-blue-500 flex-shrink-0" />}
-              <a
-                href={item.urldrive || item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline break-all"
-              >
-                {item.name}
-              </a>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default function ClientDashboard() {
   const [activeTab, setActiveTab] = useState('profile');
