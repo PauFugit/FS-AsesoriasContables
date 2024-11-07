@@ -3,6 +3,9 @@ import Image from 'next/image';
 import { UserCircle, FileText, LogOut, Menu, GraduationCap, Globe, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import ResourcesTab from '@/components/ResourcesTab';
 
 
 const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
@@ -217,8 +220,6 @@ const ProfileTab = () => {
 };
 
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-
 const ResourcesTab = () => {
   const [activeResource, setActiveResource] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -291,6 +292,40 @@ const ResourcesTab = () => {
         resource={activeResource}
       />
     </div>
+  );
+};
+
+const ResourceModal = ({ isOpen, onClose, resource }) => {
+  if (!resource) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{resource.title}</DialogTitle>
+          <Button onClick={onClose} variant="ghost" className="absolute right-4 top-4">
+            <X className="h-4 w-4" />
+          </Button>
+        </DialogHeader>
+        <div className="space-y-4">
+          {resource.content.map((item, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              {item.type === 'WEB' && <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />}
+              {item.type === 'link' && <Globe className="w-5 h-5 text-blue-500 flex-shrink-0" />}
+              {item.type === 'pdf' && <FileText className="w-5 h-5 text-green-500 flex-shrink-0" />}
+              <Link
+                href={item.urldrive || item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline break-all"
+              >
+                {item.name}
+              </Link>
+            </div>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
