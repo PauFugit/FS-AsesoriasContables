@@ -264,7 +264,7 @@ const ResourcesTab = () => {
         { type: 'link', name: 'Dirección del Trabajo', url:'https://www.dt.gob.cl'},
         { type: 'link', name: 'Previred', url: 'https://www.previred.com/' },
         { type: 'link', name: 'Portal SII', url: 'https://www.sii.cl/' },
-        { type: 'pdf', name: 'Documento PDF', url: '/public/pdfs/pdfrecursoweb.pdf' },
+        { type: 'pdf', name: 'Documento PDF', url: '/pdfs/pdfrecursoweb.pdf' },
       ]
     },
   ];
@@ -274,18 +274,18 @@ const ResourcesTab = () => {
       <h1 className="text-xl md:text-2xl font-bold mb-6">RECURSOS COMPLEMENTARIOS</h1>
       <p className="mb-6">Haz click en cada recurso para acceder a él.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {resources.map((resource, index) => (
-          <div
-            key={index}
-            className="bg-blue-50 p-4 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => setActiveResource(resource)}
-          >
-            <resource.icon className="w-12 h-12 text-custom-blue mb-2" />
-            <h3 className="text-lg font-semibold mb-2">{resource.title}</h3>
-            <p className="text-sm text-gray-600">{resource.description}</p>
-          </div>
-        ))}
-      </div>
+  {resources.map((resource, index) => (
+    <div
+      key={index}
+      className="bg-white p-6 rounded-lg cursor-pointer hover:shadow-lg transition-shadow border border-blue-100"
+      onClick={() => setActiveResource(resource)}
+    >
+      <resource.icon className="w-12 h-12 text-blue-600 mb-4" />
+      <h3 className="text-xl font-semibold mb-2 text-blue-800">{resource.title}</h3>
+      <p className="text-sm text-gray-600">{resource.description}</p>
+    </div>
+  ))}
+</div>
       <ResourceModal
         isOpen={!!activeResource}
         onClose={() => setActiveResource(null)}
@@ -298,29 +298,44 @@ const ResourcesTab = () => {
 const ResourceModal = ({ isOpen, onClose, resource }) => {
   if (!resource) return null;
 
+  const handleItemClick = (item) => {
+    if (item.type === 'pdf') {
+      window.open(item.url, '_blank');
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="bg-blue-50 border-2 border-blue-200 max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle>{resource.title}</DialogTitle>
-          <Button onClick={onClose} variant="ghost" className="absolute right-4 top-4">
-            <X className="h-4 w-4" />
+          <DialogTitle className="text-2xl font-bold text-blue-800">{resource.title}</DialogTitle>
+          <Button onClick={onClose} variant="ghost" className="absolute right-4 top-4 text-blue-600 hover:text-blue-800">
+            <X className="h-5 w-5" />
           </Button>
         </DialogHeader>
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
           {resource.content.map((item, index) => (
-            <div key={index} className="flex items-center space-x-2">
-              {item.type === 'WEB' && <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />}
-              {item.type === 'link' && <Globe className="w-5 h-5 text-blue-500 flex-shrink-0" />}
-              {item.type === 'pdf' && <FileText className="w-5 h-5 text-green-500 flex-shrink-0" />}
-              <Link
-                href={item.urldrive || item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline break-all"
-              >
-                {item.name}
-              </Link>
+            <div key={index} className="flex items-center space-x-3 bg-white p-3 rounded-lg shadow-sm">
+              {item.type === 'WEB' && <FileText className="w-6 h-6 text-red-500 flex-shrink-0" />}
+              {item.type === 'link' && <Globe className="w-6 h-6 text-blue-500 flex-shrink-0" />}
+              {item.type === 'pdf' && <FileText className="w-6 h-6 text-green-500 flex-shrink-0" />}
+              {item.type === 'pdf' ? (
+                <button
+                  onClick={() => handleItemClick(item)}
+                  className="text-blue-600 hover:text-blue-800 hover:underline font-medium break-all text-left"
+                >
+                  {item.name}
+                </button>
+              ) : (
+                <Link
+                  href={item.urldrive || item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 hover:underline font-medium break-all"
+                >
+                  {item.name}
+                </Link>
+              )}
             </div>
           ))}
         </div>
