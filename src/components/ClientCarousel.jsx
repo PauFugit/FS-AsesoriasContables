@@ -36,6 +36,15 @@ const clients = [
     { src: '/client29.png', alt: 'Client 29' },
     { src: '/client30.png', alt: 'Client 30' },
     { src: '/client31.png', alt: 'Client 31' },
+    { src: '/client32.png', alt: 'Client 32' },
+    { src: '/client33.jpeg', alt: 'Client 33' },
+    { src: '/client34.jpeg', alt: 'Client 34' },
+    { src: '/client35.jpeg', alt: 'Client 35' },
+    { src: '/client36.png', alt: 'Client 36' },
+    { src: '/client37.jpeg', alt: 'Client 37' },
+    { src: '/client38.jpeg', alt: 'Client 38' },
+    { src: '/client39.jpeg', alt: 'Client 39' },
+    { src: '/client40.jpeg', alt: 'Client 40' }
 ];
 
 export default function ClientCarousel() {
