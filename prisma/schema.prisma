@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,76 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Modelo User
 model Users {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
-  username   String   @unique
-  name       String
-  lastname   String
-  password   String @db.VarChar(255)
-  phone      String?
-  image    String?
-  role       Role     // DEFINE ROL DE USUARIO
-  active Boolean @default(true)
-  resetToken       String?
-  resetTokenExpires DateTime?
-  //services   Service[] @relation("UserServices")
-  //resources  Resource[] @relation("UsersResources")
-  company    String?
-  companyEmail String?
-  companyPhone String?
-  companyRUT String?
-  driveURL String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                Int       @id @default(autoincrement())
+  email             String    @unique(map: "email")
+  username          String    @unique(map: "username")
+  name              String
+  lastname          String
+  password          String    @db.VarChar(255)
+  phone             String?
+  image             String?
+  role              Role
+  active            Boolean   @default(true)
+  resetToken        String?
+  resetTokenExpires DateTime? @db.DateTime(0)
+  company           String?
+  companyEmail      String?
+  companyPhone      String?
+  companyRUT        String?
+  driveURL          String?
+  createdAt         DateTime  @default(now()) @db.DateTime(0)
+  updatedAt         DateTime  @default(now()) @updatedAt @db.DateTime(0)
 }
-
-enum Role{
-  ADMIN 
-  TEAM 
-  CLIENT // acceso a recursos
-}
-
-// Modelo Service
-//model Service {
-  //id         Int      @id @default(autoincrement())
-  //name       String
-  //description String
-  //active     Boolean  @default(true)
-  //clientId   Int?     // Campo opcional para relacionar con un cliente
-  //client     User?    @relation(fields: [clientId], references: [id], name: "UserServices")
-  //resources  Resource[] // Relación con recursos
-  //createdAt  DateTime @default(now())
-  //updatedAt  DateTime @updatedAt
-//}
-
-// Modelo Resource
-//model Resource {
-  //id        Int      @id @default(autoincrement())
-  //name      String
-  //description String 
-  //serviceId Int      // Relacionado con el servicio
-
-  //service   Service  @relation(fields: [serviceId], references: [id])
-  //clientId  Int?     // Relacionado con el cliente
-  //client    Users?    @relation(fields: [clientId], references: [id], name: "UsersResources")
-  //files     File[]   // Relación con archivos
-  //createdAt DateTime @default(now())
-  //updatedAt DateTime @updatedAt
-//}
-
-// Modelo File
-//model File {
- // id        Int      @id @default(autoincrement())
-  //name      String
-  //type      String
-  //url       String
-  //resourceId Int     // Relacionado con el recurso
-  //resource  Resource @relation(fields: [resourceId], references: [id])
-  //createdAt DateTime @default(now())
-  //updatedAt DateTime @updatedAt
-//}
 
 model ContactForm {
   id        Int      @id @default(autoincrement())
@@ -85,8 +35,8 @@ model ContactForm {
   apellido  String
   correo    String
   telefono  String?
-  mensaje   String
-  createdAt DateTime @default(now())
+  mensaje   String   @db.Text
+  createdAt DateTime @default(now()) @db.DateTime(0)
 }
 
 model CotizationForm {
@@ -96,6 +46,22 @@ model CotizationForm {
   correo    String
   telefono  String?
   servicio  String
-  mensaje   String
-  createdAt DateTime @default(now())
+  mensaje   String   @db.Text
+  createdAt DateTime @default(now()) @db.DateTime(0)
+}
+
+model RoleEnum {
+  value RoleEnum_value @id
+}
+
+enum Role {
+  ADMIN
+  TEAM
+  CLIENT
+}
+
+enum RoleEnum_value {
+  ADMIN
+  TEAM
+  CLIENT
 }
