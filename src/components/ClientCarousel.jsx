@@ -33,8 +33,6 @@ const clients = [
     { src: '/client26.png', alt: 'Client 26' },
     { src: '/client27.png', alt: 'Client 27' },
     { src: '/client28.png', alt: 'Client 28' },
-    { src: '/client29.png', alt: 'Client 29' },
-    { src: '/client30.png', alt: 'Client 30' },
     { src: '/client31.png', alt: 'Client 31' },
     { src: '/client32.png', alt: 'Client 32' },
     { src: '/client33.jpeg', alt: 'Client 33' },
