@@ -57,7 +57,7 @@ export default function CardsServices() {
         <div className="flex items-center space-x-5 space-y-10">
           <Link href="/cotiza">
             <p
-              className="inline-block mt-10 ml-8 text-xl sm:text-3xl bg-custom-green py-2 px-3 rounded-full shadow-lg hover:bg-custom-blue hover:text-custom-white transition duration-300 cursor-pointer"
+              className="inline-block mt-10 ml-8 text-xl sm:text-3xl text-white bg-custom-blue py-2 px-3 rounded-full shadow-lg hover:bg-custom-white hover:text-custom-blue transition duration-300 cursor-pointer"
               style={{ letterSpacing: "0.1rem" }}
             >
               Cotiza aquí

@@ -98,7 +98,7 @@ function LoginPage() {
               <span className="text-red-500 text-sm">{errors.password.message}</span>
             )}
           </div>
-          <button className="w-full bg-custom-blue text-white hover:bg-custom-green hover:text-custom-blue p-3 rounded-lg mt-2 mb-4">
+          <button className="w-full bg-custom-blue text-white hover:bg-custom-white hover:text-custom-blue p-3 rounded-lg mt-2 mb-4">
             INICIAR SESIÓN
           </button>
           <div className="text-center">

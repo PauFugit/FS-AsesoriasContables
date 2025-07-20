@@ -171,7 +171,7 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center px-3 py-1 border border-transparent text-2xl font-medium rounded-full shadow-sm text-custom-white bg-custom-blue hover:bg-custom-green hover:text-custom-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="flex items-center px-3 py-1 border border-transparent text-2xl font-medium rounded-full shadow-sm text-custom-white bg-custom-blue hover:bg-custom-white hover:text-custom-blue focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             {isSubmitting ? "Enviando..." : "Enviar"}
           </button>

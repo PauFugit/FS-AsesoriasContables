@@ -24,17 +24,17 @@ export default function Footer() {
                         <h3 className="text-3xl font-semibold mb-4">CONTACTO</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="mailto:contacto@asesoriasvaldivia.cl" className="hover:text-custom-green text-lg">
+                                <Link href="mailto:contacto@asesoriasvaldivia.cl" className="hover:text-custom-white text-lg">
                                     contacto@asesoriasvaldivia.cl
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/cotiza" className="hover:text-custom-green text-lg">
+                                <Link href="/cotiza" className="hover:text-custom-white text-lg">
                                     Cotiza con nosotros
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/contacto" className="hover:text-custom-green text-lg">
+                                <Link href="/contacto" className="hover:text-custom-white text-lg">
                                     Consultas generales
                                 </Link>
                             </li>
@@ -59,12 +59,12 @@ export default function Footer() {
                         <h3 className="text-3xl font-semibold mb-4">INFORMACIÓN</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/nosotros" className="hover:text-custom-green text-lg">
+                                <Link href="/nosotros" className="hover:text-custom-white text-lg">
                                     Quiénes somos
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/misionvision" className="hover:text-custom-green text-lg">
+                                <Link href="/misionvision" className="hover:text-custom-white text-lg">
                                     Misión y Visión
                                 </Link>
                             </li>
@@ -76,12 +76,12 @@ export default function Footer() {
                         <h3 className="text-3xl font-semibold mb-4">POLÍTICAS</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/privacidad" className="hover:text-custom-green text-lg">
+                                <Link href="/privacidad" className="hover:text-custom-white text-lg">
                                     Privacidad
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/terminosdeuso" className="hover:text-custom-green text-lg">
+                                <Link href="/terminosdeuso" className="hover:text-custom-white text-lg">
                                     Aviso legal y Términos de Uso
                                 </Link>
                             </li>

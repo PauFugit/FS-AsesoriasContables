@@ -39,7 +39,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
   }, [session]);
 
   return (
-    <div className={`w-64 bg-custom-green p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
+    <div className={`w-64 bg-custom-blue p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
       <div className="flex flex-col items-center mb-6">
         <Image
           src={userData.image}
@@ -48,10 +48,10 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
           height={100}
           className="rounded-full mb-2"
         />
-        <h2 className="text-lg font-bold text-custom-blue">{userData.name.toUpperCase()}</h2>
-        <p className="text-sm text-gray-800">{userData.email}</p>
+        <h2 className="text-lg font-bold text-custom-white">{userData.name.toUpperCase()}</h2>
+        <p className="text-sm text-custom-white">{userData.email}</p>
       </div>
-    <nav className="flex-1 space-y-2">
+    <nav className="flex-1 space-y-2 text-white">
       {[
         { icon: UserCircle, label: 'Perfil', value: 'profile' },
         { icon: Users, label: 'Usuarios', value: 'users' },
@@ -62,14 +62,14 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         <button
           key={item.value}
           className={`w-full text-left py-2 px-4 rounded flex items-center ${
-            activeTab === item.value ? 'bg-green-200' : ''
+            activeTab === item.value ? 'bg-blue-200' : ''
           }`}
           onClick={() => {
             setActiveTab(item.value);
             setIsSidebarOpen(false);
           }}
         >
-          <item.icon className="w-5 h-5 mr-2 text-custom-blue" />
+          <item.icon className="w-5 h-5 mr-2 text-custom-white" />
           {item.label}
         </button>
       ))}
@@ -188,7 +188,7 @@ const ProfileTab = () => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-end space-y-2 md:space-y-0 md:space-x-4">
-          <button type="submit" className="px-4 py-2 bg-custom-blue text-white rounded hover:bg-custom-green w-full md:w-auto">Actualizar Datos</button>
+          <button type="submit" className="px-4 py-2 bg-custom-blue text-white rounded hover:bg-custom-white hover:text-custom-blue w-full md:w-auto">Actualizar Datos</button>
           <button type="button" className="px-4 py-2 border rounded text-blue-600 hover:bg-blue-50 w-full md:w-auto" onClick={() => {
             setUserData(prevData => ({ ...prevData }));
             setPassword('');

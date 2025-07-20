@@ -80,7 +80,7 @@ export default function NewsSection() {
                 {newsItems.map(news => (
                     <div
                         key={news.id}
-                        className="bg-custom-green rounded-2xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-105"
+                        className="bg-custom-blue rounded-2xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-105"
                         onClick={() => openModal(news)}
                     >
                         <div className="relative h-48">
@@ -93,10 +93,10 @@ export default function NewsSection() {
                             />
                         </div>
                         <div className="p-4">
-                            <h3 className="text-lg font-semibold text-custom-blue mb-2">
+                            <h3 className="text-lg font-semibold text-custom-white mb-2">
                                 {news.title}
                             </h3>
-                            <p className="text-sm text-custom-blue">{news.subtitle}</p>
+                            <p className="text-sm text-custom-white">{news.subtitle}</p>
                         </div>
                     </div>
                 ))}

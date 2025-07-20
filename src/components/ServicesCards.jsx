@@ -17,7 +17,7 @@ const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReve
       <p className="text-custom-blue my-6 text-md md:text-2xl">{description}</p>
       <div className="flex items-center space-x-4 mt-8">
         <Link href="/cotiza"> 
-        <button className="text-lg sm:text-2xl flex items-center space-x-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full hover:bg-custom-green hover:text-custom-blue">
+        <button className="text-lg sm:text-2xl flex items-center space-x-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full hover:bg-custom-white hover:text-custom-blue">
           {buttonText}</button>
         </Link>
         <Image

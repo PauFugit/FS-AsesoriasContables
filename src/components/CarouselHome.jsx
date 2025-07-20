@@ -69,9 +69,15 @@ export default function Carousel() {
                         <h2 className="text-5xl sm:text-5xl md:text-7xl font-bold text-white mb-2">
                             {slide.title}
                         </h2>
-                        <h3 className="text-5xl sm:text-5xl md:text-7xl font-bold text-custom-green mb-2">
+                        <h3 className="text-5xl sm:text-5xl md:text-7xl font-bold text-custom-white mb-2">
                             {slide.subtitle}
                         </h3>
+                        <style jsx>{`
+                            .text-custom-white {
+                                -webkit-text-stroke: 2px #2B55A0;
+                                text-stroke: 2px #2B55A0;
+                            }
+                        `}</style>
                         <h2 className="text-5xl sm:text-5xl md:text-7xl font-bold text-white mb-4">
                             {slide.action}
                         </h2>
@@ -81,14 +87,14 @@ export default function Carousel() {
 
                         <div className="flex items-center">
                             <Image
-                                src="/flechaverdederecha.png"
+                                src="/flechaazulderecha.png"
                                 width={100}
                                 height={100}
                                 alt="Arrow"
                                 className="mr-2 hidden md:block"
                             />
                             <Image
-                                src="/flechaverdederecha.png"
+                                src="/flechaazulderecha.png"
                                 width={50}
                                 height={50}
                                 alt="Arrow"
@@ -96,7 +102,7 @@ export default function Carousel() {
                             />
 
                             <Link href={slide.href}>
-                                <button className="bg-custom-green text-white px-4 py-4 rounded-full text-lg sm:text-2xl font-semibold inline-flex items-center transition-all duration-300 ease-in-out hover:bg-custom-blue">
+                                <button className="bg-custom-white text-custom-blue px-4 py-4 rounded-full text-lg sm:text-2xl font-semibold inline-flex items-center transition-all duration-300 ease-in-out hover:bg-custom-blue hover:text-custom-white">
                                     {slide.buttonText}
                                 </button>
                             </Link>
@@ -123,14 +129,14 @@ export default function Carousel() {
                 className="absolute top-1/2 right-4 transform -translate-y-1/2 rounded-full p-2 focus:outline-none transition-all duration-300"
             >
                 <Image
-                    src="/flechaverdederecha.png"
+                    src="/flechaazulderecha.png"
                     width={80}
                     height={80}
                     alt="Arrow"
                     className="mr-2 block md:hidden "
                 />
                 <Image
-                    src="/flechaverdederecha.png"
+                    src="/flechaazulderecha.png"
                     width={200}
                     height={200}
                     alt="Next slide"

@@ -9,9 +9,9 @@ async function Navbar() {
 
   const NavLink = ({ href, children, className = "" }) => (
     <li className="w-full lg:w-auto">
-      <Link href={href} className={`flex items-center hover:bg-custom-blue hover:text-custom-white py-1 px-4 rounded transition-colors duration-200 ${className}`}>
+      <Link href={href} className={`flex items-center hover:bg-custom-white hover:text-custom-blue py-1 px-4 rounded transition-colors duration-200 ${className}`}>
         <Image
-          src="/flechaverdederecha.png"
+          src="/flechaazulderecha.png"
           alt="Flecha verde hacia la derecha"
           width={25}
           height={25}
@@ -51,8 +51,8 @@ async function Navbar() {
               <NavLink href="/noticias">Noticias</NavLink>
               <NavLink href="/contacto">Contacto</NavLink>
               <li className="w-full lg:w-auto">
-                <Link href="/auth/login" className="flex items-center hover:bg-custom-green lg:hover:text-custom-white px-3 py-2 rounded transition-colors duration-200">
-                <CircleUserRound className="w-5 h-5 mr-2 text-custom-green hover:text-custom-white" />
+                <Link href="/auth/login" className="flex items-center hover:bg-custom-blue lg:hover:text-custom-blue px-3 py-2 rounded transition-colors duration-200">
+                <CircleUserRound className="w-5 h-5 mr-2 text-custom-white hover:text-custom-white" />
                 </Link>
               </li>
             </>
