@@ -13,24 +13,22 @@ const AboutUs = () => {
       </header>
     <div className=" py-12 w-full" style={{ backgroundImage: "url('/fondoaboutus.png')", backgroundSize: "cover" }}>
       <div className="container mx-auto py-12">
-        <div className="flex flex-wrap justify-center items-center mb-8">
-          <div className="w-1/2 md:w-1/4 px-4 mb-8 md:mb-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-4 gap-y-8 justify-items-center items-center mb-8 w-full max-w-6xl mx-auto">
+          <div className="w-full">
             <img src="/credencialricardo.png" alt="Ricardo Valdivia Salis" className="w-full h-auto" />
-
           </div>
-          <div className="w-1/2 md:w-1/4 px-4 mb-8 md:mb-0">
+          <div className="w-full">
             <img src="/credencialgabriela.png" alt="Gabriela Oyanadel Dubost" className="w-full h-auto" />
-
           </div>
-          <div className="w-1/2 md:w-1/4 px-4 mb-8 md:mb-0">
+          <div className="w-full">
             <img src="/credencialariel.png" alt="Ariel Villaman Sanchez" className="w-full h-auto" />
-
           </div>
-          <div className="w-1/2 md:w-1/4 px-4 mb-8 md:mb-0">
+          <div className="w-full">
             <img src="/credencialhector.png" alt="Hector Valdivia Ramos" className="w-full h-auto" />
-
           </div>
-          
+          <div className="w-full">
+            <img src="/credencialjesus.png" alt="Jesús [Nombre Apellido]" className="w-full h-auto" />
+          </div>
         </div>
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="text-left">

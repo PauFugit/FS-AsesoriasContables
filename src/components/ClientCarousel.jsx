@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 
 // client logos 
@@ -48,22 +48,9 @@ const clients = [
 export default function ClientCarousel() {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [visibleClients, setVisibleClients] = useState(5)
-
-    const nextSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % clients.length)
-    }
-
-    const prevSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + clients.length) % clients.length)
-    }
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            nextSlide()
-        }, 5000) // changes every 5 seconds
-
-        return () => clearInterval(timer)
-    }, [])
+    const startX = useRef(null)
+    const isDragging = useRef(false)
+    const hasMoved = useRef(false)
 
     useEffect(() => {
         const handleResize = () => {
@@ -77,18 +64,55 @@ export default function ClientCarousel() {
                 setVisibleClients(5)
             }
         }
-
         handleResize()
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
     }, [])
 
+    // Mouse/touch events
+    const handleDragStart = (e) => {
+        isDragging.current = true
+        hasMoved.current = false
+        startX.current = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX
+    }
+
+const handleDragMove = (e) => {
+    if (!isDragging.current) return
+    const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX
+    const delta = currentX - startX.current
+    const threshold = 40 // px por imagen
+    if (Math.abs(delta) > threshold && !hasMoved.current) {
+        const steps = Math.floor(Math.abs(delta) / threshold)
+        if (delta < 0) {
+            setCurrentIndex((prevIndex) => (prevIndex + steps) % clients.length)
+        } else {
+            setCurrentIndex((prevIndex) => (prevIndex - steps + clients.length) % clients.length)
+        }
+        hasMoved.current = true
+    }
+}
+
+    const handleDragEnd = () => {
+        isDragging.current = false
+        startX.current = null
+        hasMoved.current = false
+    }
+
     return (
-        <div className="w-full mx-auto px-4 py-8 md:py-16">
+        <div className="w-full mx-auto px-4 py-8 md:py-16 select-none">
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl text-custom-blue py-4 md:py-8 mb-4 md:mb-8 text-left" style={{ letterSpacing: "0.1rem" }}>
                 NUESTROS CLIENTES
             </h2>
-            <div className="relative my-4 md:my-8 py-5 md:py-10">
+            <div
+                className="relative my-4 md:my-8 py-5 md:py-10 cursor-grab"
+                onMouseDown={handleDragStart}
+                onMouseMove={handleDragMove}
+                onMouseUp={handleDragEnd}
+                onMouseLeave={handleDragEnd}
+                onTouchStart={handleDragStart}
+                onTouchMove={handleDragMove}
+                onTouchEnd={handleDragEnd}
+            >
                 <div className="flex justify-center items-center space-x-4 md:space-x-8 lg:space-x-12 mt-4">
                     {[...Array(visibleClients)].map((_, index) => {
                         const clientIndex = (currentIndex + index) % clients.length
@@ -105,32 +129,6 @@ export default function ClientCarousel() {
                         )
                     })}
                 </div>
-                <button
-                    onClick={prevSlide}
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-2"
-                    aria-label="Previous slide"
-                >
-                    <Image
-                        src="/flechaazulizquierda.png" 
-                        width={40} 
-                        height={40}
-                        className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20"
-                        alt="Previous"
-                    />
-                </button>
-                <button
-                    onClick={nextSlide}
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-2"
-                    aria-label="Next slide"
-                >
-                    <Image
-                        src="/flechaazulderecha.png" 
-                        width={40} 
-                        height={40}
-                        className="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20"
-                        alt="Next"
-                    />
-                </button>
             </div>
         </div>
     )
