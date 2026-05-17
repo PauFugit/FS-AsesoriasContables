@@ -17,8 +17,10 @@ export async function GET() {
             where: { role: 'CLIENT' },
             select: {
                 id: true,
+                username: true,
                 name: true,
                 lastname: true,
+                phone: true,
                 email: true,
                 company: true,
                 companyEmail: true,
