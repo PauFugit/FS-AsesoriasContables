@@ -2,7 +2,8 @@ import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import Image from 'next/image';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { CircleUserRound, LogOut } from 'lucide-react';
+import { CircleUserRound } from 'lucide-react';
+import SignOutButton from './SignOutButton';
 
 async function Navbar() {
   const session = await getServerSession(authOptions);
@@ -72,7 +73,7 @@ async function Navbar() {
               <NavLink href="/dashboard">Panel de Usuario</NavLink>
               {session?.user?.role === 'ADMIN' && (
               <NavLink href="/auth/register">Registrar nuevo usuario</NavLink>)}
-              <Link href="/api/auth/signout"><LogOut className="w-4 h-4 mr-2 text-custom-white" /></Link>
+              <SignOutButton />
             </>
           )}
         </ul>

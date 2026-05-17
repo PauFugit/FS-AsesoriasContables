@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { UserCircle, FileText, LogOut, Menu, GraduationCap, Globe, X } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 
 
@@ -68,10 +68,13 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         </button>
       ))}
     </nav>
-    <Link href="/api/auth/signout" className="flex items-center  mt-6">
+    <button
+      onClick={() => signOut({ callbackUrl: `${window.location.origin}/auth/login` })}
+      className="flex items-center mt-6 text-left"
+    >
       <LogOut className="w-4 h-4 mr-2 text-red-600" />
       Cerrar sesión
-    </Link>
+    </button>
   </div>
 );
 };

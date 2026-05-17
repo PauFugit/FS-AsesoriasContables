@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { UserCircle, Users, Briefcase, FileText, LogOut, Menu } from 'lucide-react';
+import { UserCircle, Users, Briefcase, FileText, LogOut, Menu, Zap, ReceiptText, ScrollText } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { PencilIcon, CheckIcon, XIcon, TrashIcon, PlusIcon } from '@heroicons/react/solid';
 
@@ -58,6 +58,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         { icon: Users, label: 'Clientes', value: 'clients' },
         { icon: Briefcase, label: 'Servicios', value: 'services' },
         { icon: FileText, label: 'Recursos', value: 'resources' },
+        { icon: Zap, label: 'Automatización', value: 'automation' },
       ].map((item) => (
         <button
           key={item.value}
@@ -74,10 +75,13 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         </button>
       ))}
     </nav>
-    <Link href="/api/auth/signout" className="flex items-center  mt-6">
+    <button
+      onClick={() => signOut({ callbackUrl: `${window.location.origin}/auth/login` })}
+      className="flex items-center mt-6 text-left"
+    >
       <LogOut className="w-4 h-4 mr-2 text-red-600" />
       Cerrar sesión
-    </Link>
+    </button>
   </div>
 );
 };
@@ -625,6 +629,121 @@ const ResourcesTab = () => {
   );
 };
 
+const AUTOMATION_ITEMS = [
+  {
+    icon: ReceiptText,
+    title: 'Facturas Electrónicas',
+    description: 'Automatiza la aceptación de facturas electrónicas en el portal del SII. Permite procesar empresas de forma individual o masiva mediante un archivo Excel, con soporte de hasta 3 operaciones simultáneas y generación automática de reportes.',
+    tools: [
+      {
+        name: 'AutomatizadorFacturas',
+        description: 'App de escritorio Windows. Automatiza la aceptación de facturas en SII con modo individual y masivo (Excel). Requiere Chrome instalado.',
+        downloadUrl: 'https://github.com/Pauaua/AutomatizadorFacturas/releases/download/v1.0.0/AutomatizadorAV_Installer.exe',
+      },
+    ],
+  },
+  {
+    icon: ScrollText,
+    title: 'Creación de Boletas',
+    description: 'Automatiza la emisión de boletas de honorarios en el portal del SII. Incluye modo individual para ingreso manual y modo masivo para carga desde Excel, con operación en modo headless y registro de actividad en tiempo real.',
+    tools: [
+      {
+        name: 'AutomatizadorBoletas',
+        description: 'App de escritorio Windows. Automatiza la emisión de boletas de honorarios en SII con modo individual y masivo (Excel). Requiere Chrome instalado.',
+        downloadUrl: 'https://github.com/Pauaua/AutomatizadorBoletas/releases/download/v1.0.0/Instalador_AutomatizadorBoletas.exe',
+      },
+    ],
+  },
+];
+
+const AutomationModal = ({ item, onClose }) => {
+  if (!item) return null;
+  const Icon = item.icon;
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="bg-custom-blue px-6 py-4 rounded-t-xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Icon className="w-6 h-6 text-white" />
+            <h2 className="text-lg font-bold text-white">{item.title}</h2>
+          </div>
+          <button onClick={onClose} className="text-white hover:text-blue-200 transition-colors">
+            <XIcon className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="p-6">
+          <p className="text-gray-500 text-sm mb-6">{item.description}</p>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden text-sm">
+              <thead>
+                <tr className="bg-blue-50">
+                  <th className="px-4 py-3 text-left font-semibold text-custom-blue">Aplicación</th>
+                  <th className="px-4 py-3 text-left font-semibold text-custom-blue">Descripción</th>
+                  <th className="px-4 py-3 text-left font-semibold text-custom-blue">Enlace</th>
+                </tr>
+              </thead>
+              <tbody>
+                {item.tools.map((tool, i) => (
+                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                    <td className="px-4 py-3 font-medium text-gray-800">{tool.name}</td>
+                    <td className="px-4 py-3 text-gray-600">{tool.description}</td>
+                    <td className="px-4 py-3">
+                      {tool.downloadUrl !== '#' ? (
+                        <a
+                          href={tool.downloadUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-custom-blue hover:underline font-medium"
+                        >
+                          Descargar →
+                        </a>
+                      ) : (
+                        <span className="text-gray-400 italic">Próximamente</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AutomationTab = () => {
+  const [activeItem, setActiveItem] = useState(null);
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <Zap className="w-6 h-6 text-custom-blue" />
+        <h1 className="text-xl md:text-2xl font-bold text-custom-blue">AUTOMATIZACIÓN</h1>
+      </div>
+      <p className="text-gray-500 text-sm mb-6">Accede a las herramientas de automatización disponibles para agilizar tus procesos.</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {AUTOMATION_ITEMS.map((item) => (
+          <button
+            key={item.title}
+            onClick={() => setActiveItem(item)}
+            className="group flex flex-col gap-4 border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-custom-blue transition-all text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-50 group-hover:bg-custom-blue p-3 rounded-lg transition-colors">
+                <item.icon className="w-6 h-6 text-custom-blue group-hover:text-white transition-colors" />
+              </div>
+              <h2 className="font-bold text-custom-blue text-lg">{item.title}</h2>
+            </div>
+            <p className="text-sm text-gray-500">{item.description}</p>
+            <span className="text-xs font-medium text-custom-blue group-hover:underline mt-auto">Ver herramientas →</span>
+          </button>
+        ))}
+      </div>
+      <AutomationModal item={activeItem} onClose={() => setActiveItem(null)} />
+    </div>
+  );
+};
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('profile');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -655,6 +774,7 @@ export default function AdminDashboard() {
         {activeTab === 'clients' && <ClientsTab />}
         {activeTab === 'services' && <ServicesTab />}
         {activeTab === 'resources' && <ResourcesTab />}
+        {activeTab === 'automation' && <AutomationTab />}
       </div>
     </div>
   );
