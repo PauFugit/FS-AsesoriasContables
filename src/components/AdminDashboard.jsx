@@ -512,10 +512,90 @@ const ServicesTab = () => {
   );
 };
 
+const AddResourceModal = ({ resources, onClose, onAdded }) => {
+  const [form, setForm] = useState({ name: '', url: '', type: 'link', resourceId: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (resources.length > 0 && !form.resourceId) {
+      setForm(f => ({ ...f, resourceId: resources[0].id }));
+    }
+  }, [resources]);
+
+  const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.url.trim() || !form.resourceId) return;
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name.trim(), url: form.url.trim(), type: form.type, resourceId: Number(form.resourceId) }),
+      });
+      if (!res.ok) throw new Error('Error al agregar el recurso');
+      const file = await res.json();
+      onAdded(file, Number(form.resourceId));
+      onClose();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+        <div className="bg-custom-blue px-6 py-4 rounded-t-xl flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white">Agregar recurso</h2>
+          <button onClick={onClose} className="text-white hover:text-blue-200">
+            <XIcon className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
+          <div>
+            <label className="text-slate-500 text-sm block mb-1">Categoría *</label>
+            <select name="resourceId" value={form.resourceId} onChange={handleChange} className="w-full p-2 border rounded text-sm bg-white">
+              {resources.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="text-slate-500 text-sm block mb-1">Nombre del recurso *</label>
+            <input name="name" required value={form.name} onChange={handleChange} className="w-full p-2 border rounded text-sm" placeholder="Ej: Guía de contabilidad 2024" />
+          </div>
+          <div>
+            <label className="text-slate-500 text-sm block mb-1">URL *</label>
+            <input name="url" required value={form.url} onChange={handleChange} className="w-full p-2 border rounded text-sm" placeholder="https://..." />
+          </div>
+          <div>
+            <label className="text-slate-500 text-sm block mb-1">Tipo</label>
+            <select name="type" value={form.type} onChange={handleChange} className="w-full p-2 border rounded text-sm bg-white">
+              <option value="link">Enlace web</option>
+              <option value="pdf">PDF</option>
+            </select>
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 border rounded text-sm hover:bg-gray-50">Cancelar</button>
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-custom-blue text-white rounded text-sm hover:bg-custom-green hover:text-custom-blue transition-colors disabled:opacity-50">
+              {loading ? 'Guardando...' : 'Agregar'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const ResourcesTab = () => {
   const [resources, setResources] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAddResource, setShowAddResource] = useState(false);
 
   // Nueva categoría
   const [newCatName, setNewCatName] = useState('');
@@ -602,13 +682,30 @@ const ResourcesTab = () => {
     <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
         <h1 className="text-xl md:text-2xl font-bold text-custom-blue">ADMINISTRADOR DE RECURSOS</h1>
-        <button
-          onClick={() => setShowNewCat(!showNewCat)}
-          className="flex items-center gap-1 bg-custom-blue text-white px-4 py-2 rounded-lg hover:bg-custom-green hover:text-custom-blue transition-colors text-sm"
-        >
-          <PlusIcon className="h-4 w-4" /> Nueva categoría
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowAddResource(true)}
+            className="flex items-center gap-1 bg-custom-green text-custom-blue px-4 py-2 rounded-lg hover:bg-custom-blue hover:text-white transition-colors text-sm font-medium"
+          >
+            <PlusIcon className="h-4 w-4" /> Agregar recurso
+          </button>
+          <button
+            onClick={() => setShowNewCat(!showNewCat)}
+            className="flex items-center gap-1 bg-custom-blue text-white px-4 py-2 rounded-lg hover:bg-custom-green hover:text-custom-blue transition-colors text-sm"
+          >
+            <PlusIcon className="h-4 w-4" /> Nueva categoría
+          </button>
+        </div>
       </div>
+      {showAddResource && (
+        <AddResourceModal
+          resources={resources}
+          onClose={() => setShowAddResource(false)}
+          onAdded={(file, resourceId) => setResources(resources.map(r =>
+            r.id === resourceId ? { ...r, files: [...r.files, file] } : r
+          ))}
+        />
+      )}
 
       {showNewCat && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
