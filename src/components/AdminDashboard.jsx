@@ -203,19 +203,102 @@ const ProfileTab = () => {
   );
 };
 
+const EMPTY_USER_FORM = { username: '', email: '', password: '', name: '', lastname: '', phone: '', role: 'TEAM' };
+
+const NewUserModal = ({ onClose, onCreated }) => {
+  const [form, setForm] = useState(EMPTY_USER_FORM);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const fd = new FormData();
+      Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+      const res = await fetch('/api/auth/register', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Error al crear usuario');
+      onCreated(data);
+      onClose();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="bg-custom-blue px-6 py-4 rounded-t-xl flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white">Nuevo Usuario</h2>
+          <button onClick={onClose} className="text-white hover:text-blue-200">
+            <XIcon className="w-5 h-5" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-slate-500 text-sm block mb-1">Nombre *</label>
+              <input name="name" required value={form.name} onChange={handleChange} className="w-full p-2 border rounded text-sm" placeholder="Nombre" />
+            </div>
+            <div>
+              <label className="text-slate-500 text-sm block mb-1">Apellido *</label>
+              <input name="lastname" required value={form.lastname} onChange={handleChange} className="w-full p-2 border rounded text-sm" placeholder="Apellido" />
+            </div>
+            <div>
+              <label className="text-slate-500 text-sm block mb-1">Nombre de usuario *</label>
+              <input name="username" required value={form.username} onChange={handleChange} className="w-full p-2 border rounded text-sm" placeholder="usuario123" />
+            </div>
+            <div>
+              <label className="text-slate-500 text-sm block mb-1">Teléfono *</label>
+              <input name="phone" required value={form.phone} onChange={handleChange} className="w-full p-2 border rounded text-sm" placeholder="+56 9 1234 5678" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="text-slate-500 text-sm block mb-1">Correo electrónico *</label>
+              <input name="email" type="email" required value={form.email} onChange={handleChange} className="w-full p-2 border rounded text-sm" placeholder="correo@ejemplo.cl" />
+            </div>
+            <div>
+              <label className="text-slate-500 text-sm block mb-1">Contraseña * (mín. 8 caracteres)</label>
+              <input name="password" type="password" required value={form.password} onChange={handleChange} className="w-full p-2 border rounded text-sm" placeholder="••••••••" />
+            </div>
+            <div>
+              <label className="text-slate-500 text-sm block mb-1">Rol *</label>
+              <select name="role" value={form.role} onChange={handleChange} className="w-full p-2 border rounded text-sm bg-white">
+                <option value="TEAM">Equipo (TEAM)</option>
+                <option value="CLIENT">Cliente (CLIENT)</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 border rounded text-sm hover:bg-gray-50">Cancelar</button>
+            <button type="submit" disabled={loading} className="px-4 py-2 bg-custom-blue text-white rounded text-sm hover:bg-custom-green hover:text-custom-blue transition-colors disabled:opacity-50">
+              {loading ? 'Registrando...' : 'Crear Usuario'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const UsersTab = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const { data: session } = useSession();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await fetch('/api/users');
-        if (!response.ok) {
-          throw new Error('Error al cargar usuarios');
-        }
+        if (!response.ok) throw new Error('Error al cargar usuarios');
         const { data } = await response.json();
         setUsers(data);
         setIsLoading(false);
@@ -224,7 +307,6 @@ const UsersTab = () => {
         setIsLoading(false);
       }
     };
-
     fetchUsers();
   }, []);
 
@@ -232,23 +314,13 @@ const UsersTab = () => {
     try {
       const response = await fetch('/api/users', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, active: !currentStatus }),
       });
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar usuario');
-      }
-
+      if (!response.ok) throw new Error();
       const { data: updatedUser } = await response.json();
-      setUsers(users.map(user => 
-        user.id === updatedUser.id ? updatedUser : user
-      ));
-    } catch (error) {
-
-    }
+      setUsers(users.map(user => user.id === updatedUser.id ? updatedUser : user));
+    } catch {}
   };
 
   if (isLoading) return <div>Cargando usuarios...</div>;
@@ -256,16 +328,25 @@ const UsersTab = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
-      <h1 className="text-xl md:text-2xl font-bold mb-6 text-custom-blue">LISTADO DE USUARIOS </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+        <h1 className="text-xl md:text-2xl font-bold text-custom-blue">LISTADO DE USUARIOS</h1>
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center gap-1 bg-custom-blue text-white px-4 py-2 rounded-lg hover:bg-custom-green hover:text-custom-blue transition-colors text-sm"
+        >
+          <PlusIcon className="h-4 w-4" /> Nuevo usuario
+        </button>
+      </div>
       <table className="min-w-full">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 text-left">Nombre</th>
             <th className="px-4 py-2 text-left">Nombre de Usuario</th>
             <th className="px-4 py-2 text-left">Email</th>
+            <th className="px-4 py-2 text-left">Rol</th>
             <th className="px-4 py-2 text-left">Teléfono</th>
             <th className="px-4 py-2 text-left">Fecha registro</th>
-            <th className="px-4 py-2 text-left">Ultima actualización</th>
+            <th className="px-4 py-2 text-left">Última actualización</th>
             {session?.user?.role === 'ADMIN' && (
               <th className="px-4 py-2 text-left">Estado</th>
             )}
@@ -277,6 +358,11 @@ const UsersTab = () => {
               <td className="px-4 py-2">{`${user.name} ${user.lastname}`}</td>
               <td className="px-4 py-2">{user.username || 'N/A'}</td>
               <td className="px-4 py-2">{user.email}</td>
+              <td className="px-4 py-2">
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${user.role === 'TEAM' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                  {user.role}
+                </span>
+              </td>
               <td className="px-4 py-2">{user.phone || 'N/A'}</td>
               <td className="px-4 py-2">{user.createdAt || 'N/A'}</td>
               <td className="px-4 py-2">{user.updatedAt || 'N/A'}</td>
@@ -292,6 +378,12 @@ const UsersTab = () => {
           ))}
         </tbody>
       </table>
+      {showModal && (
+        <NewUserModal
+          onClose={() => setShowModal(false)}
+          onCreated={(newUser) => setUsers(prev => [...prev, newUser])}
+        />
+      )}
     </div>
   );
 };
