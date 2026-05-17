@@ -8,7 +8,7 @@ import { PencilIcon, CheckIcon, XIcon, TrashIcon, PlusIcon } from '@heroicons/re
 
 
 const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [userData, setUserData] = useState({
     name: '',
     email: '',
@@ -39,19 +39,19 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
   }, [session]);
 
   return (
-    <div className={`w-64 bg-custom-blue p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
-      <div className="flex flex-col items-center mb-6">
+    <div className={`w-64 bg-custom-blue p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 overflow-y-auto`}>
+      <div className="flex flex-col items-center mb-4">
         <Image
           src={userData.image}
           alt="User"
-          width={100}
-          height={100}
+          width={80}
+          height={80}
           className="rounded-full mb-2"
         />
-        <h2 className="text-lg font-bold text-custom-white">{userData.name?.toUpperCase() || ''}</h2>
-        <p className="text-sm text-custom-white">{userData.email}</p>
+        <h2 className="text-base font-bold text-custom-white">{userData.name?.toUpperCase() || ''}</h2>
+        <p className="text-xs text-custom-white">{userData.email}</p>
       </div>
-    <nav className="flex-1 space-y-2 text-white">
+    <nav className="space-y-1 text-white">
       {[
         { icon: UserCircle, label: 'Perfil', value: 'profile' },
         { icon: Users, label: 'Usuarios', value: 'users' },
@@ -77,16 +77,16 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
     </nav>
     <button
       onClick={() => signOut({ callbackUrl: `${window.location.origin}/auth/login` })}
-      className="flex items-center mt-6 text-left"
+      className="flex items-center mt-4 pt-4 border-t border-blue-400 text-left text-white"
     >
-      <LogOut className="w-4 h-4 mr-2 text-red-600" />
+      <LogOut className="w-4 h-4 mr-2 text-red-400" />
       Cerrar sesión
     </button>
   </div>
 );
 };
 const ProfileTab = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [userData, setUserData] = useState({
     username: '',
     name: '',
@@ -99,31 +99,31 @@ const ProfileTab = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (status === 'loading') return;
+    if (status !== 'authenticated' || !session?.user?.id) {
+      setIsLoading(false);
+      return;
+    }
     const fetchUserData = async () => {
-      if (session?.user?.id) {
-        try {
-          const response = await fetch(`/api/users/${session.user.id}`);
-          if (!response.ok) {
-            throw new Error('Error al cargar datos del usuario');
-          }
-          const data = await response.json();
-          setUserData({
-            username: data.username || '',
-            name: data.name || '',
-            lastname: data.lastname || '',
-            phone: data.phone || '',
-            email: data.email || ''
-          });
-          setIsLoading(false);
-        } catch (error) {
-          setError(error.message);
-          setIsLoading(false);
-        }
+      try {
+        const response = await fetch(`/api/users/${session.user.id}`);
+        if (!response.ok) throw new Error('Error al cargar datos del usuario');
+        const data = await response.json();
+        setUserData({
+          username: data.username || '',
+          name: data.name || '',
+          lastname: data.lastname || '',
+          phone: data.phone || '',
+          email: data.email || ''
+        });
+        setIsLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
       }
     };
-
     fetchUserData();
-  }, [session]);
+  }, [status, session]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

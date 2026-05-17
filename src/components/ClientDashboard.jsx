@@ -41,7 +41,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
   }, [session]);
 
   return (
-    <div className={`w-64 bg-custom-green p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}>
+    <div className={`w-64 bg-custom-green p-6 flex flex-col fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 overflow-y-auto`}>
       <div className="flex flex-col items-center mb-6">
         <Image
           src={userData.image || '/isotipouno.png'}
@@ -74,7 +74,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
       </nav>
       <button
         onClick={() => signOut({ callbackUrl: `${window.location.origin}/auth/login` })}
-        className="flex items-center mt-6 text-left"
+        className="flex items-center mt-4 pt-4 border-t border-green-400 text-left"
       >
         <LogOut className="w-4 h-4 mr-2 text-red-600" />
         Cerrar sesión
@@ -83,7 +83,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
   );
 };
 const ProfileTab = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [userData, setUserData] = useState({
     username: '',
     name: '',
@@ -100,35 +100,35 @@ const ProfileTab = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (status === 'loading') return;
+    if (status !== 'authenticated' || !session?.user?.id) {
+      setIsLoading(false);
+      return;
+    }
     const fetchUserData = async () => {
-      if (session?.user?.id) {
-        try {
-          const response = await fetch(`/api/users/${session.user.id}`);
-          if (!response.ok) {
-            throw new Error('Error al cargar datos del usuario');
-          }
-          const data = await response.json();
-          setUserData({
-            username: data.username || '',
-            name: data.name || '',
-            lastname: data.lastname || '',
-            phone: data.phone || '',
-            email: data.email || '',
-            company: data.company || '',
-            companyEmail: data.companyEmail || '',
-            companyPhone: data.companyPhone || '',
-            companyRUT: data.companyRUT || '',
-          });
-          setIsLoading(false);
-        } catch (error) {
-          setError(error.message);
-          setIsLoading(false);
-        }
+      try {
+        const response = await fetch(`/api/users/${session.user.id}`);
+        if (!response.ok) throw new Error('Error al cargar datos del usuario');
+        const data = await response.json();
+        setUserData({
+          username: data.username || '',
+          name: data.name || '',
+          lastname: data.lastname || '',
+          phone: data.phone || '',
+          email: data.email || '',
+          company: data.company || '',
+          companyEmail: data.companyEmail || '',
+          companyPhone: data.companyPhone || '',
+          companyRUT: data.companyRUT || '',
+        });
+        setIsLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
       }
     };
-
     fetchUserData();
-  }, [session]);
+  }, [status, session]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -302,9 +302,6 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
       <DialogContent className="bg-blue-50 border-2 border-blue-200 max-w-md mx-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-blue-800">{resource.name}</DialogTitle>
-          <Button onClick={onClose} variant="ghost" className="absolute right-4 top-4 text-blue-600 hover:text-blue-800">
-            <X className="h-5 w-5" />
-          </Button>
         </DialogHeader>
         <div className="space-y-4 mt-4">
           {(resource.files || []).map((item) => (
