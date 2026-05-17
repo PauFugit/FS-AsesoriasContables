@@ -19,32 +19,24 @@ export default function ContactForm() {
     setIsSubmitting(true)
     setSubmitError("")
     setSubmitSuccess(false)
-  
+
     try {
-      console.log('Submitting form data:', data);
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
-  
+
       const result = await response.json()
-  
+
       if (!response.ok) {
-        console.error('Form submission failed:', result);
         throw new Error(result.error || "Error al enviar el formulario")
       }
-  
-      console.log("Form submission result:", result)
+
       setSubmitSuccess(true)
-      reset() // Reset form fields after successful submission
+      reset()
     } catch (error) {
-      console.error("Form submission error:", error)
-      setSubmitError(
-        "Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo."
-      )
+      setSubmitError("Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo.")
     } finally {
       setIsSubmitting(false)
     }
@@ -54,10 +46,7 @@ export default function ContactForm() {
     <div className="max-w-2xl mx-auto p-6 bg-transparent rounded-xl">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label
-            htmlFor="nombre"
-            className="block text-lg font-medium text-custom-blue"
-          >
+          <label htmlFor="nombre" className="block text-lg font-medium text-custom-blue">
             Nombre:
           </label>
           <input
@@ -66,16 +55,11 @@ export default function ContactForm() {
             {...register("nombre", { required: "Este campo es requerido" })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           />
-          {errors.nombre && (
-            <p className="mt-1 text-lg text-red-600">{errors.nombre.message}</p>
-          )}
+          {errors.nombre && <p className="mt-1 text-lg text-red-600">{errors.nombre.message}</p>}
         </div>
 
         <div>
-          <label
-            htmlFor="apellido"
-            className="block text-lg font-medium text-custom-blue"
-          >
+          <label htmlFor="apellido" className="block text-lg font-medium text-custom-blue">
             Apellido:
           </label>
           <input
@@ -84,18 +68,11 @@ export default function ContactForm() {
             {...register("apellido", { required: "Este campo es requerido" })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           />
-          {errors.apellido && (
-            <p className="mt-1 text-lg text-red-600">
-              {errors.apellido.message}
-            </p>
-          )}
+          {errors.apellido && <p className="mt-1 text-lg text-red-600">{errors.apellido.message}</p>}
         </div>
 
         <div>
-          <label
-            htmlFor="correo"
-            className="block text-lg font-medium text-custom-blue"
-          >
+          <label htmlFor="correo" className="block text-lg font-medium text-custom-blue">
             Correo:
           </label>
           <input
@@ -104,22 +81,17 @@ export default function ContactForm() {
             {...register("correo", {
               required: "Este campo es requerido",
               pattern: {
-                value: /\S+@\S+\.\S+/,
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                 message: "Correo electrónico inválido"
               }
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           />
-          {errors.correo && (
-            <p className="mt-1 text-sm text-red-600">{errors.correo.message}</p>
-          )}
+          {errors.correo && <p className="mt-1 text-sm text-red-600">{errors.correo.message}</p>}
         </div>
 
         <div>
-          <label
-            htmlFor="telefono"
-            className="block text-lg font-medium text-custom-blue"
-          >
+          <label htmlFor="telefono" className="block text-lg font-medium text-custom-blue">
             Teléfono:
           </label>
           <input
@@ -133,18 +105,11 @@ export default function ContactForm() {
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           />
-          {errors.telefono && (
-            <p className="mt-1 text-lg text-red-600">
-              {errors.telefono.message}
-            </p>
-          )}
+          {errors.telefono && <p className="mt-1 text-lg text-red-600">{errors.telefono.message}</p>}
         </div>
 
         <div>
-          <label
-            htmlFor="mensaje"
-            className="block text-lg font-medium text-custom-blue"
-          >
+          <label htmlFor="mensaje" className="block text-lg font-medium text-custom-blue">
             Mensaje:
           </label>
           <textarea
@@ -153,17 +118,13 @@ export default function ContactForm() {
             rows={4}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
           ></textarea>
-          {errors.mensaje && (
-            <p className="mt-1 text-lg text-red-600">
-              {errors.mensaje.message}
-            </p>
-          )}
+          {errors.mensaje && <p className="mt-1 text-lg text-red-600">{errors.mensaje.message}</p>}
         </div>
 
         <div className="flex items-center">
           <Image
             src="/flechaazulderecha.png"
-            alt="Button image"
+            alt="Flecha derecha"
             width={70}
             height={70}
             className="rounded-full"
@@ -178,10 +139,7 @@ export default function ContactForm() {
         </div>
       </form>
 
-      {submitError && (
-        <p className="mt-4 text-lg text-red-600">{submitError}</p>
-      )}
-
+      {submitError && <p className="mt-4 text-lg text-red-600">{submitError}</p>}
       {submitSuccess && (
         <p className="mt-4 text-lg text-green-600">
           Formulario enviado con éxito. Gracias por contactarnos.
@@ -189,4 +147,4 @@ export default function ContactForm() {
       )}
     </div>
   )
-};
+}

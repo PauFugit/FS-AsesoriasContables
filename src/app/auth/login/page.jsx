@@ -15,20 +15,16 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);    
-    
     const response = await signIn('credentials', {
       email: data.email,
       password: data.password,
       redirect: false,
     });
-    console.log(response)
 
     if (response.error) {
       setError(response.error)
     } else {
       router.push('/dashboard')
-      router.refresh()
     }
   });
 
@@ -40,7 +36,7 @@ function LoginPage() {
     <div>
       <div className="bg-custom-blue text-white text-center py-16">
       </div>
-      <div className="min-h-[calc(100vh-7rem)] flex justify-center items-center" style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
+      <div className="min-h-[calc(100vh-7rem)] flex justify-center items-center px-4" style={{paddingTop:"7rem", backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
         <form onSubmit={onSubmit} className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
           {error && (
             <p className="bg-red-500 text-white text-lg p-3 rounded mb-4">{error}</p>

@@ -21,7 +21,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         try {
           const response = await fetch(`/api/users/${session.user.id}`);
           if (!response.ok) {
-            throw new Error('Failed to fetch user data');
+            throw new Error('Error al cargar datos del usuario');
           }
           const data = await response.json();
           setUserData({
@@ -30,7 +30,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
             image: data.image || '/isotipouno.png',
           });
         } catch (error) {
-          console.error('Error fetching user data:', error);
+
         }
       }
     };
@@ -48,7 +48,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
           height={100}
           className="rounded-full mb-2"
         />
-        <h2 className="text-lg font-bold text-custom-white">{userData.name.toUpperCase()}</h2>
+        <h2 className="text-lg font-bold text-custom-white">{userData.name?.toUpperCase() || ''}</h2>
         <p className="text-sm text-custom-white">{userData.email}</p>
       </div>
     <nav className="flex-1 space-y-2 text-white">
@@ -100,7 +100,7 @@ const ProfileTab = () => {
         try {
           const response = await fetch(`/api/users/${session.user.id}`);
           if (!response.ok) {
-            throw new Error('Failed to fetch user data');
+            throw new Error('Error al cargar datos del usuario');
           }
           const data = await response.json();
           setUserData({
@@ -151,7 +151,7 @@ const ProfileTab = () => {
         });
   
         if (!response.ok) {
-          throw new Error('Failed to update user data');
+          throw new Error('Error al actualizar datos del usuario');
         }
   
         const result = await response.json();
@@ -243,11 +243,11 @@ const UsersTab = () => {
         user.id === updatedUser.id ? updatedUser : user
       ));
     } catch (error) {
-      console.error('Error al actualizar estado de usuario:', error);
+
     }
   };
 
-  if (isLoading) return <div>Loading users...</div>;
+  if (isLoading) return <div>Cargando usuarios...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -305,7 +305,7 @@ const ClientsTab = () => {
       try {
         const response = await fetch('/api/clients');
         if (!response.ok) {
-          throw new Error('Failed to fetch clients');
+          throw new Error('Error al cargar clientes');
         }
         const { data } = await response.json();
         setClients(data);
@@ -330,7 +330,7 @@ const ClientsTab = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update client status');
+        throw new Error('Error al actualizar estado del cliente');
       }
 
       const { data: updatedClient } = await response.json();
@@ -338,11 +338,11 @@ const ClientsTab = () => {
         client.id === updatedClient.id ? updatedClient : client
       ));
     } catch (error) {
-      console.error('Error updating client status:', error);
+
     }
   };
 
-  if (isLoading) return <div>Loading clients...</div>;
+  if (isLoading) return <div>Cargando clientes...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -405,7 +405,7 @@ const ServicesTab = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((service) => (
           <div key={service.id} className="bg-blue-50 p-4 rounded-lg">
-            <Image src={service.image} width={250} height={250} />
+            <Image src={service.image} alt={service.title} width={250} height={250} />
             <h3 className="text-lg font-semibold mb-2 text-custom-blue">{service.title}</h3>
             <p className="text-sm text-gray-600 mb-4">{service.description}</p>
             <p className="text-custom-blue font-bold">{service.price}</p>
@@ -417,152 +417,210 @@ const ServicesTab = () => {
 };
 
 const ResourcesTab = () => {
-  const [clients, setClients] = useState([]);
+  const [resources, setResources] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-  const [editValue, setEditValue] = useState('');
 
-  useEffect(() => {
-    fetchClients();
-  }, []);
+  // Nueva categoría
+  const [newCatName, setNewCatName] = useState('');
+  const [newCatDesc, setNewCatDesc] = useState('');
+  const [showNewCat, setShowNewCat] = useState(false);
 
-  const fetchClients = async () => {
+  // Nuevo archivo dentro de una categoría
+  const [addingFileTo, setAddingFileTo] = useState(null);
+  const [newFileName, setNewFileName] = useState('');
+  const [newFileUrl, setNewFileUrl] = useState('');
+  const [newFileType, setNewFileType] = useState('link');
+
+  useEffect(() => { fetchResources(); }, []);
+
+  const fetchResources = async () => {
     try {
-      const response = await fetch('/api/clients');
-      if (!response.ok) {
-        throw new Error('Error al cargar recursos');
-      }
-      const { data } = await response.json();
-      setClients(data);
+      const res = await fetch('/api/resource');
+      if (!res.ok) throw new Error('Error al cargar recursos');
+      const { data } = await res.json();
+      setResources(data);
       setIsLoading(false);
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
       setIsLoading(false);
     }
   };
 
-  const handleEdit = (id, currentValue) => {
-    setEditingId(id);
-    setEditValue(currentValue || '');
-  };
-
-  const handleSave = async (id) => {
+  const handleAddCategory = async () => {
+    if (!newCatName.trim()) return;
     try {
-      const response = await fetch(`/api/clients/${id}`, {
-        method: 'PATCH',
+      const res = await fetch('/api/resource', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ driveURL: editValue }),
+        body: JSON.stringify({ name: newCatName.trim(), description: newCatDesc.trim() }),
       });
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar el recurso');
-      }
-
-      setClients(clients.map(client => 
-        client.id === id ? { ...client, driveURL: editValue } : client
-      ));
-      setEditingId(null);
-    } catch (error) {
-      console.error('Error saving driveURL:', error);
-    }
+      if (!res.ok) throw new Error();
+      const created = await res.json();
+      setResources([...resources, { ...created, files: [] }]);
+      setNewCatName(''); setNewCatDesc(''); setShowNewCat(false);
+    } catch { }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este recurso?')) return;
-
+  const handleDeleteCategory = async (id) => {
+    if (!confirm('¿Eliminar esta categoría y todos sus archivos?')) return;
     try {
-      const response = await fetch(`/api/clients/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ driveURL: null }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al eliminar el recurso');
-      }
-
-      setClients(clients.map(client => 
-        client.id === id ? { ...client, driveURL: null } : client
-      ));
-    } catch (error) {
-      console.error('Error deleting driveURL:', error);
-      // You might want to show an error message to the user here
-    }
+      const res = await fetch(`/api/resource/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      setResources(resources.filter(r => r.id !== id));
+    } catch { }
   };
 
-  if (isLoading) return <div>Cargando recursos...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const handleAddFile = async (resourceId) => {
+    if (!newFileName.trim() || !newFileUrl.trim()) return;
+    try {
+      const res = await fetch('/api/file', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newFileName.trim(), url: newFileUrl.trim(), type: newFileType, resourceId }),
+      });
+      if (!res.ok) throw new Error();
+      const file = await res.json();
+      setResources(resources.map(r =>
+        r.id === resourceId ? { ...r, files: [...r.files, file] } : r
+      ));
+      setNewFileName(''); setNewFileUrl(''); setNewFileType('link'); setAddingFileTo(null);
+    } catch { }
+  };
+
+  const handleDeleteFile = async (fileId, resourceId) => {
+    if (!confirm('¿Eliminar este archivo?')) return;
+    try {
+      const res = await fetch(`/api/file/${fileId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      setResources(resources.map(r =>
+        r.id === resourceId ? { ...r, files: r.files.filter(f => f.id !== fileId) } : r
+      ));
+    } catch { }
+  };
+
+  if (isLoading) return <div className="p-6">Cargando recursos...</div>;
+  if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 overflow-x-auto">
-      <h1 className="text-xl md:text-2xl font-bold mb-6 text-custom-blue">ADMINISTRADOR DE RECURSOS</h1>
-      <table className="min-w-full">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="px-4 py-2 text-left">Nombre</th>
-            <th className="px-4 py-2 text-left">Email</th>
-            <th className="px-4 py-2 text-left">Empresa</th>
-            <th className="px-4 py-2 text-left">RUT Empresa</th>
-            <th className="px-4 py-2 text-left">Link Drive</th>
-            <th className="px-4 py-2 text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {clients.map((client) => (
-            <tr key={client.id} className="border-b">
-              <td className="px-4 py-2">{`${client.name} ${client.lastname}`}</td>
-              <td className="px-4 py-2">{client.email}</td>
-              <td className="px-4 py-2">{client.company || 'N/A'}</td>
-              <td className="px-4 py-2">{client.companyRUT || 'N/A'}</td>
-              <td className="px-4 py-2">
-                {editingId === client.id ? (
+    <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+        <h1 className="text-xl md:text-2xl font-bold text-custom-blue">ADMINISTRADOR DE RECURSOS</h1>
+        <button
+          onClick={() => setShowNewCat(!showNewCat)}
+          className="flex items-center gap-1 bg-custom-blue text-white px-4 py-2 rounded-lg hover:bg-custom-green hover:text-custom-blue transition-colors text-sm"
+        >
+          <PlusIcon className="h-4 w-4" /> Nueva categoría
+        </button>
+      </div>
+
+      {showNewCat && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h3 className="font-semibold mb-3 text-custom-blue">Nueva categoría</h3>
+          <input
+            type="text"
+            placeholder="Nombre de la categoría"
+            value={newCatName}
+            onChange={e => setNewCatName(e.target.value)}
+            className="border rounded px-3 py-2 w-full mb-2 text-sm"
+          />
+          <input
+            type="text"
+            placeholder="Descripción (opcional)"
+            value={newCatDesc}
+            onChange={e => setNewCatDesc(e.target.value)}
+            className="border rounded px-3 py-2 w-full mb-3 text-sm"
+          />
+          <div className="flex gap-2">
+            <button onClick={handleAddCategory} className="bg-custom-blue text-white px-4 py-2 rounded text-sm hover:bg-custom-green hover:text-custom-blue transition-colors">Crear</button>
+            <button onClick={() => setShowNewCat(false)} className="border px-4 py-2 rounded text-sm hover:bg-gray-50">Cancelar</button>
+          </div>
+        </div>
+      )}
+
+      <div className="space-y-6">
+        {resources.length === 0 && <p className="text-gray-500 text-sm">No hay categorías aún. Crea la primera.</p>}
+        {resources.map(resource => (
+          <div key={resource.id} className="border rounded-lg overflow-hidden">
+            <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
+              <div>
+                <h2 className="font-bold text-custom-blue">{resource.name}</h2>
+                {resource.description && <p className="text-xs text-gray-500 mt-0.5">{resource.description}</p>}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { setAddingFileTo(resource.id); setNewFileName(''); setNewFileUrl(''); setNewFileType('link'); }}
+                  className="text-xs flex items-center gap-1 bg-custom-blue text-white px-3 py-1.5 rounded hover:bg-custom-green hover:text-custom-blue transition-colors"
+                >
+                  <PlusIcon className="h-3 w-3" /> Añadir
+                </button>
+                <button onClick={() => handleDeleteCategory(resource.id)} className="text-red-500 hover:text-red-700">
+                  <TrashIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            {addingFileTo === resource.id && (
+              <div className="bg-yellow-50 border-t border-yellow-200 px-4 py-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
                   <input
                     type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    className="border rounded px-2 py-1 w-full"
+                    placeholder="Nombre del archivo o enlace"
+                    value={newFileName}
+                    onChange={e => setNewFileName(e.target.value)}
+                    className="border rounded px-2 py-1.5 text-sm"
                   />
-                ) : (
-                  client.driveURL ? (
-                    <a href={client.driveURL} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                      {client.driveURL}
+                  <input
+                    type="text"
+                    placeholder="URL (https://...)"
+                    value={newFileUrl}
+                    onChange={e => setNewFileUrl(e.target.value)}
+                    className="border rounded px-2 py-1.5 text-sm"
+                  />
+                  <select
+                    value={newFileType}
+                    onChange={e => setNewFileType(e.target.value)}
+                    className="border rounded px-2 py-1.5 text-sm"
+                  >
+                    <option value="link">Enlace web</option>
+                    <option value="pdf">PDF</option>
+                  </select>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => handleAddFile(resource.id)} className="bg-custom-blue text-white px-3 py-1.5 rounded text-sm hover:bg-custom-green hover:text-custom-blue transition-colors">Guardar</button>
+                  <button onClick={() => setAddingFileTo(null)} className="border px-3 py-1.5 rounded text-sm hover:bg-gray-50">Cancelar</button>
+                </div>
+              </div>
+            )}
+
+            <ul className="divide-y">
+              {resource.files.length === 0 && (
+                <li className="px-4 py-3 text-sm text-gray-400 italic">Sin archivos aún.</li>
+              )}
+              {resource.files.map(file => (
+                <li key={file.id} className="px-4 py-2 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${file.type === 'pdf' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
+                      {file.type === 'pdf' ? 'PDF' : 'Link'}
+                    </span>
+                    <a
+                      href={/^https?:\/\//.test(file.url) ? file.url : '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-blue-600 hover:underline truncate"
+                    >
+                      {file.name}
                     </a>
-                  ) : 'N/A'
-                )}
-              </td>
-              <td className="px-4 py-2">
-                {editingId === client.id ? (
-                  <>
-                    <button onClick={() => handleSave(client.id)} className="text-green-600 hover:text-green-800 mr-2">
-                      <CheckIcon className="h-5 w-5" />
-                    </button>
-                    <button onClick={() => setEditingId(null)} className="text-red-600 hover:text-red-800">
-                      <XIcon className="h-5 w-5" />
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => handleEdit(client.id, client.driveURL)} className="text-blue-600 hover:text-blue-800 mr-2">
-                      <PencilIcon className="h-5 w-5" />
-                    </button>
-                    {client.driveURL && (
-                      <button onClick={() => handleDelete(client.id)} className="text-red-600 hover:text-red-800">
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
-                    )}
-                    {!client.driveURL && (
-                      <button onClick={() => handleEdit(client.id, '')} className="text-green-600 hover:text-green-800">
-                        <PlusIcon className="h-5 w-5" />
-                      </button>
-                    )}
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  </div>
+                  <button onClick={() => handleDeleteFile(file.id, resource.id)} className="text-red-400 hover:text-red-600 flex-shrink-0">
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

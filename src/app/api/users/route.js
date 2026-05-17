@@ -1,22 +1,46 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import bcrypt from 'bcrypt'
-
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 export async function GET() {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+        return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+    if (session.user.role !== 'ADMIN' && session.user.role !== 'TEAM') {
+        return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 })
+    }
     try {
-        const user = await prisma.users.findMany();
-        return NextResponse.json({ data: user }, { status: 200 });
+        const users = await prisma.users.findMany({
+            select: {
+                id: true,
+                email: true,
+                username: true,
+                name: true,
+                lastname: true,
+                phone: true,
+                role: true,
+                active: true,
+                createdAt: true,
+                updatedAt: true,
+            }
+        });
+        return NextResponse.json({ data: users }, { status: 200 });
     } catch (error) {
-        return new NextResponse(error.message, { status: 500 })
+        return NextResponse.json({ error: 'Error al obtener usuarios' }, { status: 500 })
     }
 }
 
 export async function POST(request) {
+    const session = await getServerSession(authOptions)
+    if (!session || session.user.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 })
+    }
     try {
         const data = await request.json()
 
-        // Check if username already exists
         const existingUser = await prisma.users.findUnique({
             where: { username: data.username }
         })
@@ -28,42 +52,40 @@ export async function POST(request) {
             )
         }
 
-        // Hash the password
         const hashedPassword = await bcrypt.hash(data.password, 10)
 
         const user = await prisma.users.create({
-            data: {
-                ...data,
-                password: hashedPassword
-            }
+            data: { ...data, password: hashedPassword }
         })
 
-        console.log("Usuario creado correctamente.")
-        
-        // Remove password from the response
         const { password, ...userWithoutPassword } = user
 
-        return NextResponse.json(userWithoutPassword, {
-            status: 201
-        })
+        return NextResponse.json(userWithoutPassword, { status: 201 })
     } catch (error) {
-        console.error('Error al crear al usuario:', error);
         return NextResponse.json(
-            { error: error.message || "Un error ocurrió al crear el usuario. Por favor, inténtalo nuevamente." },
+            { error: "Un error ocurrió al crear el usuario. Por favor, inténtalo nuevamente." },
             { status: 500 }
         )
     }
 }
 
-export async function PUT(request){
-    try{
+export async function PUT(request) {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+        return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+    try {
         const data = await request.json()
-        const {id, ...updateData} = data
+        const { id, ...updateData } = data
+
+        // Solo ADMIN puede actualizar a otros usuarios
+        if (session.user.role !== 'ADMIN' && session.user.id !== id) {
+            return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 })
+        }
 
         if (updateData.password) {
             updateData.password = await bcrypt.hash(updateData.password, 10)
         } else {
-            // If no new password is provided, remove the password field
             delete updateData.password
         }
 
@@ -72,7 +94,6 @@ export async function PUT(request){
             data: updateData
         })
 
-        // Remove password from the response
         const { password, ...userWithoutPassword } = updatedUser
 
         return NextResponse.json({
@@ -80,9 +101,8 @@ export async function PUT(request){
             data: userWithoutPassword
         }, { status: 200 })
     } catch (error) {
-        console.error('Error actualizando usuario:', error);
         return NextResponse.json(
-            { error: error.message || "Ha ocurrido un error al actualizar al usuario." },
+            { error: "Ha ocurrido un error al actualizar al usuario." },
             { status: 500 }
         )
     }

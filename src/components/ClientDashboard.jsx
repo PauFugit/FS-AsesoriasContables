@@ -22,7 +22,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         try {
           const response = await fetch(`/api/users/${session.user.id}`);
           if (!response.ok) {
-            throw new Error('Failed to fetch user data');
+            throw new Error('Error al cargar datos del usuario');
           }
           const data = await response.json();
           setUserData({
@@ -32,7 +32,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
             image: data.image || '/isotipouno.png',
           });
         } catch (error) {
-          console.error('Error fetching user data:', error);
+
         }
       }
     };
@@ -50,7 +50,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
           height={100}
           className="rounded-full mb-2"
         />
-        <h2 className="text-lg font-bold text-custom-blue">{userData.name.toUpperCase()}</h2>
+        <h2 className="text-lg font-bold text-custom-blue">{userData.name?.toUpperCase() || ''}</h2>
         <p className="text-sm text-gray-800">{userData.email}</p>
       </div>
       <nav className="flex-1 space-y-2">
@@ -102,7 +102,7 @@ const ProfileTab = () => {
         try {
           const response = await fetch(`/api/users/${session.user.id}`);
           if (!response.ok) {
-            throw new Error('Failed to fetch user data');
+            throw new Error('Error al cargar datos del usuario');
           }
           const data = await response.json();
           setUserData({
@@ -157,7 +157,7 @@ const ProfileTab = () => {
         });
   
         if (!response.ok) {
-          throw new Error('Failed to update user data');
+          throw new Error('Error al actualizar datos del usuario');
         }
   
         const result = await response.json();
@@ -220,72 +220,68 @@ const ProfileTab = () => {
 };
 
 
+const CATEGORY_ICONS = [FileText, Globe, GraduationCap];
+
 const ResourcesTab = () => {
   const [activeResource, setActiveResource] = useState(null);
-  const [userData, setUserData] = useState(null);
+  const [driveURL, setDriveURL] = useState(null);
+  const [resources, setResources] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { data: session } = useSession();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (session && session.user.id) {
-        try {
-          const response = await fetch(`/api/users/${session.user.id}`);
-          if (response.ok) {
-            const data = await response.json();
-            setUserData(data);
-          } else {
-            console.error('Failed to fetch user data');
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
+    const fetchAll = async () => {
+      try {
+        const [userRes, resourceRes] = await Promise.all([
+          session?.user?.id ? fetch(`/api/users/${session.user.id}`) : Promise.resolve(null),
+          fetch('/api/resource'),
+        ]);
+        if (userRes?.ok) {
+          const userData = await userRes.json();
+          setDriveURL(userData.driveURL || null);
         }
-      }
+        if (resourceRes.ok) {
+          const { data } = await resourceRes.json();
+          setResources(data);
+        }
+      } catch { }
+      setIsLoading(false);
     };
-
-    fetchUserData();
+    fetchAll();
   }, [session]);
 
-  const resources = [
-    {
-      icon: FileText,
-      title: 'BIBLIOTECA DIGITAL',
-      description: 'Acceso a carpetas con documentos contables en formato digital.',
-      content: [
-        { type: 'WEB', name: 'Acceso a google drive', urldrive: userData?.driveURL || '#' },
-      ]
-    },
-    {
-      icon: Globe,
-      title: 'RECURSOS WEB',
-      description: 'Enlaces útiles y herramientas en línea.',
-      content: [
-        { type: 'link', name: 'Calcular', url: 'https://www.calcular.cl/' },
-        { type: 'link', name: 'Calculador Boleta Honorarios', url: 'https://www.boleteo.cl' },
-        { type: 'link', name: 'Dirección del Trabajo', url:'https://www.dt.gob.cl'},
-        { type: 'link', name: 'Previred', url: 'https://www.previred.com/' },
-        { type: 'link', name: 'Portal SII', url: 'https://www.sii.cl/' },
-        { type: 'pdf', name: 'Documento PDF', url: '/pdfs/pdfrecursoweb.pdf' },
-      ]
-    },
-  ];
+  if (isLoading) return <div className="p-6">Cargando recursos...</div>;
+
+  const driveCategory = {
+    id: 'drive',
+    name: 'BIBLIOTECA DIGITAL',
+    description: 'Acceso a carpetas con documentos contables en formato digital.',
+    files: driveURL ? [{ id: 'drive-link', type: 'link', name: 'Acceso a Google Drive', url: driveURL }] : [],
+    isDrive: true,
+  };
+
+  const allResources = [driveCategory, ...resources];
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h1 className="text-xl md:text-2xl font-bold mb-6">RECURSOS COMPLEMENTARIOS</h1>
       <p className="mb-6">Haz click en cada recurso para acceder a él.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  {resources.map((resource, index) => (
-    <div
-      key={index}
-      className="bg-white p-6 rounded-lg cursor-pointer hover:shadow-lg transition-shadow border border-blue-100"
-      onClick={() => setActiveResource(resource)}
-    >
-      <resource.icon className="w-12 h-12 text-blue-600 mb-4" />
-      <h3 className="text-xl font-semibold mb-2 text-blue-800">{resource.title}</h3>
-      <p className="text-sm text-gray-600">{resource.description}</p>
-    </div>
-  ))}
-</div>
+        {allResources.map((resource, index) => {
+          const Icon = CATEGORY_ICONS[index % CATEGORY_ICONS.length];
+          return (
+            <div
+              key={resource.id}
+              className="bg-white p-6 rounded-lg cursor-pointer hover:shadow-lg transition-shadow border border-blue-100"
+              onClick={() => setActiveResource(resource)}
+            >
+              <Icon className="w-12 h-12 text-blue-600 mb-4" />
+              <h3 className="text-xl font-semibold mb-2 text-blue-800">{resource.name}</h3>
+              <p className="text-sm text-gray-600">{resource.description}</p>
+            </div>
+          );
+        })}
+      </div>
       <ResourceModal
         isOpen={!!activeResource}
         onClose={() => setActiveResource(null)}
@@ -298,37 +294,30 @@ const ResourcesTab = () => {
 const ResourceModal = ({ isOpen, onClose, resource }) => {
   if (!resource) return null;
 
-  const handleItemClick = (item) => {
-    if (item.type === 'pdf') {
-      window.open(item.url, '_blank');
-    }
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-blue-50 border-2 border-blue-200 max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-blue-800">{resource.title}</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-blue-800">{resource.name}</DialogTitle>
           <Button onClick={onClose} variant="ghost" className="absolute right-4 top-4 text-blue-600 hover:text-blue-800">
             <X className="h-5 w-5" />
           </Button>
         </DialogHeader>
         <div className="space-y-4 mt-4">
-          {resource.content.map((item, index) => (
-            <div key={index} className="flex items-center space-x-3 bg-white p-3 rounded-lg shadow-sm">
-              {item.type === 'WEB' && <FileText className="w-6 h-6 text-red-500 flex-shrink-0" />}
+          {(resource.files || []).map((item) => (
+            <div key={item.id} className="flex items-center space-x-3 bg-white p-3 rounded-lg shadow-sm">
               {item.type === 'link' && <Globe className="w-6 h-6 text-blue-500 flex-shrink-0" />}
               {item.type === 'pdf' && <FileText className="w-6 h-6 text-green-500 flex-shrink-0" />}
               {item.type === 'pdf' ? (
                 <button
-                  onClick={() => handleItemClick(item)}
+                  onClick={() => window.open(item.url, '_blank')}
                   className="text-blue-600 hover:text-blue-800 hover:underline font-medium break-all text-left"
                 >
                   {item.name}
                 </button>
               ) : (
                 <Link
-                  href={item.urldrive || item.url}
+                  href={/^https?:\/\//.test(item.url) ? item.url : '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 hover:underline font-medium break-all"
@@ -338,6 +327,9 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
               )}
             </div>
           ))}
+          {(!resource.files || resource.files.length === 0) && (
+            <p className="text-gray-400 text-sm italic">Sin archivos en esta categoría.</p>
+          )}
         </div>
       </DialogContent>
     </Dialog>

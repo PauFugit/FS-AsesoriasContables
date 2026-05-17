@@ -1,82 +1,91 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import sgMail from '@sendgrid/mail'
+import { Resend } from 'resend'
+
+const allowedOrigin = process.env.NEXT_PUBLIC_APP_URL || 'https://newasesoriasvaldivia.vercel.app'
 
 const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
 }
 
 export async function POST(request) {
-    console.log('API Route: POST /api/contact started');
     try {
         const data = await request.json()
-        console.log('Received data:', data);
 
-        console.log('Creating contact form entry in database...');
-        const contactForm = await prisma.contactForm.create({
-            data: data
-        })
-        console.log('Contact form entry created:', contactForm);
-
-        console.log('Setting up SendGrid...');
-        const apiKey = process.env.SENDGRID_API_KEY;
-        console.log('API Key length:', apiKey ? apiKey.length : 'undefined');
-        sgMail.setApiKey(apiKey);
-
-        const msg = {
-            to: 'contacto@asesoriasvaldivia.cl',
-            from: 'contacto@asesoriasvaldivia.cl', // Make sure this is verified in SendGrid
-            subject: "Nuevo mensaje de contacto",
-            text: `
-        Nombre: ${data.nombre} ${data.apellido}
-        Correo: ${data.correo}
-        Teléfono: ${data.telefono}
-        Mensaje: ${data.mensaje}
-      `,
+        const { nombre, apellido, correo, mensaje } = data
+        if (!nombre || !apellido || !correo || !mensaje) {
+            return new NextResponse(JSON.stringify({ error: 'Faltan campos requeridos: nombre, apellido, correo y mensaje son obligatorios.' }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders }
+            })
         }
-        
-        console.log('Attempting to send email...');
-        const result = await sgMail.send(msg);
-        console.log('SendGrid response:', result);
 
-        console.log("Formulario de contacto enviado y correo enviado exitosamente.")
+        if (String(nombre).trim().length > 100 || String(apellido).trim().length > 100) {
+            return new NextResponse(JSON.stringify({ error: 'El nombre y apellido no pueden superar los 100 caracteres.' }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders }
+            })
+        }
+
+        if (String(mensaje).trim().length > 2000) {
+            return new NextResponse(JSON.stringify({ error: 'El mensaje no puede superar los 2000 caracteres.' }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders }
+            })
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(correo)) {
+            return new NextResponse(JSON.stringify({ error: 'El correo electrónico no es válido.' }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders }
+            })
+        }
+
+        const contactForm = await prisma.contactForm.create({
+            data: {
+                nombre: String(nombre).trim(),
+                apellido: String(apellido).trim(),
+                correo: String(correo).trim().toLowerCase(),
+                telefono: data.telefono ? String(data.telefono).trim() : null,
+                mensaje: String(mensaje).trim(),
+            }
+        })
+
+        const apiKey = process.env.RESEND_API_KEY
+        if (!apiKey) throw new Error('RESEND_API_KEY no está configurada')
+
+        const resend = new Resend(apiKey)
+        const from = process.env.EMAIL_FROM
+
+        await resend.emails.send({
+            from,
+            to: from,
+            subject: 'Nuevo mensaje de contacto',
+            text: `Nombre: ${nombre} ${apellido}\nCorreo: ${correo}\nTeléfono: ${data.telefono || 'No indicado'}\nMensaje: ${mensaje}`,
+        })
+
         return new NextResponse(JSON.stringify(contactForm), {
             status: 201,
-            headers: {
-                "Content-Type": "application/json",
-                ...corsHeaders
-            }
+            headers: { "Content-Type": "application/json", ...corsHeaders }
         })
     } catch (error) {
-        console.error("Error en la API de contacto:", error)
-        if (error.response) {
-            console.error('SendGrid Error Response:', error.response.body)
-        }
-        return new NextResponse(JSON.stringify({ error: error.message }), {
+        return new NextResponse(JSON.stringify({ error: 'Ha ocurrido un error al procesar el formulario.' }), {
             status: 500,
-            headers: {
-                "Content-Type": "application/json",
-                ...corsHeaders
-            }
+            headers: { "Content-Type": "application/json", ...corsHeaders }
         })
     }
 }
 
 export async function GET() {
-    return new NextResponse(JSON.stringify({ message: "This endpoint only accepts POST requests" }), {
+    return new NextResponse(JSON.stringify({ message: "Este endpoint solo acepta POST" }), {
         status: 405,
-        headers: {
-            "Content-Type": "application/json",
-            ...corsHeaders
-        }
+        headers: { "Content-Type": "application/json", ...corsHeaders }
     })
 }
 
 export async function OPTIONS() {
-    return new NextResponse(null, {
-        status: 200,
-        headers: corsHeaders
-    })
+    return new NextResponse(null, { status: 200, headers: corsHeaders })
 }

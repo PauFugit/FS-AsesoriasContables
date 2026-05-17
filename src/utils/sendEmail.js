@@ -1,58 +1,36 @@
-import sgMail from '@sendgrid/mail';
+import { Resend } from 'resend';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+function getResend() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) throw new Error('RESEND_API_KEY no está configurada');
+  return new Resend(apiKey);
+}
 
 export async function sendEmail(to, from, subject, text, html) {
-  const msg = {
-    to,
+  const resend = getResend();
+
+  await resend.emails.send({
     from,
+    to,
     subject,
     text,
     html,
-  };
+  });
 
-  try {
-    const [response] = await sgMail.send(msg);
-    console.log('Email sent successfully', {
-      statusCode: response.statusCode,
-      headers: response.headers,
-      to: to,
-      subject: subject
-    });
-    return true;
-  } catch (error) {
-    console.error('Error sending email:', error.message);
-    if (error.response) {
-      console.error('SendGrid API response error:', {
-        body: error.response.body,
-        statusCode: error.response.statusCode,
-        headers: error.response.headers,
-      });
-    }
-    throw error; // Re-throw the error 
-  }
+  return true;
 }
 
 export async function sendPasswordResetEmail(to, resetUrl) {
   const from = process.env.EMAIL_FROM;
-  if (!from) {
-    throw new Error('EMAIL_FROM environment variable is not set');
-  }
+  if (!from) throw new Error('EMAIL_FROM no está configurada');
 
-  const subject = 'Password Reset Request';
-  const text = `Solicitaste el reestablecimiento de tu contraseña. Haz click en el siguiente enlace para reestablecer tu contraseña: ${resetUrl}`;
+  const subject = 'Solicitud de restablecimiento de contraseña';
+  const text = `Solicitaste el restablecimiento de tu contraseña. Haz click en el siguiente enlace: ${resetUrl}`;
   const html = `
-    <p>Solicitaste el reestablecimiento de tu contraseña. Haz click en el siguiente enlace para reestablecer tu contraseña:</p>
-    <a href="${resetUrl}">Reestablecer contraseña</a>
-    <p>Si tu no solicitaste esto, por favor ignora este correo.</p>
+    <p>Solicitaste el restablecimiento de tu contraseña.</p>
+    <p><a href="${resetUrl}">Restablecer contraseña</a></p>
+    <p>Si no solicitaste esto, ignora este correo. El enlace expira en 1 hora.</p>
   `;
 
-  try {
-    const result = await sendEmail(to, from, subject, text, html);
-    console.log('Password reset email sent successfully', { to: to });
-    return result;
-  } catch (error) {
-    console.error('Failed to send password reset email', { to: to, error: error.message });
-    throw error; // Re-throw the error 
-  }
+  return sendEmail(to, from, subject, text, html);
 }

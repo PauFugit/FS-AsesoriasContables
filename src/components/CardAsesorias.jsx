@@ -16,8 +16,8 @@ const CardAsesorias = ({ title, description, imageSrc, reverse }) => {
         </div>
         <div className="p-6 w-full md:w-2/3 flex flex-col justify-between font-alternative">
           <div className="flex flex-col justify-between py-4 md:py-20">
-            <h2 className="text-4xl md:text-5xl lg:text-7xl mb-4 md:mb-10 text-custom-blue font-bold" style={{ letterSpacing: "0.5rem" }}>{title}</h2>
-            <p className="text-m sm:text-lg md:text-xl lg:text-2xl text-custom-blue mb-4 sm:px-10">{description}</p>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl mb-4 md:mb-10 text-custom-blue font-bold" style={{ letterSpacing: "0.5rem" }}>{title}</h2>
+            <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-custom-blue mb-4 sm:px-10">{description}</p>
           </div>
           <div className="flex items-center space-x-4">
             <Link href="/cotiza">

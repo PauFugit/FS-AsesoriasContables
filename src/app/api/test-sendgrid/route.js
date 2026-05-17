@@ -1,35 +1,32 @@
-import sgMail from '@sendgrid/mail';
+import { NextResponse } from 'next/server'
+import { Resend } from 'resend'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
-export default async function handler(req, res) {
-  console.log('Test SendGrid API Route started');
-  if (req.method === 'GET') {
-    try {
-      console.log('Setting up SendGrid...');
-      const apiKey = process.env.SENDGRID_API_KEY;
-      console.log('API Key length:', apiKey ? apiKey.length : 'undefined');
-      console.log('API Key starts with:', apiKey ? apiKey.substring(0, 5) : 'undefined');
-      sgMail.setApiKey(apiKey);
+export async function GET() {
+  const session = await getServerSession(authOptions)
+  if (!session || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 })
+  }
 
-      const msg = {
-        to: 'contacto@asesoriasvaldivia.cl', // Replace with your email
-        from: 'contacto@asesoriasvaldivia.cl', // Replace with your verified sender
-        subject: 'SendGrid Test from Vercel',
-        text: 'If you receive this, SendGrid is working correctly!',
-      };
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    return NextResponse.json({ error: 'RESEND_API_KEY no está configurada' }, { status: 500 })
+  }
 
-      console.log('Attempting to send test email...');
-      const result = await sgMail.send(msg);
-      console.log('SendGrid test email sent successfully:', result);
-      res.status(200).json({ success: true, message: 'Test email sent successfully' });
-    } catch (error) {
-      console.error('SendGrid Error:', error);
-      if (error.response) {
-        console.error(error.response.body);
-      }
-      res.status(500).json({ success: false, error: error.message });
-    }
-  } else {
-    res.setHeader('Allow', ['GET']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+  try {
+    const resend = new Resend(apiKey)
+    const from = process.env.EMAIL_FROM
+
+    await resend.emails.send({
+      from,
+      to: from,
+      subject: 'Test de email — Resend',
+      text: 'Si recibes esto, Resend está funcionando correctamente.',
+    })
+
+    return NextResponse.json({ success: true, message: 'Email de prueba enviado correctamente' })
+  } catch (error) {
+    return NextResponse.json({ success: false, error: 'Error al enviar email de prueba' }, { status: 500 })
   }
 }

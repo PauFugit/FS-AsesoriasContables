@@ -31,7 +31,6 @@ export async function POST(req) {
       await sendPasswordResetEmail(user.email, resetUrl);
       return NextResponse.json({ message: 'Si la cuenta con el correo existe, se enviará el enlace para resetear la contraseña.' });
     } catch (emailError) {
-      console.error('Failed to send password reset email:', emailError);
       // Revert the token update in the database
       await prisma.users.update({
         where: { id: user.id },
@@ -43,7 +42,6 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Ha ocurrido un error al enviar el email de recuperación. Por favor, inténtalo de nuevo más tarde.' }, { status: 500 });
     }
   } catch (error) {
-    console.error('Password reset request error:', error);
     return NextResponse.json({ error: 'Ha ocurrido un error procesando tu solicitud.' }, { status: 500 });
   }
 }

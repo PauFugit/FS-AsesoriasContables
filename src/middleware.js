@@ -3,8 +3,6 @@ import { NextResponse } from 'next/server'
 
 export default withAuth(
   function middleware(req) {
-    console.log("Middleware - User:", req.nextauth.token)
-    
     const path = req.nextUrl.pathname
     const token = req.nextauth.token
 
@@ -12,15 +10,11 @@ export default withAuth(
       return NextResponse.redirect(new URL('/auth/login', req.url))
     }
 
-    // Check for /auth/register route
     if (path === '/auth/register') {
-      // If user is not logged in or doesn't have an admin role, redirect to home page
       if (!token || token.role !== 'ADMIN') {
         return NextResponse.redirect(new URL('/', req.url))
       }
     }
-
-    // Add other role-based redirects here if needed
   },
   {
     callbacks: {

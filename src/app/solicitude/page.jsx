@@ -36,7 +36,7 @@ function Contacto() {
       </div>
 
     </section>
-    <div classNamee="mt-4" >
+    <div className="mt-4">
     <h2 className="text-lg md:text-2xl font-bold mb-6 mt-6 text-left p-4 text-custom-blue">
     Si ya eres cliente, completa el siguiente formulario para crear tu registro. 
       </h2>

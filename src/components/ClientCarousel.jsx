@@ -121,9 +121,9 @@ const handleDragMove = (e) => {
                                 <Image
                                     src={clients[clientIndex].src}
                                     alt={clients[clientIndex].alt}
-                                    layout="fill"
-                                    objectFit="contain"
-                                    className="rounded-full"
+                                    fill
+                                    sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, (max-width: 1024px) 160px, 192px"
+                                    className="rounded-full object-contain"
                                 />
                             </div>
                         )

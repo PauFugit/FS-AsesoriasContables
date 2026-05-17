@@ -11,13 +11,13 @@ const BannerServicios = () => {
         className="object-cover"
       ></Image>
       <div className="relative z-10 p-6 md:p-16 bg-opacity-50">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl mt-20 font-semibold text-custom-white py-10 md:py-20" style={{ letterSpacing: "0.5rem" }}>
+        <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl mt-20 font-semibold text-custom-white py-6 md:py-20" style={{ letterSpacing: "0.5rem" }}>
           NUESTROS SERVICIOS
         </h1>
-        <p className="text-3xl md:text-4xl lg:text-5xl mt-1 py-1">
+        <p className="text-xl sm:text-3xl md:text-4xl lg:text-5xl mt-1 py-1">
           ¿Buscas empezar tu emprendimiento?
         </p>
-        <p className="text-2xl md:text-3xl lg:text-5xl font-bold mt-1 bg-transparent inline-block px-2 md:px-4 py-2 rounded-lg border-2 md:border-4 border-custom-blue">
+        <p className="text-lg sm:text-2xl md:text-3xl lg:text-5xl font-bold mt-1 bg-transparent inline-block px-2 md:px-4 py-2 rounded-lg border-2 md:border-4 border-custom-blue">
           estás en el lugar indicado
         </p>
         <p className="pr-20 mt-10 md:mt-20 text-sm md:text-xl lg:text-2xl leading-relaxed">

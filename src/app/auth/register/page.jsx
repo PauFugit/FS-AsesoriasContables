@@ -14,6 +14,7 @@ function RegisterPage() {
   } = useForm()
   const router = useRouter()
   const [imagePreview, setImagePreview] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const onSubmit = handleSubmit(async data => {
     if (data.password !== data.confirmPassword) {
@@ -29,23 +30,24 @@ function RegisterPage() {
       }
     })
 
-try{
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      body: formData
-    })
+    setLoading(true)
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        body: formData
+      })
 
-    if (response.ok) {
-      router.push("/dashboard")
-    } else {
-      const errorData = await response.json()
-      console.log("Registration failed:", errorData)
-      alert(errorData.message || "Registration failed. Please try again.")
+      if (response.ok) {
+        router.push("/dashboard")
+      } else {
+        const errorData = await response.json()
+        alert(errorData.message || "Error en el registro. Por favor inténtalo nuevamente.")
+      }
+    } catch(error) {
+      alert("Un error ha ocurrido durante el registro. Por favor inténtalo nuevamente.")
+    } finally {
+      setLoading(false)
     }
-  } catch(error){
-    console.error("Registration error:", error)
-    alert("Un error ha ocurrido durante el registro. Por favor inténtalo nuevamente.")
-  }
   })
 
   const handleImageChange = e => {
@@ -75,14 +77,14 @@ try{
     <div>
       <div className="bg-primary text-primary-foreground text-center py-16"></div>
       <div
-        className="flex justify-center items-center py-10"
+        className="flex justify-center items-center py-10 px-4"
         style={{
           backgroundImage: "url('/fondodegradado.png')",
           backgroundSize: "cover"
         }}
       >
         <form onSubmit={onSubmit} className="w-full max-w-md">
-          <h1 className="text-primary font-bold text-4xl mb-4">
+          <h1 className="text-primary font-bold text-2xl sm:text-4xl mb-4">
             Registro de Usuarios
           </h1>
           {fields.map((field) => (
@@ -124,8 +126,12 @@ try{
               />
             )}
           </div>
-          <button className="w-full bg-custom-blue text-custom-white p-3 rounded-lg mt-2 hover:bg-custom-white hover:text-custom-blue transition-colors">
-            REGISTRAR
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-custom-blue text-custom-white p-3 rounded-lg mt-2 hover:bg-custom-white hover:text-custom-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'REGISTRANDO...' : 'REGISTRAR'}
           </button>
         </form>
       </div>

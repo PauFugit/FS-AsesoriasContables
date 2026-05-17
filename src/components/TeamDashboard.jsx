@@ -19,7 +19,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
         try {
           const response = await fetch(`/api/users/${session.user.id}`);
           if (!response.ok) {
-            throw new Error('Failed to fetch user data');
+            throw new Error('Error al cargar datos del usuario');
           }
           const data = await response.json();
           setUserData({
@@ -28,7 +28,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
             image: data.image || '/isotipouno.png',
           });
         } catch (error) {
-          console.error('Error fetching user data:', error);
+
         }
       }
     };
@@ -46,7 +46,7 @@ const Sidebar = ({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen }) =
           height={100}
           className="rounded-full mb-2"
         />
-        <h2 className="text-lg font-bold text-custom-blue">{userData.name.toUpperCase()}</h2>
+        <h2 className="text-lg font-bold text-custom-blue">{userData.name?.toUpperCase() || ''}</h2>
         <p className="text-sm text-gray-800">{userData.email}</p>
       </div>
     <nav className="flex-1 space-y-2">
@@ -94,7 +94,7 @@ const ProfileTab = () => {
         try {
           const response = await fetch(`/api/users/${session.user.id}`);
           if (!response.ok) {
-            throw new Error('Failed to fetch user data');
+            throw new Error('Error al cargar datos del usuario');
           }
           const data = await response.json();
           setUserData({
@@ -145,7 +145,7 @@ const ProfileTab = () => {
         });
   
         if (!response.ok) {
-          throw new Error('Failed to update user data');
+          throw new Error('Error al actualizar datos del usuario');
         }
   
         const result = await response.json();
@@ -193,87 +193,69 @@ const ProfileTab = () => {
     </div>
   );
 };
+const CATEGORY_ICONS = [FileText, GraduationCap, Globe];
+
 const ResourcesTab = () => {
   const [activeResource, setActiveResource] = useState(null);
+  const [resources, setResources] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const resources = [
-    {
-      icon: FileText,
-      title: 'RECURSOS CONTABLES',
-      description: 'Documentos y enlaces relacionados con contabilidad y finanzas.',
-      content: [
-        { type: 'pdf', name: 'Plan de cuentas 2023.pdf', url: '/path/to/plan-de-cuentas-2023.pdf' },
-        { type: 'pdf', name: 'Guía de impuestos.pdf', url: '/path/to/guia-de-impuestos.pdf' },
-        { type: 'link', name: 'Portal SII', url: 'https://www.sii.cl/' },
-      ]
-    },
-    {
-      icon: GraduationCap,
-      title: 'RECURSOS ACADÉMICOS',
-      description: 'Material educativo y recursos de aprendizaje.',
-      content: [
-        { type: 'pdf', name: 'Introducción a la contabilidad.pdf', url: '/path/to/introduccion-contabilidad.pdf' },
-        { type: 'link', name: 'Curso online de Excel', url: 'https://www.example.com/excel-course' },
-        { type: 'pdf', name: 'Glosario de términos financieros.pdf', url: '/path/to/glosario-financiero.pdf' },
-      ]
-    },
-    {
-      icon: Globe,
-      title: 'RECURSOS WEB',
-      description: 'Enlaces útiles y herramientas en línea.',
-      content: [
-        { type: 'link', name: 'Calculadora de IVA', url: 'https://www.ivachile.cl/' },
-        { type: 'link', name: 'Calculador Boleta Honorarios', url: 'https://www.boleteo.cl' },
-        { type: 'link', name: 'Colegio Contadores de Chile', url: 'https://www.contach.cl/' },
-      ]
-    },
-  ];
+  useEffect(() => {
+    fetch('/api/resource')
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then(({ data }) => { setResources(data); setIsLoading(false); })
+      .catch(() => setIsLoading(false));
+  }, []);
+
+  if (isLoading) return <div className="p-6">Cargando recursos...</div>;
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h1 className="text-xl md:text-2xl font-bold mb-6">RECURSOS COMPLEMENTARIOS</h1>
       <p className="mb-6">Haz click en cada recurso para acceder a él.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {resources.map((resource, index) => (
-          <div
-            key={index}
-            className="bg-blue-50 p-4 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => setActiveResource(resource)}
-          >
-            <resource.icon className="w-12 h-12 text-custom-blue mb-2" />
-            <h3 className="text-lg font-semibold mb-2">{resource.title}</h3>
-            <p className="text-sm text-gray-600">{resource.description}</p>
-          </div>
-        ))}
+        {resources.map((resource, index) => {
+          const Icon = CATEGORY_ICONS[index % CATEGORY_ICONS.length];
+          return (
+            <div
+              key={resource.id}
+              className="bg-blue-50 p-4 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => setActiveResource(resource)}
+            >
+              <Icon className="w-12 h-12 text-custom-blue mb-2" />
+              <h3 className="text-lg font-semibold mb-2">{resource.name}</h3>
+              <p className="text-sm text-gray-600">{resource.description}</p>
+            </div>
+          );
+        })}
       </div>
       <ResourceModal
-      isOpen={!!activeResource}
-      onClose={() => setActiveResource(null)}
-      resource={activeResource}
+        isOpen={!!activeResource}
+        onClose={() => setActiveResource(null)}
+        resource={activeResource}
       />
     </div>
   );
 };
 const ResourceModal = ({ isOpen, onClose, resource }) => {
-  const [activeResource, setActiveResource] = useState(null);
-
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl md:text-2xl font-bold">{resource.title}</h2>
+          <h2 className="text-xl md:text-2xl font-bold">{resource.name}</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X className="w-6 h-6" />
           </button>
         </div>
         <div className="space-y-4">
-          {resource.content.map((item, index) => (
-            <div key={index} className="flex items-center space-x-2">
+          {(resource.files || []).map((item) => (
+            <div key={item.id} className="flex items-center space-x-2">
               {item.type === 'pdf' && <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />}
               {item.type === 'link' && <Globe className="w-5 h-5 text-blue-500 flex-shrink-0" />}
               <a
-                href={item.url}
+                href={/^https?:\/\//.test(item.url) ? item.url : '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline break-all"
@@ -282,6 +264,9 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
               </a>
             </div>
           ))}
+          {(!resource.files || resource.files.length === 0) && (
+            <p className="text-gray-400 text-sm italic">Sin archivos en esta categoría.</p>
+          )}
         </div>
       </div>
       

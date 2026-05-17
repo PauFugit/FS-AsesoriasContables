@@ -6,6 +6,11 @@ import BannerClientes from '@/components/BannerClientes';
 import BannerCierre from '@/components/BannerCierre';
 import BannerEstatico from '@/components/BannerEstatico';
 
+export const metadata = {
+  title: 'Contacto | Asesorías Valdivia',
+  description: 'Contáctanos para resolver tus dudas sobre nuestros servicios de asesoría contable y tributaria.',
+};
+
 function Contacto() {
   return (
     <div style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
@@ -37,7 +42,7 @@ function Contacto() {
       </div>
 
     </section>
-    <div classNamee="mt-4" >
+    <div className="mt-4">
     <h2 className="text-lg md:text-2xl font-bold mb-6 mt-6 text-left p-4 text-custom-blue">
         Para continuar complete el siguiente formulario:
       </h2>

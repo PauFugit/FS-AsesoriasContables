@@ -2,33 +2,62 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { sendEmail } from '@/utils/sendEmail'
 
+const allowedOrigin = process.env.NEXT_PUBLIC_APP_URL || 'https://newasesoriasvaldivia.vercel.app'
+
 const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
 }
 
 export async function POST(request) {
-    console.log('API Route: POST /api/cotization started');
     try {
         const data = await request.json()
-        console.log('Received data:', data);
 
-        console.log('Creating cotization form entry in database...');
+        // Validación de campos requeridos
+        const { nombre, apellido, correo, servicio, mensaje } = data
+        if (!nombre || !apellido || !correo || !servicio || !mensaje) {
+            return new NextResponse(JSON.stringify({ error: 'Faltan campos requeridos: nombre, apellido, correo, servicio y mensaje son obligatorios.' }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders }
+            })
+        }
+
+        if (String(nombre).trim().length > 100 || String(apellido).trim().length > 100) {
+            return new NextResponse(JSON.stringify({ error: 'El nombre y apellido no pueden superar los 100 caracteres.' }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders }
+            })
+        }
+
+        if (String(mensaje).trim().length > 2000) {
+            return new NextResponse(JSON.stringify({ error: 'El mensaje no puede superar los 2000 caracteres.' }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders }
+            })
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(correo)) {
+            return new NextResponse(JSON.stringify({ error: 'El correo electrónico no es válido.' }), {
+                status: 400,
+                headers: { "Content-Type": "application/json", ...corsHeaders }
+            })
+        }
+
         const cotizationForm = await prisma.cotizationForm.create({
-            data: data
+            data: {
+                nombre: String(nombre).trim(),
+                apellido: String(apellido).trim(),
+                correo: String(correo).trim().toLowerCase(),
+                telefono: data.telefono ? String(data.telefono).trim() : null,
+                servicio: String(servicio).trim(),
+                mensaje: String(mensaje).trim(),
+            }
         })
-        console.log('Cotization form entry created:', cotizationForm);
 
-        const emailText = `
-        Nombre: ${data.nombre} ${data.apellido}
-        Correo: ${data.correo}
-        Teléfono: ${data.telefono}
-        Servicio a cotizar: ${data.servicio}
-        Mensaje: ${data.mensaje}
-        `;
+        const emailText = `Nombre: ${nombre} ${apellido}\nCorreo: ${correo}\nTeléfono: ${data.telefono || 'No indicado'}\nServicio a cotizar: ${servicio}\nMensaje: ${mensaje}`;
 
-        console.log('Attempting to send email...');
         const emailSent = await sendEmail(
             'contacto@asesoriasvaldivia.cl',
             'contacto@asesoriasvaldivia.cl',
@@ -37,42 +66,28 @@ export async function POST(request) {
         );
 
         if (!emailSent) {
-            throw new Error('Failed to send email');
+            throw new Error('Error al enviar el correo');
         }
 
-        console.log("Formulario de cotización enviado y correo enviado exitosamente.")
         return new NextResponse(JSON.stringify(cotizationForm), {
             status: 201,
-            headers: {
-                "Content-Type": "application/json",
-                ...corsHeaders
-            }
+            headers: { "Content-Type": "application/json", ...corsHeaders }
         })
     } catch (error) {
-        console.error("Error en la API de cotización:", error)
-        return new NextResponse(JSON.stringify({ error: error.message }), {
+        return new NextResponse(JSON.stringify({ error: 'Ha ocurrido un error al procesar la cotización.' }), {
             status: 500,
-            headers: {
-                "Content-Type": "application/json",
-                ...corsHeaders
-            }
+            headers: { "Content-Type": "application/json", ...corsHeaders }
         })
     }
 }
 
 export async function GET() {
-    return new NextResponse(JSON.stringify({ message: "This endpoint only accepts POST requests" }), {
+    return new NextResponse(JSON.stringify({ message: "Este endpoint solo acepta POST" }), {
         status: 405,
-        headers: {
-            "Content-Type": "application/json",
-            ...corsHeaders
-        }
+        headers: { "Content-Type": "application/json", ...corsHeaders }
     })
 }
 
 export async function OPTIONS() {
-    return new NextResponse(null, {
-        status: 200,
-        headers: corsHeaders
-    })
+    return new NextResponse(null, { status: 200, headers: corsHeaders })
 }

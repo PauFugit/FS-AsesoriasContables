@@ -61,9 +61,8 @@ export default function Carousel() {
                     <Image
                         src={slide.image}
                         alt={`Slide ${index + 1}`}
-                        layout="fill"
-                        objectFit="cover"
-                        className=""
+                        fill
+                        className="object-cover"
                     />
                     <div className="absolute inset-0 flex flex-col justify-center mt-20 pt-20 px-4 sm:px-8 md:px-16 ">
                         <h2 className="text-5xl sm:text-5xl md:text-7xl font-bold text-white mb-2">

@@ -3,6 +3,11 @@ import Image from 'next/image'
 import CotizaForm from '@/components/CotizaForm'
 import BannerCierre from '@/components/BannerCierre'
 
+export const metadata = {
+  title: 'Cotiza | Asesorías Valdivia',
+  description: 'Solicita una cotización para nuestros servicios de asesoría contable, tributaria y laboral.',
+};
+
 function Cotiza() {
   return (
     <div style={{backgroundImage: "url('/fondodegradado.png')", backgroundSize: "cover" }}>
@@ -28,7 +33,7 @@ function Cotiza() {
       </div>
 
     </section>
-    <div classNamee="mt-4" >
+    <div className="mt-4">
     <h2 className="text-lg md:text-2xl font-bold mb-6 mt-6 text-left p-4 text-custom-blue">
         Para continuar complete el siguiente formulario:
       </h2>

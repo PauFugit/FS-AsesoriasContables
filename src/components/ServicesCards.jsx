@@ -13,8 +13,8 @@ const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReve
           className="w-full h-auto object-cover"
         />
       </div>
-      <h2 className="text-4xl md:text-7xl font-semibold text-custom-blue mb-8">{title}</h2>
-      <p className="text-custom-blue my-6 text-md md:text-2xl">{description}</p>
+      <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-semibold text-custom-blue mb-4 md:mb-8">{title}</h2>
+      <p className="text-custom-blue my-4 md:my-6 text-sm sm:text-base md:text-xl lg:text-2xl">{description}</p>
       <div className="flex items-center space-x-4 mt-8">
         <Link href="/cotiza"> 
         <button className="text-lg sm:text-2xl flex items-center space-x-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full hover:bg-custom-white hover:text-custom-blue">
@@ -34,8 +34,8 @@ const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReve
         <Image
           src={imageSrc}
           alt={title}
-          layout="fill"
-          objectFit="cover"
+          fill
+          sizes="(max-width: 1024px) 0px, 33vw"
           className="rounded-lg"
         />
       </div>

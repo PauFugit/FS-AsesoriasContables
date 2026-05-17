@@ -3,30 +3,31 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model Users {
   id                Int       @id @default(autoincrement())
-  email             String    @unique(map: "email")
-  username          String    @unique(map: "username")
+  email             String    @unique
+  username          String    @unique
   name              String
   lastname          String
-  password          String    @db.VarChar(255)
+  password          String
   phone             String?
   image             String?
   role              Role
   active            Boolean   @default(true)
   resetToken        String?
-  resetTokenExpires DateTime? @db.DateTime(0)
+  resetTokenExpires DateTime?
   company           String?
   companyEmail      String?
   companyPhone      String?
   companyRUT        String?
   driveURL          String?
-  createdAt         DateTime  @default(now()) @db.DateTime(0)
-  updatedAt         DateTime  @default(now()) @updatedAt @db.DateTime(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now()) @updatedAt
 }
 
 model ContactForm {
@@ -35,8 +36,8 @@ model ContactForm {
   apellido  String
   correo    String
   telefono  String?
-  mensaje   String   @db.Text
-  createdAt DateTime @default(now()) @db.DateTime(0)
+  mensaje   String
+  createdAt DateTime @default(now())
 }
 
 model CotizationForm {
@@ -46,12 +47,27 @@ model CotizationForm {
   correo    String
   telefono  String?
   servicio  String
-  mensaje   String   @db.Text
-  createdAt DateTime @default(now()) @db.DateTime(0)
+  mensaje   String
+  createdAt DateTime @default(now())
 }
 
-model RoleEnum {
-  value RoleEnum_value @id
+model Resource {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  files       File[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model File {
+  id         Int       @id @default(autoincrement())
+  name       String
+  url        String
+  type       String?
+  resourceId Int?
+  resource   Resource? @relation(fields: [resourceId], references: [id], onDelete: SetNull)
+  createdAt  DateTime  @default(now())
 }
 
 enum Role {
@@ -60,8 +76,3 @@ enum Role {
   CLIENT
 }
 
-enum RoleEnum_value {
-  ADMIN
-  TEAM
-  CLIENT
-}

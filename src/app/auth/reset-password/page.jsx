@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
 export default function ResetPasswordPage() {
-  const { register, handleSubmit, formState: { errors }, watch } = useForm()
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm()
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
               id="confirmPassword"
               {...register("confirmPassword", {
                 required: 'Por favor, confirme su contraseña',
-                validate: (value) => value === watch('password') || 'Las contraseñas no coinciden'
+                validate: (value) => value === getValues('password') || 'Las contraseñas no coinciden'
               })}
               className="p-3 rounded block mb-2 bg-custom-white text-custom-blue w-full border border-gray-300"
             />
