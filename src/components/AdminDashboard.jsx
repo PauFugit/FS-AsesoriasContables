@@ -822,117 +822,392 @@ const ResourcesTab = () => {
   );
 };
 
-const AUTOMATION_ITEMS = [
-  {
-    icon: ReceiptText,
-    title: 'Facturas Electrónicas',
-    description: 'Automatiza la aceptación de facturas electrónicas en el portal del SII. Permite procesar empresas de forma individual o masiva mediante un archivo Excel, con soporte de hasta 3 operaciones simultáneas y generación automática de reportes.',
-    tools: [
-      {
-        name: 'AutomatizadorFacturas',
-        description: 'App de escritorio Windows. Automatiza la aceptación de facturas en SII con modo individual y masivo (Excel). Requiere Chrome instalado.',
-        downloadUrl: 'https://github.com/Pauaua/AutomatizadorFacturas/releases/download/v1.0.0/AutomatizadorAV_Installer.exe',
-      },
-    ],
-  },
-  {
-    icon: ScrollText,
-    title: 'Creación de Boletas',
-    description: 'Automatiza la emisión de boletas de honorarios en el portal del SII. Incluye modo individual para ingreso manual y modo masivo para carga desde Excel, con operación en modo headless y registro de actividad en tiempo real.',
-    tools: [
-      {
-        name: 'AutomatizadorBoletas',
-        description: 'App de escritorio Windows. Automatiza la emisión de boletas de honorarios en SII con modo individual y masivo (Excel). Requiere Chrome instalado.',
-        downloadUrl: 'https://github.com/Pauaua/AutomatizadorBoletas/releases/download/v1.0.0/Instalador_AutomatizadorBoletas.exe',
-      },
-    ],
-  },
-];
+// ═══════════════════════════════════════════════════════════════════════
+// AUTOMATIZACIÓN — helpers
+// ═══════════════════════════════════════════════════════════════════════
+const POLL_INTERVAL = 2500;
 
-const AutomationModal = ({ item, onClose }) => {
-  if (!item) return null;
-  const Icon = item.icon;
+function useJobPoller(jobId, onUpdate) {
+  React.useEffect(() => {
+    if (!jobId) return;
+    const iv = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/automation?action=status&job_id=${jobId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        onUpdate(data);
+        if (data.status === 'done' || data.status === 'error' || data.status === 'stopped') {
+          clearInterval(iv);
+        }
+      } catch {}
+    }, POLL_INTERVAL);
+    return () => clearInterval(iv);
+  }, [jobId]);
+}
+
+const JobProgress = ({ job, onStop }) => {
+  if (!job) return null;
+  const isDone = job.status === 'done' || job.status === 'error' || job.status === 'stopped';
+  const color  = job.status === 'done' ? 'bg-green-500' : job.status === 'error' ? 'bg-red-500' : 'bg-custom-blue';
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="bg-custom-blue px-6 py-4 rounded-t-xl flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Icon className="w-6 h-6 text-white" />
-            <h2 className="text-lg font-bold text-white">{item.title}</h2>
-          </div>
-          <button onClick={onClose} className="text-white hover:text-blue-200 transition-colors">
-            <XIcon className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="p-6">
-          <p className="text-gray-500 text-sm mb-6">{item.description}</p>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden text-sm">
-              <thead>
-                <tr className="bg-blue-50">
-                  <th className="px-4 py-3 text-left font-semibold text-custom-blue">Aplicación</th>
-                  <th className="px-4 py-3 text-left font-semibold text-custom-blue">Descripción</th>
-                  <th className="px-4 py-3 text-left font-semibold text-custom-blue">Enlace</th>
-                </tr>
-              </thead>
-              <tbody>
-                {item.tools.map((tool, i) => (
-                  <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium text-gray-800">{tool.name}</td>
-                    <td className="px-4 py-3 text-gray-600">{tool.description}</td>
-                    <td className="px-4 py-3">
-                      {tool.downloadUrl !== '#' ? (
-                        <a
-                          href={tool.downloadUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-custom-blue hover:underline font-medium"
-                        >
-                          Descargar →
-                        </a>
-                      ) : (
-                        <span className="text-gray-400 italic">Próximamente</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+    <div className="mt-6 border border-gray-200 rounded-lg p-4 bg-gray-50">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium text-gray-700">
+          {job.status === 'running' ? '⏳ Procesando...' :
+           job.status === 'done'    ? '✅ Completado' :
+           job.status === 'error'   ? '❌ Error' :
+           job.status === 'stopped' ? '⏹️ Detenido' : '⏳ Iniciando...'}
+        </span>
+        {!isDone && (
+          <button onClick={onStop} className="text-xs text-red-500 hover:underline">Detener</button>
+        )}
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+        <div className={`${color} h-2 rounded-full transition-all`} style={{ width: `${job.progress}%` }} />
+      </div>
+      <div className="bg-white border border-gray-200 rounded p-2 max-h-48 overflow-y-auto text-xs font-mono text-gray-700 space-y-0.5">
+        {(job.logs || []).slice(-80).map((l, i) => <div key={i}>{l}</div>)}
       </div>
     </div>
   );
 };
 
+// ── Boletas Individual ───────────────────────────────────────────────────
+const BoletasIndividual = () => {
+  const today = new Date();
+  const [form, setForm] = useState({
+    rut: '', clave: '',
+    rut_dest: '', dv_dest: '', nombres_dest: '', domicilio: '', region: '', comuna: '',
+    fecha_dia: String(today.getDate()).padStart(2, '0'),
+    fecha_mes: String(today.getMonth() + 1).padStart(2, '0'),
+    fecha_anio: String(today.getFullYear()),
+    prestaciones: [{ glosa: '', valor: '' }, { glosa: '', valor: '' },
+                   { glosa: '', valor: '' }, { glosa: '', valor: '' }],
+  });
+  const [jobId, setJobId] = useState(null);
+  const [job, setJob]     = useState(null);
+  const [error, setError] = useState(null);
+  const running = job && (job.status === 'running' || job.status === 'pending');
+
+  useJobPoller(jobId, setJob);
+
+  const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const setPrest = (i, k, v) => setForm(f => {
+    const p = [...f.prestaciones]; p[i] = { ...p[i], [k]: v }; return { ...f, prestaciones: p };
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null); setJob(null); setJobId(null);
+    const prestaciones = form.prestaciones.filter(p => p.glosa.trim());
+    if (!prestaciones.length) { setError('Ingresa al menos una prestación.'); return; }
+    try {
+      const res = await fetch('/api/automation', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'run_boletas_individual',
+          rut: form.rut, clave: form.clave,
+          rut_dest: form.rut_dest, dv_dest: form.dv_dest,
+          nombres_dest: form.nombres_dest, domicilio: form.domicilio,
+          region: form.region, comuna: form.comuna,
+          fecha_dia: form.fecha_dia, fecha_mes: form.fecha_mes, fecha_anio: form.fecha_anio,
+          prestaciones,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al iniciar');
+      setJobId(data.job_id); setJob({ status: 'pending', progress: 0, logs: [] });
+    } catch (e) { setError(e.message); }
+  };
+
+  const handleStop = async () => {
+    if (!jobId) return;
+    await fetch('/api/automation', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'stop', job_id: jobId }) });
+  };
+
+  const inputCls = 'w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-custom-blue';
+  const labelCls = 'text-xs text-gray-500 mb-1 block';
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div><label className={labelCls}>RUT Emisor *</label>
+          <input className={inputCls} placeholder="76.123.456-7" value={form.rut} onChange={e => setField('rut', e.target.value)} required /></div>
+        <div><label className={labelCls}>Clave SII *</label>
+          <input className={inputCls} type="password" placeholder="Clave SII" value={form.clave} onChange={e => setField('clave', e.target.value)} required /></div>
+      </div>
+      <div className="border-t pt-3">
+        <p className="text-xs font-semibold text-gray-600 mb-3">📅 Fecha de la boleta</p>
+        <div className="grid grid-cols-3 gap-3">
+          <div><label className={labelCls}>Día *</label>
+            <input className={inputCls} type="number" min="1" max="31" value={form.fecha_dia} onChange={e => setField('fecha_dia', e.target.value)} required /></div>
+          <div><label className={labelCls}>Mes *</label>
+            <select className={inputCls} value={form.fecha_mes} onChange={e => setField('fecha_mes', e.target.value)} required>
+              {['01','02','03','04','05','06','07','08','09','10','11','12'].map((m, i) => (
+                <option key={m} value={m}>{['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][i]}</option>
+              ))}
+            </select></div>
+          <div><label className={labelCls}>Año *</label>
+            <input className={inputCls} type="number" min="2020" max="2099" value={form.fecha_anio} onChange={e => setField('fecha_anio', e.target.value)} required /></div>
+        </div>
+      </div>
+      <div className="border-t pt-3">
+        <p className="text-xs font-semibold text-gray-600 mb-3">👤 Destinatario</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="flex gap-2">
+            <div className="flex-1"><label className={labelCls}>RUT Destinatario *</label>
+              <input className={inputCls} placeholder="12345678" value={form.rut_dest} onChange={e => setField('rut_dest', e.target.value)} required /></div>
+            <div className="w-16"><label className={labelCls}>DV *</label>
+              <input className={inputCls} placeholder="K" maxLength={1} value={form.dv_dest} onChange={e => setField('dv_dest', e.target.value)} required /></div>
+          </div>
+          <div><label className={labelCls}>Nombre / Razón Social *</label>
+            <input className={inputCls} placeholder="Nombre completo" value={form.nombres_dest} onChange={e => setField('nombres_dest', e.target.value)} required /></div>
+          <div><label className={labelCls}>Domicilio *</label>
+            <input className={inputCls} placeholder="Calle 123, Ciudad" value={form.domicilio} onChange={e => setField('domicilio', e.target.value)} required /></div>
+          <div><label className={labelCls}>Región</label>
+            <input className={inputCls} placeholder="Antofagasta" value={form.region} onChange={e => setField('region', e.target.value)} /></div>
+          <div><label className={labelCls}>Comuna *</label>
+            <input className={inputCls} placeholder="Antofagasta" value={form.comuna} onChange={e => setField('comuna', e.target.value)} required /></div>
+        </div>
+      </div>
+      <div className="border-t pt-3">
+        <p className="text-xs font-semibold text-gray-600 mb-3">💼 Prestaciones (mín. 1)</p>
+        {form.prestaciones.map((p, i) => (
+          <div key={i} className="flex gap-2 mb-2">
+            <input className={`${inputCls} flex-1`} placeholder={`Prestación ${i+1}${i===0?' *':''}`} value={p.glosa} onChange={e => setPrest(i,'glosa',e.target.value)} />
+            <input className={`${inputCls} w-28`} placeholder={`Valor ${i+1}`} value={p.valor} onChange={e => setPrest(i,'valor',e.target.value)} />
+          </div>
+        ))}
+      </div>
+      <button type="submit" disabled={!!running}
+        className="w-full py-2.5 bg-custom-blue text-white rounded font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+        {running ? '⏳ Procesando...' : '🚀 Emitir Boleta'}
+      </button>
+      <JobProgress job={job} onStop={handleStop} />
+    </form>
+  );
+};
+
+// ── Boletas Masivo ───────────────────────────────────────────────────────
+const BoletasMasivo = () => {
+  const [file, setFile]   = useState(null);
+  const [jobId, setJobId] = useState(null);
+  const [job, setJob]     = useState(null);
+  const [error, setError] = useState(null);
+  const running = job && (job.status === 'running' || job.status === 'pending');
+  useJobPoller(jobId, setJob);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) { setError('Selecciona un archivo Excel.'); return; }
+    setError(null); setJob(null); setJobId(null);
+    const fd = new FormData(); fd.append('type','boletas'); fd.append('archivo',file);
+    try {
+      const res  = await fetch('/api/automation', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al iniciar');
+      setJobId(data.job_id); setJob({ status: 'pending', progress: 0, logs: [] });
+    } catch (e) { setError(e.message); }
+  };
+
+  const handleStop = async () => {
+    if (!jobId) return;
+    await fetch('/api/automation', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'stop', job_id: jobId }) });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
+      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+        <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+        <p className="text-sm text-gray-500 mb-3">Columnas: RUT | CLAVE | RUT_DEST | DV | NOMBRE_DEST | DOMICILIO | REGIÓN | COMUNA | FECHA_DIA | FECHA_MES | FECHA_ANIO | PRESTACION | VALOR</p>
+        <input type="file" accept=".xlsx,.xls,.csv" onChange={e => setFile(e.target.files[0])} className="text-sm text-gray-600" />
+        {file && <p className="text-xs text-green-600 mt-2">✅ {file.name}</p>}
+      </div>
+      <button type="submit" disabled={!!running || !file}
+        className="w-full py-2.5 bg-custom-blue text-white rounded font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+        {running ? '⏳ Procesando...' : '🚀 Iniciar proceso masivo'}
+      </button>
+      <JobProgress job={job} onStop={handleStop} />
+    </form>
+  );
+};
+
+// ── Facturas Individual ──────────────────────────────────────────────────
+const FacturasIndividual = () => {
+  const [form, setForm]   = useState({ rut_empresa: '', rut_usuario: '', clave: '' });
+  const [jobId, setJobId] = useState(null);
+  const [job, setJob]     = useState(null);
+  const [error, setError] = useState(null);
+  const running = job && (job.status === 'running' || job.status === 'pending');
+  useJobPoller(jobId, setJob);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null); setJob(null); setJobId(null);
+    try {
+      const res  = await fetch('/api/automation', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'run_facturas_individual', rut_empresa: form.rut_empresa,
+          rut_usuario: form.rut_usuario || form.rut_empresa, clave: form.clave }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al iniciar');
+      setJobId(data.job_id); setJob({ status: 'pending', progress: 0, logs: [] });
+    } catch (e) { setError(e.message); }
+  };
+
+  const handleStop = async () => {
+    if (!jobId) return;
+    await fetch('/api/automation', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'stop', job_id: jobId }) });
+  };
+
+  const inputCls = 'w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-custom-blue';
+  const labelCls = 'text-xs text-gray-500 mb-1 block';
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div><label className={labelCls}>RUT Empresa *</label>
+          <input className={inputCls} placeholder="76.123.456-7" value={form.rut_empresa} onChange={e => setForm(f=>({...f,rut_empresa:e.target.value}))} required /></div>
+        <div><label className={labelCls}>RUT Usuario (si es distinto)</label>
+          <input className={inputCls} placeholder="Mismo que empresa si se deja vacío" value={form.rut_usuario} onChange={e => setForm(f=>({...f,rut_usuario:e.target.value}))} /></div>
+        <div className="md:col-span-2"><label className={labelCls}>Clave SII *</label>
+          <input className={inputCls} type="password" placeholder="Clave SII" value={form.clave} onChange={e => setForm(f=>({...f,clave:e.target.value}))} required /></div>
+      </div>
+      <button type="submit" disabled={!!running}
+        className="w-full py-2.5 bg-custom-blue text-white rounded font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+        {running ? '⏳ Procesando...' : '🚀 Aceptar Facturas'}
+      </button>
+      <JobProgress job={job} onStop={handleStop} />
+    </form>
+  );
+};
+
+// ── Facturas Masivo ──────────────────────────────────────────────────────
+const FacturasMasivo = () => {
+  const [file, setFile]   = useState(null);
+  const [jobId, setJobId] = useState(null);
+  const [job, setJob]     = useState(null);
+  const [error, setError] = useState(null);
+  const running = job && (job.status === 'running' || job.status === 'pending');
+  useJobPoller(jobId, setJob);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) { setError('Selecciona un archivo Excel.'); return; }
+    setError(null); setJob(null); setJobId(null);
+    const fd = new FormData(); fd.append('type','facturas'); fd.append('archivo',file);
+    try {
+      const res  = await fetch('/api/automation', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al iniciar');
+      setJobId(data.job_id); setJob({ status: 'pending', progress: 0, logs: [] });
+    } catch (e) { setError(e.message); }
+  };
+
+  const handleStop = async () => {
+    if (!jobId) return;
+    await fetch('/api/automation', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'stop', job_id: jobId }) });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {error && <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
+      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+        <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+        <p className="text-sm text-gray-500 mb-3">Columnas: RUT_EMPRESA | RUT_USUARIO (opcional) | CLAVE</p>
+        <input type="file" accept=".xlsx,.xls,.csv" onChange={e => setFile(e.target.files[0])} className="text-sm text-gray-600" />
+        {file && <p className="text-xs text-green-600 mt-2">✅ {file.name}</p>}
+      </div>
+      <button type="submit" disabled={!!running || !file}
+        className="w-full py-2.5 bg-custom-blue text-white rounded font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+        {running ? '⏳ Procesando...' : '🚀 Iniciar proceso masivo'}
+      </button>
+      <JobProgress job={job} onStop={handleStop} />
+    </form>
+  );
+};
+
+// ── AutomationTab principal ──────────────────────────────────────────────
 const AutomationTab = () => {
-  const [activeItem, setActiveItem] = useState(null);
+  const [activeProcess, setActiveProcess] = useState(null);
+  const [activeMode, setActiveMode]       = useState('individual');
+  const [daemonOk, setDaemonOk]           = useState(null);
+
+  React.useEffect(() => {
+    fetch('/api/automation?action=health')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => setDaemonOk(d?.ok === true))
+      .catch(() => setDaemonOk(false));
+  }, []);
+
+  const tabCls = (v) =>
+    `px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
+      activeMode === v ? 'border-custom-blue text-custom-blue bg-white' : 'border-transparent text-gray-500 hover:text-gray-700'
+    }`;
+
   return (
     <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-2">
         <Zap className="w-6 h-6 text-custom-blue" />
         <h1 className="text-xl md:text-2xl font-bold text-custom-blue">AUTOMATIZACIÓN</h1>
       </div>
-      <p className="text-gray-500 text-sm mb-6">Accede a las herramientas de automatización disponibles para agilizar tus procesos.</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {AUTOMATION_ITEMS.map((item) => (
-          <button
-            key={item.title}
-            onClick={() => setActiveItem(item)}
-            className="group flex flex-col gap-4 border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-custom-blue transition-all text-left"
-          >
+      <div className={`text-xs px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 mb-6 ${
+        daemonOk === null ? 'bg-gray-100 text-gray-500' : daemonOk ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+      }`}>
+        <span className={`w-2 h-2 rounded-full ${daemonOk === null ? 'bg-gray-400' : daemonOk ? 'bg-green-500' : 'bg-red-500'}`} />
+        {daemonOk === null ? 'Verificando daemon...' : daemonOk ? 'Daemon conectado' : 'Daemon no disponible — ejecuta iniciar_daemon.bat en el PC'}
+      </div>
+
+      {!activeProcess ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <button onClick={() => setActiveProcess('boletas')}
+            className="group flex flex-col gap-4 border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-custom-blue transition-all text-left">
             <div className="flex items-center gap-3">
               <div className="bg-blue-50 group-hover:bg-custom-blue p-3 rounded-lg transition-colors">
-                <item.icon className="w-6 h-6 text-custom-blue group-hover:text-white transition-colors" />
+                <ScrollText className="w-6 h-6 text-custom-blue group-hover:text-white transition-colors" />
               </div>
-              <h2 className="font-bold text-custom-blue text-lg">{item.title}</h2>
+              <h2 className="font-bold text-custom-blue text-lg">Creación de Boletas</h2>
             </div>
-            <p className="text-sm text-gray-500">{item.description}</p>
-            <span className="text-xs font-medium text-custom-blue group-hover:underline mt-auto">Ver herramientas →</span>
+            <p className="text-sm text-gray-500">Emite boletas de honorarios electrónicas en el SII. Modo individual o carga masiva por Excel.</p>
+            <span className="text-xs font-medium text-custom-blue group-hover:underline mt-auto">Iniciar →</span>
           </button>
-        ))}
-      </div>
-      <AutomationModal item={activeItem} onClose={() => setActiveItem(null)} />
+          <button onClick={() => setActiveProcess('facturas')}
+            className="group flex flex-col gap-4 border border-gray-200 rounded-lg p-6 hover:shadow-md hover:border-custom-blue transition-all text-left">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-50 group-hover:bg-custom-blue p-3 rounded-lg transition-colors">
+                <ReceiptText className="w-6 h-6 text-custom-blue group-hover:text-white transition-colors" />
+              </div>
+              <h2 className="font-bold text-custom-blue text-lg">Facturas Electrónicas</h2>
+            </div>
+            <p className="text-sm text-gray-500">Acepta facturas electrónicas pendientes en el SII. Modo individual o carga masiva por Excel.</p>
+            <span className="text-xs font-medium text-custom-blue group-hover:underline mt-auto">Iniciar →</span>
+          </button>
+        </div>
+      ) : (
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <button onClick={() => setActiveProcess(null)} className="text-sm text-gray-500 hover:text-custom-blue">← Volver</button>
+            <span className="text-gray-300">/</span>
+            <span className="text-sm font-semibold text-custom-blue">
+              {activeProcess === 'boletas' ? 'Creación de Boletas' : 'Facturas Electrónicas'}
+            </span>
+          </div>
+          <div className="flex gap-1 border-b border-gray-200 mb-6">
+            <button className={tabCls('individual')} onClick={() => setActiveMode('individual')}>👤 Individual</button>
+            <button className={tabCls('masivo')} onClick={() => setActiveMode('masivo')}>📊 Masivo (Excel)</button>
+          </div>
+          {activeProcess === 'boletas'   && activeMode === 'individual' && <BoletasIndividual />}
+          {activeProcess === 'boletas'   && activeMode === 'masivo'     && <BoletasMasivo />}
+          {activeProcess === 'facturas'  && activeMode === 'individual' && <FacturasIndividual />}
+          {activeProcess === 'facturas'  && activeMode === 'masivo'     && <FacturasMasivo />}
+        </div>
+      )}
     </div>
   );
 };
