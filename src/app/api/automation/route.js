@@ -2,11 +2,15 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { NextResponse } from 'next/server'
 
-const DAEMON_URL    = process.env.DAEMON_URL
-const DAEMON_SECRET = process.env.DAEMON_SECRET
+function getDaemonConfig() {
+  return {
+    url:    process.env.DAEMON_URL,
+    secret: process.env.DAEMON_SECRET,
+  }
+}
 
-function daemonHeaders() {
-  return { 'x-daemon-secret': DAEMON_SECRET, 'Content-Type': 'application/json' }
+function daemonHeaders(secret) {
+  return { 'x-daemon-secret': secret, 'Content-Type': 'application/json' }
 }
 
 async function requireAdmin() {
@@ -26,10 +30,21 @@ function noDaemon() {
 export async function GET(req) {
   const deny = await requireAdmin()
   if (deny) return deny
-  if (!DAEMON_URL) return noDaemon()
 
+  const { url: DAEMON_URL, secret: DAEMON_SECRET } = getDaemonConfig()
+
+  // Debug endpoint: ?action=debug
   const { searchParams } = new URL(req.url)
   const action = searchParams.get('action')
+  if (action === 'debug') {
+    return NextResponse.json({
+      DAEMON_URL: DAEMON_URL || '(no definida)',
+      DAEMON_SECRET: DAEMON_SECRET ? '(definida)' : '(no definida)',
+    })
+  }
+
+  if (!DAEMON_URL) return noDaemon()
+
   const jobId  = searchParams.get('job_id')
 
   let daemonPath = '/health'
@@ -59,6 +74,8 @@ export async function GET(req) {
 export async function POST(req) {
   const deny = await requireAdmin()
   if (deny) return deny
+
+  const { url: DAEMON_URL, secret: DAEMON_SECRET } = getDaemonConfig()
   if (!DAEMON_URL) return noDaemon()
 
   const contentType = req.headers.get('content-type') || ''
@@ -72,7 +89,6 @@ export async function POST(req) {
       ? '/run/boletas/masivo'
       : '/run/facturas/masivo'
 
-    // Reenviar el FormData al daemon
     const daemonForm = new FormData()
     const archivo = form.get('archivo')
     if (!archivo) {
@@ -124,7 +140,7 @@ export async function POST(req) {
   try {
     const res = await fetch(`${DAEMON_URL}${endpoint}`, {
       method: 'POST',
-      headers: daemonHeaders(),
+      headers: daemonHeaders(DAEMON_SECRET),
       body: JSON.stringify(params),
       signal: AbortSignal.timeout(15000),
     })
