@@ -33,7 +33,7 @@ async function Navbar() {
             width={300}
             height={300}
             priority
-            className=""
+            className="w-28 sm:w-36 lg:w-48"
           />
         </Link>
 

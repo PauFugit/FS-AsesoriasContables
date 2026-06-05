@@ -58,15 +58,13 @@ export async function POST(request) {
 
         const emailText = `Nombre: ${nombre} ${apellido}\nCorreo: ${correo}\nTeléfono: ${data.telefono || 'No indicado'}\nServicio a cotizar: ${servicio}\nMensaje: ${mensaje}`;
 
-        const emailSent = await sendEmail(
-            'contacto@asesoriasvaldivia.cl',
-            'contacto@asesoriasvaldivia.cl',
-            "Nueva solicitud de cotización",
-            emailText
-        );
-
-        if (!emailSent) {
-            throw new Error('Error al enviar el correo');
+        const emailTo = process.env.EMAIL_FROM
+        if (emailTo) {
+            try {
+                await sendEmail(emailTo, emailTo, "Nueva solicitud de cotización", emailText)
+            } catch {
+                // El formulario fue guardado correctamente; el fallo de email no es crítico
+            }
         }
 
         return new NextResponse(JSON.stringify(cotizationForm), {

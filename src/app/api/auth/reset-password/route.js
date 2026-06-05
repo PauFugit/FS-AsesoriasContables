@@ -26,16 +26,15 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Token inválido o expirado' }, { status: 400 });
     }
 
-    await prisma.users.update({
-      where: { id: user.id },
-      data: { resetToken: null, resetTokenExpires: null },
-    });
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.users.update({
       where: { id: user.id },
-      data: { password: hashedPassword },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpires: null,
+      },
     });
 
     return NextResponse.json({ message: 'Tu contraseña ha sido reseteada correctamente.' });

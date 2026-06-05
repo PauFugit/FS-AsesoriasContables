@@ -7,7 +7,16 @@ export async function POST(req) {
   try {
     const { email } = await req.json();
 
-    const user = await prisma.users.findUnique({ where: { email } });
+    if (!email || String(email).trim() === '') {
+      return NextResponse.json({ error: 'El correo electrónico es requerido' }, { status: 400 });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'El correo electrónico no es válido' }, { status: 400 });
+    }
+
+    const user = await prisma.users.findUnique({ where: { email: String(email).trim().toLowerCase() } });
     if (!user) {
       // Don't reveal that the user doesn't exist
       return NextResponse.json({ message: 'Si la cuenta con el correo existe, se enviará el enlace para resetear la contraseña.' });

@@ -2,8 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReversed }) => (
-  <div className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} overflow-hidden  mx-6 my-8 bg-transparent`}>
-    <div className="w-full lg:w-3/5 p-8 flex flex-col justify-center">
+  <div className={`flex flex-col ${isReversed ? 'lg:flex-row-reverse' : 'lg:flex-row'} overflow-hidden mx-3 sm:mx-6 my-4 sm:my-8 bg-transparent`}>
+    <div className="w-full lg:w-3/5 p-4 sm:p-6 md:p-8 flex flex-col justify-center">
       <div className="lg:hidden w-full mb-4">
         <Image
           src={imageSrc}
@@ -13,11 +13,11 @@ const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReve
           className="w-full h-auto object-cover"
         />
       </div>
-      <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-semibold text-custom-blue mb-4 md:mb-8">{title}</h2>
-      <p className="text-custom-blue my-4 md:my-6 text-sm sm:text-base md:text-xl lg:text-2xl">{description}</p>
-      <div className="flex items-center space-x-4 mt-8">
-        <Link href="/cotiza"> 
-        <button className="text-lg sm:text-2xl flex items-center space-x-2 bg-custom-blue text-custom-white px-4 py-2 rounded-full hover:bg-custom-white hover:text-custom-blue">
+      <h2 className="text-xl sm:text-3xl md:text-5xl lg:text-7xl font-semibold text-custom-blue mb-3 sm:mb-6 md:mb-8">{title}</h2>
+      <p className="text-custom-blue my-3 sm:my-4 md:my-6 text-sm sm:text-base md:text-lg lg:text-2xl">{description}</p>
+      <div className="flex items-center space-x-3 sm:space-x-4 mt-4 sm:mt-8">
+        <Link href="/cotiza">
+        <button className="text-sm sm:text-base md:text-lg flex items-center space-x-2 bg-custom-blue text-custom-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full hover:bg-custom-white hover:text-custom-blue">
           {buttonText}</button>
         </Link>
         <Image
@@ -25,7 +25,7 @@ const Card = ({ title, description, imageSrc, buttonText, buttonImageSrc, isReve
           alt="Flecha Azul"
           width={80}
           height={80}
-          className="rounded-full"
+          className="rounded-full w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20"
         />
       </div>
     </div>

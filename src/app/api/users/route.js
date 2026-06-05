@@ -41,6 +41,22 @@ export async function POST(request) {
     try {
         const data = await request.json()
 
+        const requiredFields = ['email', 'username', 'password', 'name', 'lastname']
+        for (const field of requiredFields) {
+            if (!data[field] || String(data[field]).trim() === '') {
+                return NextResponse.json({ error: `El campo ${field} es requerido` }, { status: 400 })
+            }
+        }
+
+        if (String(data.password).length < 8) {
+            return NextResponse.json({ error: 'La contraseña debe tener al menos 8 caracteres' }, { status: 400 })
+        }
+
+        const existingEmail = await prisma.users.findUnique({ where: { email: data.email } })
+        if (existingEmail) {
+            return NextResponse.json({ error: 'El correo ya está registrado' }, { status: 400 })
+        }
+
         const existingUser = await prisma.users.findUnique({
             where: { username: data.username }
         })
@@ -54,8 +70,20 @@ export async function POST(request) {
 
         const hashedPassword = await bcrypt.hash(data.password, 10)
 
+        // Solo campos conocidos para evitar inyección de campos arbitrarios
+        const ALLOWED_ROLES = ['TEAM', 'CLIENT']
+        const role = ALLOWED_ROLES.includes(data.role) ? data.role : 'TEAM'
+
         const user = await prisma.users.create({
-            data: { ...data, password: hashedPassword }
+            data: {
+                email: data.email,
+                username: data.username,
+                name: data.name,
+                lastname: data.lastname,
+                password: hashedPassword,
+                phone: data.phone || null,
+                role,
+            }
         })
 
         const { password, ...userWithoutPassword } = user
@@ -77,21 +105,27 @@ export async function PUT(request) {
     try {
         const data = await request.json()
         const { id, ...updateData } = data
+        const numericId = parseInt(id)
 
         // Solo ADMIN puede actualizar a otros usuarios
-        if (session.user.role !== 'ADMIN' && session.user.id !== id) {
+        if (session.user.role !== 'ADMIN' && parseInt(session.user.id) !== numericId) {
             return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 })
         }
 
+        // Solo campos editables por perfil para evitar escalada de privilegios
+        const allowedFields = ['username', 'name', 'lastname', 'phone', 'email', 'active']
+        const safeUpdate = {}
+        for (const field of allowedFields) {
+            if (updateData[field] !== undefined) safeUpdate[field] = updateData[field]
+        }
+
         if (updateData.password) {
-            updateData.password = await bcrypt.hash(updateData.password, 10)
-        } else {
-            delete updateData.password
+            safeUpdate.password = await bcrypt.hash(updateData.password, 10)
         }
 
         const updatedUser = await prisma.users.update({
-            where: { id: parseInt(id) },
-            data: updateData
+            where: { id: numericId },
+            data: safeUpdate
         })
 
         const { password, ...userWithoutPassword } = updatedUser

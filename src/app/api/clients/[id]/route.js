@@ -21,6 +21,7 @@ export async function GET(request, { params }) {
                 name: true,
                 lastname: true,
                 email: true,
+                role: true,
                 company: true,
                 companyEmail: true,
                 companyPhone: true,

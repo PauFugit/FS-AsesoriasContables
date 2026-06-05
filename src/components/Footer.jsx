@@ -24,17 +24,17 @@ export default function Footer() {
                         <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-4">CONTACTO</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="mailto:contacto@asesoriasvaldivia.cl" className="hover:text-custom-white text-lg">
+                                <Link href="mailto:contacto@asesoriasvaldivia.cl" className="hover:text-custom-white text-sm sm:text-base lg:text-lg">
                                     contacto@asesoriasvaldivia.cl
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/cotiza" className="hover:text-custom-white text-lg">
+                                <Link href="/cotiza" className="hover:text-custom-white text-sm sm:text-base lg:text-lg">
                                     Cotiza con nosotros
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/contacto" className="hover:text-custom-white text-lg">
+                                <Link href="/contacto" className="hover:text-custom-white text-sm sm:text-base lg:text-lg">
                                     Consultas generales
                                 </Link>
                             </li>
@@ -42,7 +42,7 @@ export default function Footer() {
                         <div className="my-8">
                             <iframe
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.8864269776224!2d-70.39742648255615!3d-23.54400329999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x96afd5d738c6d8e7%3A0x7e3b1ff1a2d6b5b0!2sArturo%20Prat%20482%2C%20Antofagasta%2C%20Chile!5e0!3m2!1sen!2sus!4v1632501144712!5m2!1sen!2sus"
-                                className="w-full"
+                                className="w-full h-40 sm:h-52"
                                 height="220"
                                 style={{ border: 0 }}
                                 allowFullScreen={false}
@@ -59,12 +59,12 @@ export default function Footer() {
                         <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-4">INFORMACIÓN</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/nosotros" className="hover:text-custom-white text-lg">
+                                <Link href="/nosotros" className="hover:text-custom-white text-sm sm:text-base lg:text-lg">
                                     Quiénes somos
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/misionvision" className="hover:text-custom-white text-lg">
+                                <Link href="/misionvision" className="hover:text-custom-white text-sm sm:text-base lg:text-lg">
                                     Misión y Visión
                                 </Link>
                             </li>
@@ -76,12 +76,12 @@ export default function Footer() {
                         <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-4">POLÍTICAS</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/privacidad" className="hover:text-custom-white text-lg">
+                                <Link href="/privacidad" className="hover:text-custom-white text-sm sm:text-base lg:text-lg">
                                     Privacidad
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/terminosdeuso" className="hover:text-custom-white text-lg">
+                                <Link href="/terminosdeuso" className="hover:text-custom-white text-sm sm:text-base lg:text-lg">
                                     Aviso legal y Términos de Uso
                                 </Link>
                             </li>

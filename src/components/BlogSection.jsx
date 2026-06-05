@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function BlogSection() {
   return (
-    <div className="p-10 xl:p-20">
+    <div className="p-4 sm:p-8 xl:p-20">
       <div className="flex flex-col md:flex-row items-center justify-between font-grotesk text-custom-blue">
         <div className="flex flex-col md:space-y-12">
           <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-12">

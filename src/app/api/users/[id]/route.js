@@ -12,7 +12,7 @@ export async function GET(request, { params }) {
     const id = parseInt(params.id)
 
     // Solo el propio usuario o un ADMIN pueden ver los datos
-    if (session.user.role !== 'ADMIN' && session.user.id !== id) {
+    if (session.user.role !== 'ADMIN' && parseInt(session.user.id) !== id) {
         return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 })
     }
 
@@ -69,21 +69,26 @@ export async function PUT(request, { params }) {
     const id = parseInt(params.id)
 
     // Solo el propio usuario o un ADMIN pueden actualizar
-    if (session.user.role !== 'ADMIN' && session.user.id !== id) {
+    if (session.user.role !== 'ADMIN' && parseInt(session.user.id) !== id) {
         return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 })
     }
 
     const data = await request.json()
     try {
-        let updateData = { ...data };
-        if (data.password) {
-            updateData.password = await bcrypt.hash(data.password, 10);
-        } else {
-            delete updateData.password;
+        // Solo campos editables para evitar escalada de privilegios
+        const allowedFields = ['username', 'name', 'lastname', 'phone', 'email', 'active']
+        const safeUpdate = {}
+        for (const field of allowedFields) {
+            if (data[field] !== undefined) safeUpdate[field] = data[field]
         }
+
+        if (data.password) {
+            safeUpdate.password = await bcrypt.hash(data.password, 10)
+        }
+
         const result = await prisma.users.update({
             where: { id: id },
-            data: updateData
+            data: safeUpdate
         });
 
         const { password, ...userWithoutPassword } = result;

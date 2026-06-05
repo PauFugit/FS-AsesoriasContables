@@ -97,6 +97,7 @@ const ProfileTab = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -139,13 +140,15 @@ const ProfileTab = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSuccessMessage('');
+    setError(null);
     if (session?.user?.id) {
       try {
         const dataToUpdate = { ...userData, id: session.user.id };
         if (password) {
           dataToUpdate.password = password;
         }
-  
+
         const response = await fetch(`/api/users`, {
           method: 'PUT',
           headers: {
@@ -153,26 +156,27 @@ const ProfileTab = () => {
           },
           body: JSON.stringify(dataToUpdate),
         });
-  
+
         if (!response.ok) {
           throw new Error('Error al actualizar datos del usuario');
         }
-  
+
         const result = await response.json();
-        alert(result.message);
-        setPassword(''); // Clear the password field after successful update
+        setSuccessMessage(result.message || 'Datos actualizados correctamente.');
+        setPassword('');
       } catch (error) {
         setError(error.message);
-        alert(error.message);
       }
     }
   };
-  if (isLoading) return <div>Loading user data...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (isLoading) return <div>Cargando datos del usuario...</div>;
+  if (error && !userData.name) return <div>Error: {error}</div>;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h1 className="text-xl md:text-2xl font-bold mb-6 text-custom-blue">BIENVENIDO/A, {userData.name.toUpperCase()} {userData.lastname.toUpperCase()}</h1>
+      {successMessage && <p className="mb-4 bg-green-100 text-green-700 border border-green-300 px-4 py-2 rounded text-sm">{successMessage}</p>}
+      {error && <p className="mb-4 bg-red-100 text-red-700 border border-red-300 px-4 py-2 rounded text-sm">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-6">
           <h2 className="text-lg md:text-xl font-semibold mb-4">INFORMACIÓN GENERAL</h2>

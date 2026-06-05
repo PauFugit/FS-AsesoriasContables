@@ -65,10 +65,10 @@ export default function Carousel() {
                         className="object-cover"
                     />
                     <div className="absolute inset-0 flex flex-col justify-center mt-20 pt-20 px-4 sm:px-8 md:px-16 ">
-                        <h2 className="text-5xl sm:text-5xl md:text-7xl font-bold text-white mb-2">
+                        <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-2">
                             {slide.title}
                         </h2>
-                        <h3 className="text-5xl sm:text-5xl md:text-7xl font-bold text-custom-white mb-2">
+                        <h3 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-custom-white mb-2">
                             {slide.subtitle}
                         </h3>
                         <style jsx>{`
@@ -77,10 +77,10 @@ export default function Carousel() {
                                 text-stroke: 2px #2B55A0;
                             }
                         `}</style>
-                        <h2 className="text-5xl sm:text-5xl md:text-7xl font-bold text-white mb-4">
+                        <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
                             {slide.action}
                         </h2>
-                        <p className="text-white text-md sm:text-lg md:text-2xl mb-6 max-w-2xl">
+                        <p className="text-white text-sm sm:text-base md:text-lg lg:text-2xl mb-6 max-w-2xl">
                             {slide.description}
                         </p>
 
@@ -94,14 +94,14 @@ export default function Carousel() {
                             />
                             <Image
                                 src="/flechaazulderecha.png"
-                                width={50}
-                                height={50}
+                                width={40}
+                                height={40}
                                 alt="Arrow"
                                 className="mr-2 block md:hidden"
                             />
 
                             <Link href={slide.href}>
-                                <button className="bg-custom-white text-custom-blue px-4 py-4 rounded-full text-lg sm:text-2xl font-semibold inline-flex items-center transition-all duration-300 ease-in-out hover:bg-custom-blue hover:text-custom-white">
+                                <button className="bg-custom-white text-custom-blue px-3 py-2 sm:px-4 sm:py-3 rounded-full text-sm sm:text-base md:text-lg font-semibold inline-flex items-center transition-all duration-300 ease-in-out hover:bg-custom-blue hover:text-custom-white">
                                     {slide.buttonText}
                                 </button>
                             </Link>

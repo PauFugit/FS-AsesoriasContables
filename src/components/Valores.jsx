@@ -24,9 +24,9 @@ const Valores = () => {
       <div className="flex flex-col md:flex-row justify-around items-center">
         {values.map((value, index) => (
           <div key={index} className="relative flex flex-col items-center mb-8 md:mb-0 md:px-4">
-            <div className="w-64 h-64 rounded-full flex items-center justify-center relative mb-4">
-              <Image src={value.image} alt={value.title} className="object-fit"
-               width='300' height='300' 
+            <div className="w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 rounded-full flex items-center justify-center relative mb-4">
+              <Image src={value.image} alt={value.title} className="object-contain w-full h-full"
+               width='300' height='300'
               ></Image>
             </div>
 

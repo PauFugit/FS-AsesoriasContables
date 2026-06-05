@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images:{
-    domains: ['gk5flxbicoiece78.public.blob.vercel-storage.com']
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'gk5flxbicoiece78.public.blob.vercel-storage.com',
+      },
+    ],
   },
   async headers() {
     return [
