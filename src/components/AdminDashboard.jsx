@@ -876,7 +876,7 @@ const JobProgress = ({ job, onStop }) => {
 const BoletasIndividual = () => {
   const today = new Date();
   const [form, setForm] = useState({
-    rut: '', clave: '',
+    rut: '', clave: '', headless: true,
     rut_dest: '', dv_dest: '', nombres_dest: '', domicilio: '', region: '', comuna: '',
     fecha_dia: String(today.getDate()).padStart(2, '0'),
     fecha_mes: String(today.getMonth() + 1).padStart(2, '0'),
@@ -911,6 +911,7 @@ const BoletasIndividual = () => {
           nombres_dest: form.nombres_dest, domicilio: form.domicilio,
           region: form.region, comuna: form.comuna,
           fecha_dia: form.fecha_dia, fecha_mes: form.fecha_mes, fecha_anio: form.fecha_anio,
+          headless: form.headless,
           prestaciones,
         }),
       });
@@ -937,6 +938,10 @@ const BoletasIndividual = () => {
           <input className={inputCls} placeholder="76.123.456-7" value={form.rut} onChange={e => setField('rut', e.target.value)} required /></div>
         <div><label className={labelCls}>Clave SII *</label>
           <input className={inputCls} type="password" placeholder="Clave SII" value={form.clave} onChange={e => setField('clave', e.target.value)} required /></div>
+      </div>
+      <div className="flex items-center gap-2">
+        <input type="checkbox" id="headless_b" checked={form.headless} onChange={e => setField('headless', e.target.checked)} className="w-4 h-4 accent-custom-blue" />
+        <label htmlFor="headless_b" className="text-sm text-gray-600">Modo silencioso (Headless) — no abre ventana del navegador</label>
       </div>
       <div className="border-t pt-3">
         <p className="text-xs font-semibold text-gray-600 mb-3">📅 Fecha de la boleta</p>
@@ -975,9 +980,22 @@ const BoletasIndividual = () => {
       <div className="border-t pt-3">
         <p className="text-xs font-semibold text-gray-600 mb-3">💼 Prestaciones (mín. 1)</p>
         {form.prestaciones.map((p, i) => (
-          <div key={i} className="flex gap-2 mb-2">
-            <input className={`${inputCls} flex-1`} placeholder={`Prestación ${i+1}${i===0?' *':''}`} value={p.glosa} onChange={e => setPrest(i,'glosa',e.target.value)} />
-            <input className={`${inputCls} w-28`} placeholder={`Valor ${i+1}`} value={p.valor} onChange={e => setPrest(i,'valor',e.target.value)} />
+          <div key={i} className="mb-3">
+            <div className="flex gap-2 items-start">
+              <textarea
+                className={`${inputCls} flex-1 resize-none`}
+                rows={2}
+                placeholder={`Descripción prestación ${i+1}${i===0?' *':''}`}
+                value={p.glosa}
+                onChange={e => setPrest(i,'glosa',e.target.value)}
+              />
+              <input
+                className={`${inputCls} w-24 shrink-0`}
+                placeholder="Valor"
+                value={p.valor}
+                onChange={e => setPrest(i,'valor',e.target.value)}
+              />
+            </div>
           </div>
         ))}
       </div>
