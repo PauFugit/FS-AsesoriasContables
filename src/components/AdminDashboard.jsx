@@ -980,22 +980,21 @@ const BoletasIndividual = () => {
       <div className="border-t pt-3">
         <p className="text-xs font-semibold text-gray-600 mb-3">💼 Prestaciones (mín. 1)</p>
         {form.prestaciones.map((p, i) => (
-          <div key={i} className="mb-3">
-            <div className="flex gap-2 items-start">
-              <textarea
-                className={`${inputCls} flex-1 resize-none`}
-                rows={2}
-                placeholder={`Descripción prestación ${i+1}${i===0?' *':''}`}
-                value={p.glosa}
-                onChange={e => setPrest(i,'glosa',e.target.value)}
-              />
-              <input
-                className={`${inputCls} w-24 shrink-0`}
-                placeholder="Valor"
-                value={p.valor}
-                onChange={e => setPrest(i,'valor',e.target.value)}
-              />
-            </div>
+          <div key={i} className="mb-3 border border-gray-200 rounded p-2">
+            <label className={labelCls}>Prestación {i+1}{i===0?' *':''}</label>
+            <textarea
+              className={`${inputCls} resize-none mb-2`}
+              rows={2}
+              placeholder="Descripción de la prestación"
+              value={p.glosa}
+              onChange={e => setPrest(i,'glosa',e.target.value)}
+            />
+            <input
+              className={inputCls}
+              placeholder="Valor ($)"
+              value={p.valor}
+              onChange={e => setPrest(i,'valor',e.target.value)}
+            />
           </div>
         ))}
       </div>
