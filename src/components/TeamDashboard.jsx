@@ -543,10 +543,11 @@ const BoletasIndividual = () => {
 // BOLETAS — masivo Excel
 // ═══════════════════════════════════════════════════════════════════════
 const BoletasMasivo = () => {
-  const [file, setFile]   = useState(null);
-  const [jobId, setJobId] = useState(null);
-  const [job, setJob]     = useState(null);
-  const [error, setError] = useState(null);
+  const [file, setFile]         = useState(null);
+  const [headless, setHeadless] = useState(true);
+  const [jobId, setJobId]       = useState(null);
+  const [job, setJob]           = useState(null);
+  const [error, setError]       = useState(null);
   const running = job && (job.status === 'running' || job.status === 'pending');
 
   useJobPoller(jobId, setJob);
@@ -558,6 +559,7 @@ const BoletasMasivo = () => {
     const fd = new FormData();
     fd.append('type', 'boletas');
     fd.append('archivo', file);
+    fd.append('headless', headless ? 'true' : 'false');
     try {
       const res = await fetch('/api/automation', { method: 'POST', body: fd });
       const data = await res.json();
@@ -578,6 +580,10 @@ const BoletasMasivo = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>}
+      <div className="flex items-center gap-2">
+        <input type="checkbox" id="headless_bm" checked={headless} onChange={e => setHeadless(e.target.checked)} className="w-4 h-4 accent-custom-blue" />
+        <label htmlFor="headless_bm" className="text-sm text-gray-600">Modo silencioso (Headless) — no abre ventana del navegador</label>
+      </div>
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
         <FileText className="w-8 h-8 text-gray-400 mx-auto mb-2" />
         <p className="text-sm text-gray-500 mb-3">
