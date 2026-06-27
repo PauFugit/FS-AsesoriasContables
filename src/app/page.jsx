@@ -1,4 +1,16 @@
 import React from "react";
+
+export const metadata = {
+  title: "Asesorías Valdivia — Contabilidad, Tributaria y Laboral en Antofagasta",
+  description: "Expertos en asesoría contable, tributaria, laboral y auditorías en Antofagasta, Chile. Confíe su empresa a profesionales con experiencia.",
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: "Asesorías Valdivia — Contabilidad, Tributaria y Laboral en Antofagasta",
+    description: "Expertos en asesoría contable, tributaria, laboral y auditorías en Antofagasta, Chile.",
+    url: '/',
+  },
+};
+
 import CarouselHome from "@/components/CarouselHome";
 import BlogSection from "@/components/BlogSection";
 import CardsServices from "@/components/CardsServices";

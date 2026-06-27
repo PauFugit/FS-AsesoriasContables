@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { Resend } from 'resend'
 
 const allowedOrigin = process.env.NEXT_PUBLIC_APP_URL || 'https://newasesoriasvaldivia.vercel.app'
 
@@ -54,18 +53,31 @@ export async function POST(request) {
             }
         })
 
-        const apiKey = process.env.RESEND_API_KEY
-        if (!apiKey) throw new Error('RESEND_API_KEY no está configurada')
+        const apiKey = process.env.SENDGRID_API_KEY
+        if (!apiKey) throw new Error('SENDGRID_API_KEY no está configurada')
 
-        const resend = new Resend(apiKey)
         const from = process.env.EMAIL_FROM
-
-        await resend.emails.send({
-            from,
-            to: from,
-            subject: 'Nuevo mensaje de contacto',
-            text: `Nombre: ${nombre} ${apellido}\nCorreo: ${correo}\nTeléfono: ${data.telefono || 'No indicado'}\nMensaje: ${mensaje}`,
+        const sgResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                personalizations: [{ to: [{ email: from }] }],
+                from: { email: from },
+                subject: 'Nuevo mensaje de contacto',
+                content: [{
+                    type: 'text/plain',
+                    value: `Nombre: ${nombre} ${apellido}\nCorreo: ${correo}\nTeléfono: ${data.telefono || 'No indicado'}\nMensaje: ${mensaje}`,
+                }],
+            }),
         })
+
+        if (!sgResponse.ok && sgResponse.status !== 202) {
+            const sgError = await sgResponse.text()
+            throw new Error(`Error SendGrid: ${sgError}`)
+        }
 
         return new NextResponse(JSON.stringify(contactForm), {
             status: 201,
