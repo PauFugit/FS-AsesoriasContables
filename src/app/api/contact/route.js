@@ -84,6 +84,7 @@ export async function POST(request) {
             headers: { "Content-Type": "application/json", ...corsHeaders }
         })
     } catch (error) {
+        console.error('[contact/route] Error:', error?.message || error)
         return new NextResponse(JSON.stringify({ error: 'Ha ocurrido un error al procesar el formulario.' }), {
             status: 500,
             headers: { "Content-Type": "application/json", ...corsHeaders }
