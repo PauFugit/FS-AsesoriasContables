@@ -25,6 +25,18 @@ function noDaemon() {
   return NextResponse.json({ error: 'Daemon no configurado (DAEMON_URL)' }, { status: 503 })
 }
 
+// El daemon a veces responde con texto no-JSON (errores de túnel, HTML, logs
+// mezclados en stdout). Si falla el parseo, devolvemos el fragmento crudo
+// para poder diagnosticar en vez de un error genérico de JSON.parse.
+async function safeJson(res) {
+  const text = await res.text()
+  try {
+    return { data: JSON.parse(text), raw: null }
+  } catch {
+    return { data: null, raw: text }
+  }
+}
+
 // ── GET /api/automation?action=status&job_id=xxx ───────────────────────
 // ── GET /api/automation?action=jobs ────────────────────────────────────
 export async function GET(req) {
@@ -56,7 +68,10 @@ export async function GET(req) {
       headers: { 'x-daemon-secret': DAEMON_SECRET },
       signal: AbortSignal.timeout(10000),
     })
-    const data = await res.json()
+    const { data, raw } = await safeJson(res)
+    if (raw !== null) {
+      return NextResponse.json({ error: 'Respuesta no-JSON del daemon', raw: raw.slice(0, 500) }, { status: 502 })
+    }
     return NextResponse.json(data, { status: res.status })
   } catch (e) {
     return NextResponse.json({ error: `Error contactando daemon: ${e.message}` }, { status: 502 })
@@ -103,7 +118,10 @@ export async function POST(req) {
         body: daemonForm,
         signal: AbortSignal.timeout(30000),
       })
-      const data = await res.json()
+      const { data, raw } = await safeJson(res)
+      if (raw !== null) {
+        return NextResponse.json({ error: 'Respuesta no-JSON del daemon', raw: raw.slice(0, 500) }, { status: 502 })
+      }
       return NextResponse.json(data, { status: res.status })
     } catch (e) {
       return NextResponse.json({ error: `Error contactando daemon: ${e.message}` }, { status: 502 })
@@ -121,7 +139,11 @@ export async function POST(req) {
         headers: { 'x-daemon-secret': DAEMON_SECRET },
         signal: AbortSignal.timeout(10000),
       })
-      return NextResponse.json(await res.json(), { status: res.status })
+      const { data, raw } = await safeJson(res)
+      if (raw !== null) {
+        return NextResponse.json({ error: 'Respuesta no-JSON del daemon', raw: raw.slice(0, 500) }, { status: 502 })
+      }
+      return NextResponse.json(data, { status: res.status })
     } catch (e) {
       return NextResponse.json({ error: e.message }, { status: 502 })
     }
@@ -144,7 +166,10 @@ export async function POST(req) {
       body: JSON.stringify(params),
       signal: AbortSignal.timeout(15000),
     })
-    const data = await res.json()
+    const { data, raw } = await safeJson(res)
+    if (raw !== null) {
+      return NextResponse.json({ error: 'Respuesta no-JSON del daemon', raw: raw.slice(0, 500) }, { status: 502 })
+    }
     return NextResponse.json(data, { status: res.status })
   } catch (e) {
     return NextResponse.json({ error: `Error contactando daemon: ${e.message}` }, { status: 502 })
