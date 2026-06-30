@@ -833,6 +833,11 @@ function useJobPoller(jobId, onUpdate) {
     const iv = setInterval(async () => {
       try {
         const res = await fetch(`/api/automation?action=status&job_id=${jobId}`);
+        if (res.status === 404) {
+          clearInterval(iv);
+          onUpdate({ status: 'error', error: 'Job no encontrado en el servidor (daemon reiniciado)', logs: [], progress: 0 });
+          return;
+        }
         if (!res.ok) return;
         const data = await res.json();
         onUpdate(data);
