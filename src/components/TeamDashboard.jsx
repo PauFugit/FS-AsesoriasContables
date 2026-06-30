@@ -310,6 +310,15 @@ const ResourceModal = ({ isOpen, onClose, resource }) => {
 // ═══════════════════════════════════════════════════════════════════════
 const POLL_INTERVAL = 2500; // ms entre polling al status del job
 
+// Si Vercel corta la función a medio camino (timeout) o el túnel del daemon
+// cae, la respuesta es HTML/texto en vez de JSON. res.json() revienta con
+// "JSON.parse: unexpected character..."; con esto mostramos un error claro.
+async function safeJson(res) {
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch { throw new Error('El servidor no respondió correctamente (revisa que el daemon esté activo).'); }
+}
+
 function useJobPoller(jobId, onUpdate) {
   React.useEffect(() => {
     if (!jobId) return;
@@ -568,7 +577,7 @@ const BoletasMasivo = () => {
     fd.append('headless', headless ? 'true' : 'false');
     try {
       const res = await fetch('/api/automation', { method: 'POST', body: fd });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error || 'Error al iniciar');
       setJobId(data.job_id);
       setJob({ status: 'pending', progress: 0, logs: [] });
@@ -703,7 +712,7 @@ const FacturasMasivo = () => {
     fd.append('archivo', file);
     try {
       const res = await fetch('/api/automation', { method: 'POST', body: fd });
-      const data = await res.json();
+      const data = await safeJson(res);
       if (!res.ok) throw new Error(data.error || 'Error al iniciar');
       setJobId(data.job_id);
       setJob({ status: 'pending', progress: 0, logs: [] });

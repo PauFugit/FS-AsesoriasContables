@@ -2,6 +2,11 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { NextResponse } from 'next/server'
 
+// Subir el Excel y reenviarlo al daemon (vía túnel) puede tardar más que el
+// límite por defecto de las funciones de Vercel (10s en Hobby), cortando la
+// conexión a medio camino y devolviendo HTML en vez de JSON al frontend.
+export const maxDuration = 60
+
 function getDaemonConfig() {
   return {
     url:    process.env.DAEMON_URL,
