@@ -115,6 +115,8 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Falta archivo Excel' }, { status: 400 })
     }
     daemonForm.append('archivo', archivo)
+    const headless = form.get('headless')
+    if (headless !== null) daemonForm.append('headless', headless)
 
     try {
       const res = await fetch(`${DAEMON_URL}${endpoint}`, {
